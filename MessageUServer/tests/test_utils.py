@@ -2,11 +2,10 @@ import unittest
 import os
 from unittest.mock import patch
 from utils import read_port_from_file
-from constants.messages import DEFAULT_PORT, FILE_NAME
-
+from constants.defaults import *
+from constants.names import *
 
 class TestUtils(unittest.TestCase):
-
     # Removes the file if it exists before each test
     def setUp(self):
         if os.path.exists(FILE_NAME):

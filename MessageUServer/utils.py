@@ -1,4 +1,6 @@
-from constants.messages import *
+from constants.server_messages import *
+from constants.names import *
+
 
 def read_port_from_file():
     try:
