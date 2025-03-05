@@ -20,7 +20,7 @@ class Client:
     def add_to_receive_buf(self, data):
         self.inb += data
 
-    def clear_recv_buffer(self):
+    def clear_receive_buffer(self):
         self.inb = b''
 
     def get_final_send_data(self ):
@@ -33,10 +33,9 @@ class Client:
     def update_last_seen(self):
         self.last_seen = datetime.datetime.now()
 
-    def process_data(self):
+    def process_data(self, recv_data):
         print(f"Processing data from {self.address}")
-        self.add_to_receive_buf(self.inb)
-        print(self.inb)
-        print("Data processed") #DEBUG TODO
-        self.clear_recv_buffer()
+        self.add_to_receive_buf(recv_data)
+        print(self.inb.decode()) ## TODO DEBUG
+        self.clear_receive_buffer()
         pass

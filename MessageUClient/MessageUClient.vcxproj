@@ -127,7 +127,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="client.cpp" />
+    <ClCompile Include="ClientProfile.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="connection.cpp" />
+    <ClCompile Include="RequestHandler.cpp" />
+    <ClCompile Include="ResponseHandler.cpp" />
+    <ClCompile Include="utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="client.h" />
+    <ClInclude Include="ClientProfile.h" />
+    <ClInclude Include="connection.h" />
+    <ClInclude Include="RequestHandler.h" />
+    <ClInclude Include="ResponseHandler.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

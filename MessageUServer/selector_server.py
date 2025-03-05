@@ -68,8 +68,7 @@ class SelectorServer:
         if mask & selectors.EVENT_READ:
             recv_data = client.client_socket.recv(MAX_BUFFER_SIZE)
             if recv_data:
-                client.add_to_receive_buf(recv_data)
-                client.process_data()
+                client.process_data(recv_data)
             # else:
             #     self.selector.unregister(client.client_socket)
             #     client.client_socket.close()
