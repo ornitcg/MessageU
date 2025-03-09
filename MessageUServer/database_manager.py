@@ -16,6 +16,14 @@ class DatabaseManager:
             print("Error connecting to DB ", e)
             return True
 
+    def initialize_db(self):
+        try:
+            self.connect()
+            self.create_tables()
+        except sqlite3.Error as e:
+            print("Error initializing the database ", e)
+            return False
+
     def create_clients_table(self):
         try:
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS clients
@@ -49,16 +57,26 @@ class DatabaseManager:
             return True
         return False
 
-    def initialize_db(self):
-        if self.connect():
-            return self.create_tables()
-
 
     def disconnect(self):
         if self.conn:
             self.conn.close()
             self.conn = None
             self.cursor = None
+
+    def is_exists_client_username(self, username):
+        try:
+            self.cursor.execute("SELECT * FROM clients WHERE UserName=?", (username,))
+            if self.cursor.fetchone():
+                return True
+            return False
+        except sqlite3.Error as e:
+            print("Error searching client ", e)
+            raise e
+
+
+
+
 
     def add_client(self, client_id, username, public_key):
         try:
@@ -73,6 +91,8 @@ class DatabaseManager:
         except sqlite3.IntegrityError as e:
             print("Error adding client ", e)
             return False
+
+
 
     def get_client_by_id(self, client_id):
         try:

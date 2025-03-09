@@ -1,6 +1,6 @@
 import datetime
-from constants.defaults import *
-
+from constants.defines import *
+from base_request import BaseRequest
 
 
 class Client:
@@ -8,8 +8,8 @@ class Client:
         self.client_socket = socket
         self.address = address
         self.client_id = None
-        self.name = None
-        self.pub_key = None
+        self.user_name = None
+        self.public_key = None
         self.inb = b''  # for incoming binary data
         self.outb = b''  # for outgoing binary data
         self.last_seen = None
@@ -33,9 +33,19 @@ class Client:
     def update_last_seen(self):
         self.last_seen = datetime.datetime.now()
 
-    def process_data(self, recv_data):
-        print(f"Processing data from {self.address}")
-        self.add_to_receive_buf(recv_data)
-        print(self.inb.decode()) ## TODO DEBUG
-        self.clear_receive_buffer()
-        pass
+
+    def extract_whole_request(self):
+        if len(self.inb) < REQUEST_HEADER_SIZE:
+            return None
+
+        self.client_id = self.inb[:CLIENT_ID_SIZE].decode()
+        offset = CLIENT_ID_SIZE
+        version = self.inb[offset:offset + VERSION_SIZE]
+        offset += VERSION_SIZE
+        code = self.inb[offset : offset + CODE_SIZE].decode()
+        offset += CODE_SIZE
+        payload_size = int(self.inb[offset:offset + PAYLOAD_SIZE].decode())
+        offset += PAYLOAD_SIZE
+
+        request = BaseRequest(self.client_id, version , code, payload_size)
+        return request

@@ -2,7 +2,7 @@ import unittest
 import os
 from unittest.mock import patch
 from utils import read_port_from_file
-from constants.defaults import *
+from constants.defines import *
 from constants.names import *
 
 class TestUtils(unittest.TestCase):

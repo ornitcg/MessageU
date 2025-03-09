@@ -2,7 +2,9 @@ import socket
 import selectors
 from client import Client
 from constants.server_messages import *
-
+from constants.defines import MAX_CONNECTIONS, MAX_BUFFER_SIZE
+from database_manager import DatabaseManager
+from request_handler import RequestHandler
 
 
 class SelectorServer:
@@ -11,7 +13,12 @@ class SelectorServer:
         self.port = port
         self.selector = selectors.DefaultSelector()
         self.server_socket = None
+        self.db_conn = DatabaseManager().initialize_db()
+        self.request_handler = RequestHandler(self.db_mangr)
 
+        if not self.db_conn:
+            print("Failed to initialize the database")
+            raise Exception("Failed to initialize the database")
 
     def connect(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -50,27 +57,56 @@ class SelectorServer:
         self.selector.register(client_socket, events, data=client)
         print(f"Client from {addr} registered with selector")  ## TODO DEBUG
 
-    # def send_data(self, data):
-    #     self.socket.send(data)
 
-    # def recv_data(self, size):
-    #     return self.socket.recv(size)
+    def handle_read(self, client):
+        try:
+            recv_data = client.client_socket.recv(MAX_BUFFER_SIZE)
+            if recv_data:
+                if client.client_id:
+                    self.db_manager.update_client_last_seen(client.client_id)
+                client.add_to_receive_buf(recv_data)
+                while True:
+                    request = client.extract_whole_request()
+                    if not request:
+                        break  # and move on to the next incoming data
 
-    def close(self):
-        self.close()
+                    response = self.request_handler.perform_request(client, request, self.db_conn)
+                    if response:
+                        client.add_to_send_buf(response)
+            else:  # case of empty data meaning client disconnected
+                print(f"Client {client.address} disconnected")
+                self.selector.unregister(client.client_socket)
+                client.client_socket.close()
+        except ConnectionError:
+            raise ConnectionError
 
 
-
+    def handle_write(self, client):
+        try:
+            sent = client.client_socket.send(client.get_final_send_data())
+            if sent == 0:
+                print(f"Failed to send data to client {client.address}")
+                self.selector.unregister(client.client_socket)
+                client.client_socket.close()
+        except ConnectionError:
+            raise ConnectionError
 
 
     def handle_client(self, key, mask):
         client = key.data
-        if mask & selectors.EVENT_READ:
-            recv_data = client.client_socket.recv(MAX_BUFFER_SIZE)
-            if recv_data:
-                client.process_data(recv_data)
-            # else:
-            #     self.selector.unregister(client.client_socket)
-            #     client.client_socket.close()
-            #     print(f"Closed connection to {client.address}")
+        try:
+            if mask & selectors.EVENT_READ:
+                    self.handle_read(client)
+            if mask & selectors.EVENT_WRITE and client.outb:
+                    self.handle_write(client)
+        except ConnectionError:
+            print(f"Connection error with client {client.address}")
+            self.selector.unregister(client.client_socket)
+            client.client_socket.close()
 
+    def close(self):
+        print("Closing server")
+        self.db_mangr.disconnect()
+        self.selector.close()
+        if self.server_socket:
+            self.server_socket.close()

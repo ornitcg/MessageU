@@ -1,15 +1,14 @@
 import utils
 from selector_server import SelectorServer
-import constants.defaults as defaults
+import constants.defines as defaults
 
 if __name__ == "__main__":
-    port = utils.read_port_from_file()
-    host = defaults.LOCALHOST
-    print(port)
-
-    mUserver = SelectorServer(host ,port)
+    #add try catch block here too TODO
     try:
+        port = utils.read_port_from_file()  #return the default port if file not found
+        host = defaults.LOCALHOST
+        print("Starting server on port: " ,port)
+        mUserver = SelectorServer(host ,port)
         mUserver.connect()
-        mUserver.accept()
     except Exception as e:
         print("Connection error: " , e)
