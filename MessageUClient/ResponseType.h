@@ -1,0 +1,12 @@
+#pragma once
+
+
+enum class RsponseType {
+	REGISTER_SUCEEDED = 2100,
+	CLIENT_LIST = 2101,
+	PUBLIC_KEY = 2102,
+	MESSAGE_SENT = 2103,
+	WAITING_MESSAGES = 2104,
+	GENERAL_ERROR = 9000
+};
+

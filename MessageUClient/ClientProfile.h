@@ -2,7 +2,8 @@
 class ClientProfile
 {
 private:
-
+		
+		
 
 public:
 

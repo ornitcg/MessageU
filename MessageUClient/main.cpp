@@ -2,34 +2,40 @@
 #include "connection.h"
 #include "client.h"
 #include <iostream>
-#include <string>
+#include "RequestInfo.h"
 
 
 
 int main() {
-	Connection conn ;
-	SOCKET client_socket = conn.getClientSocket();
-	std::cout << "Client socket: " << client_socket << std::endl;
-	if (client_socket < 0) {
-		std::cout << "Client socket creation error" << std::endl;
-		return 1;
-	}
+	try {
+		Connection conn;
+		SOCKET client_socket = conn.getClientSocket();
+		std::cout << "Client socket: " << client_socket << std::endl;
+		if (client_socket < 0) {
+			std::cout << "Client socket creation error" << std::endl;
+			return 1;
+		}
 
-	Client client;
-	int choice = 1;
-	
-	while (choice) {
-		client.displayClientMenu();
-		try {
-			choice = client.getChoice();	// only valid accepted
-			client.handleChoice(choice);
-		}
-		catch (const std::exception& e) {
-			std::cout << e.what() << std::endl;
-			choice = 1; // to keep the loop going
+		Client client(client_socket);
+		int choice = 1;
+
+		while (choice) {
+			displayMenu();
+			try {
+				choice = client.getChoice();	// only valid accepted
+				client.handleChoice(static_cast<MenuOption> (choice));
+				
+			}
+			catch (const std::exception& e) {
+				std::cout << e.what() << std::endl;
+				choice = 1; // to keep the loop going
+			}
 		}
 	}
-	std::cout << "Exit client\n";
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << "Exited client\n";
 
 	////send
 	//send(clientSocket, "Hello from cpp client!", 22, 0);

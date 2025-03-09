@@ -2,13 +2,12 @@
 #include "connection.h"
 #include "utils.h"
 #include <ws2tcpip.h> 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 Connection::Connection()
 {
 	clientSocket = -1;
 	if (!connectionInit()) {
-		std::cerr << "Failed to initiallize connection! " << std::endl;
+		throw std::runtime_error("Failed to initiallize connection! ");
 	}
 }
 
@@ -46,7 +45,7 @@ bool Connection::connectionInit()
 		std::string serverIp = serverInfo[0];
 		int port = std::stoi(serverInfo[1]);
 		
-		std::cout << "Connecting to server " << serverIp << " on port " << port << std::endl;	// TODO DEBUG
+		//std::cout << "Connecting to server " << serverIp << " on port " << port << std::endl;	// TODO DEBUG
 		struct sockaddr_in serverAddr = { 0 }; // struct that holds the server address
 		serverAddr.sin_family = AF_INET; // IPv4
 		serverAddr.sin_port = htons(port); // turns the endianess of the port to network endianess
