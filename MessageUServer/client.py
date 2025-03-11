@@ -37,15 +37,19 @@ class Client:
     def extract_whole_request(self):
         if len(self.inb) < REQUEST_HEADER_SIZE:
             return None
-
+        print(f"Request size: {len(self.inb)}") # TODO DEBUG
         self.client_id = self.inb[:CLIENT_ID_SIZE].decode()
         offset = CLIENT_ID_SIZE
         version = self.inb[offset:offset + VERSION_SIZE]
         offset += VERSION_SIZE
         code = self.inb[offset : offset + CODE_SIZE].decode()
         offset += CODE_SIZE
-        payload_size = int(self.inb[offset:offset + PAYLOAD_SIZE].decode())
+        # payload_size = self.inb[offset:offset + PAYLOAD_SIZE].decode()
+        payload_size = int.from_bytes(self.inb[offset:offset + PAYLOAD_SIZE], byteorder='little')
         offset += PAYLOAD_SIZE
+        print(f"Payload size: {payload_size}")
+        payload = self.inb[offset:offset + payload_size]
 
-        request = BaseRequest(self.client_id, version , code, payload_size)
-        return request
+        if payload == "":
+            return BaseRequest(self.client_id, version , code, payload_size)
+        else

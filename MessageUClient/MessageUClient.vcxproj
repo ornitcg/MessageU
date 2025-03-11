@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d0499487-d37e-413a-aec6-0b2c58adb4d9}</ProjectGuid>
+    <ProjectGuid>{b4c6812f-3cf1-4234-8ea3-0bc203920c73}</ProjectGuid>
     <RootNamespace>MessageUClient</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -105,10 +105,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>"C:\Users\ornit\OneDrive\Documents\Defensive Programming\cryptopp-CRYPTOPP_8_8_0";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>"C:\Users\ornit\OneDrive\Documents\Defensive Programming\cryptopp-CRYPTOPP_8_8_0\x64\Output\Debug\cryptlib.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -128,37 +131,47 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseRequest.cpp" />
-    <ClCompile Include="BaseResponse.cpp" />
-    <ClCompile Include="client.cpp" />
-    <ClCompile Include="ClientProfile.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="connection.cpp" />
-    <ClCompile Include="MessageRequest.cpp" />
-    <ClCompile Include="RegisterRequest.cpp" />
-    <ClCompile Include="RequestHandler.cpp" />
-    <ClCompile Include="RequestInfo.cpp" />
-    <ClCompile Include="ResponseHandler.cpp" />
-    <ClCompile Include="ResponseType.cpp" />
-    <ClCompile Include="TargetClientRequest.cpp" />
-    <ClCompile Include="utils.cpp" />
-    <ClCompile Include="uuid.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="AESWrapper.h" />
+    <ClInclude Include="Base64Wrapper.h" />
     <ClInclude Include="BaseRequest.h" />
     <ClInclude Include="BaseResponse.h" />
-    <ClInclude Include="client.h" />
-    <ClInclude Include="ClientProfile.h" />
-    <ClInclude Include="connection.h" />
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="Connection.h" />
+    <ClInclude Include="EncryptionManager.h" />
     <ClInclude Include="MessageRequest.h" />
     <ClInclude Include="RegisterRequest.h" />
+    <ClInclude Include="RegisterResponse.h" />
     <ClInclude Include="RequestHandler.h" />
     <ClInclude Include="RequestInfo.h" />
     <ClInclude Include="ResponseHandler.h" />
     <ClInclude Include="ResponseType.h" />
+    <ClInclude Include="RSAWrapper.h" />
     <ClInclude Include="TargetClientRequest.h" />
+    <ClInclude Include="UImanager.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="uuid.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AESWrapper.cpp" />
+    <ClCompile Include="Base64Wrapper.cpp" />
+    <ClCompile Include="BaseRequest.cpp" />
+    <ClCompile Include="BaseResponse.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="EncryptionManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MessageRequest.cpp" />
+    <ClCompile Include="RegisterRequest.cpp" />
+    <ClCompile Include="RegisterResponse.cpp" />
+    <ClCompile Include="RequestHandler.cpp" />
+    <ClCompile Include="RequestInfo.cpp" />
+    <ClCompile Include="ResponseHandler.cpp" />
+    <ClCompile Include="ResponseType.cpp" />
+    <ClCompile Include="RSAWrapper.cpp" />
+    <ClCompile Include="TargetClientRequest.cpp" />
+    <ClCompile Include="UImanager.cpp" />
+    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="uuid.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

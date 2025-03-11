@@ -24,7 +24,6 @@ class TestDatabaseManager(unittest.TestCase):
             os.remove(names.DB_NAME)
 
     def test_connect_and_create_tables(self):
-        """Test connection and table creation"""
         # Disconnect first
         self.db_manager.disconnect()
         # Test connection

@@ -14,7 +14,7 @@ private:
 public:
 	Connection();
 	~Connection();
-	SOCKET getClientSocket();
+	SOCKET getClientSocket() const;
 	bool connectionInit();
 };
 

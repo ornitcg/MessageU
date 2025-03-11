@@ -1,5 +1,5 @@
 #include <array>
-#include "connection.h"
+#include "Connection.h"
 #include "utils.h"
 #include <ws2tcpip.h> 
 
@@ -19,7 +19,7 @@ Connection::~Connection()
 	WSACleanup();
 }
 
-SOCKET Connection::getClientSocket()
+SOCKET Connection::getClientSocket() const
 {
 	return clientSocket;
 }

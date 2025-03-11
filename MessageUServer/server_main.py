@@ -3,7 +3,6 @@ from selector_server import SelectorServer
 import constants.defines as defaults
 
 if __name__ == "__main__":
-    #add try catch block here too TODO
     try:
         port = utils.read_port_from_file()  #return the default port if file not found
         host = defaults.LOCALHOST
@@ -11,4 +10,4 @@ if __name__ == "__main__":
         mUserver = SelectorServer(host ,port)
         mUserver.connect()
     except Exception as e:
-        print("Connection error: " , e)
+        print("Connection error in main : " , e) # TODO DEBUG

@@ -13,8 +13,9 @@ class SelectorServer:
         self.port = port
         self.selector = selectors.DefaultSelector()
         self.server_socket = None
-        self.db_conn = DatabaseManager().initialize_db()
-        self.request_handler = RequestHandler(self.db_mangr)
+        self.db_mngr = DatabaseManager()
+        self.db_conn = self.db_mngr.initialize_db()
+        self.request_handler = RequestHandler(self.db_conn)
 
         if not self.db_conn:
             print("Failed to initialize the database")
@@ -63,7 +64,7 @@ class SelectorServer:
             recv_data = client.client_socket.recv(MAX_BUFFER_SIZE)
             if recv_data:
                 if client.client_id:
-                    self.db_manager.update_client_last_seen(client.client_id)
+                    self.db_mngr.update_client_last_seen(client.client_id)
                 client.add_to_receive_buf(recv_data)
                 while True:
                     request = client.extract_whole_request()
@@ -77,8 +78,14 @@ class SelectorServer:
                 print(f"Client {client.address} disconnected")
                 self.selector.unregister(client.client_socket)
                 client.client_socket.close()
-        except ConnectionError:
-            raise ConnectionError
+        except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
+            print(f"Connection error with client {client.address}")
+            self.selector.unregister(client.client_socket)
+            client.client_socket.close()
+        except Exception as e:
+            print (f"Error in handling client {client.address}: {e} " )
+            self.selector.unregister(client.client_socket)
+            client.client_socket.close()
 
 
     def handle_write(self, client):
@@ -88,8 +95,14 @@ class SelectorServer:
                 print(f"Failed to send data to client {client.address}")
                 self.selector.unregister(client.client_socket)
                 client.client_socket.close()
-        except ConnectionError:
-            raise ConnectionError
+        except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
+            print(f"Connection error with client {client.address}")
+            self.selector.unregister(client.client_socket)
+            client.client_socket.close()
+        except Exception as e:
+            print(f"Error in handling client {client.address}: {e} ")
+            self.selector.unregister(client.client_socket)
+            client.client_socket.close()
 
 
     def handle_client(self, key, mask):
@@ -106,7 +119,7 @@ class SelectorServer:
 
     def close(self):
         print("Closing server")
-        self.db_mangr.disconnect()
+        self.db_mngr.disconnect()
         self.selector.close()
         if self.server_socket:
             self.server_socket.close()

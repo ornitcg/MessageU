@@ -21,11 +21,6 @@ public:
 	std::string getBinaryHeader() const;
 
 	virtual std::string getBinaryRequest() const;
-	//uint16_t getCode();
-	//uint32_t getPayloadSize();
-	//uint8_t getVersion();
-	//uint8_t* getClientId();
-
 
 };
 

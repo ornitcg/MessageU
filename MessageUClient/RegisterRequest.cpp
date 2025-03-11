@@ -2,13 +2,15 @@
 #include "RequestInfo.h"
 #include <iostream>
 #include <cstring>
+#include "utils.h"
 
 
-RegisterRequest::RegisterRequest(std::string& userName) : BaseRequest(static_cast<uint16_t>(RequestCode::REGISTER))
+RegisterRequest::RegisterRequest(std::string& userName, std::string& publicKey) : BaseRequest(static_cast<uint16_t>(RequestCode::REGISTER))
 {
 	std::cout << "in RegisterRequest constructor\n"; //DEBUG	
-	padName( userName );
-	std::cout << "name: " << nameBuffer << std::endl; //DEBUG
+	payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE; 
+	padName(userName);
+	strncpy_s(this->publicKey, PUBLIC_KEY_SIZE, publicKey.c_str(), _TRUNCATE);
 }
 
 RegisterRequest::~RegisterRequest()
@@ -18,10 +20,8 @@ RegisterRequest::~RegisterRequest()
 
 void RegisterRequest::padName(const std::string& userName) {
 	std::cout << "in padName\n"; //DEBUG
-	// check if name is too long
-	std::cout << "set zeos in name buffer" << std::endl; //DEBUG
 	strncpy_s(nameBuffer, MAX_NAME_SIZE, userName.c_str(),  _TRUNCATE);
-	std::cout << "nameBuffer: " << nameBuffer << std::endl; //DEBUG
+	std::cout << "nameBuffer: " << nameBuffer << std::endl; //DEBUG	
 }
 
 std::string RegisterRequest::getBinary() const
@@ -30,6 +30,7 @@ std::string RegisterRequest::getBinary() const
 	std::string binaryData = getBinaryHeader();
 	//add nameBuffer as binary
 	binaryData.append(nameBuffer, MAX_NAME_SIZE+1);
+	binaryData.append(this->publicKey, PUBLIC_KEY_SIZE);
 
 	std::cout << "binaryData: " << binaryData << std::endl; //DEBUG
 	return binaryData;

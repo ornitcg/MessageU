@@ -1,7 +1,7 @@
 #pragma once
 
 
-enum class RsponseType {
+enum class RsponseCode {
 	REGISTER_SUCEEDED = 2100,
 	CLIENT_LIST = 2101,
 	PUBLIC_KEY = 2102,

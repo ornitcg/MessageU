@@ -1,7 +1,6 @@
 
 #pragma once
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 // menu options for the user interface
@@ -61,7 +60,6 @@ const std::vector<std::pair<MenuOption, RequestInfo>> requestInfoVector = {
 };
 
 // Helper functions to work with this structure
-const RequestInfo& getRequestInfo(MenuOption option);
-void displayMenu();
+int getChoice();
 bool isValidChoice(int choice);
 RequestCode getProtocolCode(MenuOption option);

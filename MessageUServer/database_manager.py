@@ -20,18 +20,32 @@ class DatabaseManager:
         try:
             self.connect()
             self.create_tables()
+            return True
         except sqlite3.Error as e:
             print("Error initializing the database ", e)
             return False
 
+    def table_exists(self, table_name):
+        try:
+            self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
+            if self.cursor.fetchone():
+                return True
+            return False
+        except sqlite3.Error as e:
+            print("Error checking table ", e)
+            return False
+
+
+
     def create_clients_table(self):
         try:
-            self.cursor.execute('''CREATE TABLE IF NOT EXISTS clients
-                                (ID BLOB(16) PRIMARY KEY, 
-                                UserName TEXT NOT NULL,
-                                PublicKey BLOB(160) NOT NULL, 
-                                LastSeen INTEGER NOT NULL)''')
-            self.conn.commit()
+            if not self.table_exists("clients"):
+                self.cursor.execute('''CREATE TABLE IF NOT EXISTS clients
+                                    (ID BLOB(16) PRIMARY KEY, 
+                                    UserName TEXT NOT NULL,
+                                    PublicKey BLOB(160) NOT NULL, 
+                                    LastSeen INTEGER NOT NULL)''')
+                self.conn.commit()
             return True
         except sqlite3.Error as e:
             print("Error creating clients table ", e)
@@ -39,14 +53,15 @@ class DatabaseManager:
 
     def create_messages_table(self):
         try:
-            self.cursor.execute('''CREATE TABLE IF NOT EXISTS messages
-                                (ToClient BLOB(16) NOT NULL, 
-                                FromClient BLOB(16) NOT NULL,
-                                Type INTEGER NOT NULL, 
-                                Content BLOB,
-                                FOREIGN KEY(ToClient) REFERENCES clients(ID),
-                                FOREIGN KEY(FromClient) REFERENCES clients(ID))''')
-            self.conn.commit()
+            if not self.table_exists("messages"):
+                self.cursor.execute('''CREATE TABLE IF NOT EXISTS messages
+                                    (ToClient BLOB(16) NOT NULL, 
+                                    FromClient BLOB(16) NOT NULL,
+                                    Type INTEGER NOT NULL, 
+                                    Content BLOB,
+                                    FOREIGN KEY(ToClient) REFERENCES clients(ID),
+                                    FOREIGN KEY(FromClient) REFERENCES clients(ID))''')
+                self.conn.commit()
             return True
         except sqlite3.Error as e:
             print("Error creating messages table ", e)

@@ -1,45 +1,28 @@
 #pragma once
-#include <map>
-#include <string>
-#include "ClientProfile.h"
-#include "RequestInfo.h"
-#include <WinSock2.h>   
-#include <windows.h>   
-#include <iostream>
-
-//create enum for menu options
-
-
-
+#include "utils.h"
+#include "Connection.h"
+#include "EncryptionManager.h"
 
 class Client
 {
 private:
-	// Client data and connections
+	const Connection& conn ;
+	EncryptionManager encMngr;
+	std::string clientID = "";
+	std::string userName = "";	
+	std::vector<std::string> clientsList; //list of clientNamess
 	
-	ClientProfile clientProfile;
-	SOCKET clientSocket;
-	std::map<std::string, std::string> clientsList;
-	std::map<std::string, std::string> symmetricKeys;
+	void setUserName(const std::string& userName);
+	void setPublicKey(const std::string& publicKey);
+
 	
-	void registerClient();
-	void requestClientsList();
-	void requestPublicKey();
-	void requestWaitingMessages();
-	void sendTextMessage();
-	void requestSymmetricKey();
-	void sendSymmetricKey();
-
-
+		
 
 public:
-	Client(SOCKET clientSocket);
+	Client(const Connection& conn);
 	~Client();
-	int getChoice();
-	void handleChoice(const MenuOption choice);
-	std::string getUserNameFromConsole();
-
-	
-
+	std::string& getUserName() ;
+	std::string& getPublicKey() ;
+	const Connection& getConnection();
 };
 
