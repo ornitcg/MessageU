@@ -59,7 +59,8 @@ class RequestHandler:
         offset = CLIENT_ID_SIZE
         version = inb[offset:offset + VERSION_SIZE]
         offset += VERSION_SIZE
-        code = inb[offset: offset + CODE_SIZE].decode()
+        code_bytes = inb[offset: offset + CODE_SIZE]
+        code = int.from_bytes(code_bytes, byteorder='little')
         offset += CODE_SIZE
         # payload_size = self.inb[offset:offset + PAYLOAD_SIZE].decode()
         payload_size = int.from_bytes(inb[offset:offset + PAYLOAD_SIZE], byteorder='little')
@@ -69,7 +70,8 @@ class RequestHandler:
         return self.generate_request_by_code(code, client_id, version, payload_size, payload)
 
     def generate_request_by_code(self, code, client_id, version, payload_size, payload):
-        if code == RequestCode.REGISTER.value:
+        print(f"Code: {code}, Register value: {RequestCode.REGISTER.value[0]}")
+        if code == RequestCode.REGISTER.value[0]:
             print(" generate_request_by_code RegisterRequest") # TODO DEBUG
             return RegisterRequest(client_id, version, code, payload_size, payload)
         # elif code == RequestCode.GET_CLIENT_LIST[0]:

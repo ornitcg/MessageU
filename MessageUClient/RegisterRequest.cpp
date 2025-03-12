@@ -17,7 +17,6 @@ RegisterRequest::~RegisterRequest()
 {
 }
 
-
 void RegisterRequest::padName(const std::string& userName) {
 	std::cout << "in padName\n"; //DEBUG
 	strncpy_s(nameBuffer, MAX_NAME_SIZE, userName.c_str(),  _TRUNCATE);
