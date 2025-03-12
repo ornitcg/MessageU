@@ -1,5 +1,3 @@
-from constants.defines import *
-
 class BaseRequest:
     def __init__(self, client_id, version, code, payload_size):
         self.client_id = client_id

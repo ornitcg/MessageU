@@ -1,8 +1,7 @@
 import unittest
-import sqlite3
 import os
-from database_manager import DatabaseManager
-import constants.names as names
+from data.database_manager import DatabaseManager
+from utils import utils_funcs as names
 
 
 class TestDatabaseManager(unittest.TestCase):

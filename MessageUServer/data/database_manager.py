@@ -1,5 +1,5 @@
 import sqlite3
-import constants.names as names
+from utils import utils_funcs as names
 
 
 class DatabaseManager:
@@ -137,6 +137,7 @@ class DatabaseManager:
 
     def update_client_last_seen(self, client_id):
         try:
+            print("Updating last seen") ## TODO DEBUG
             self.cursor.execute("UPDATE clients SET LastSeen = CURRENT_TIMESTAMP WHERE ID=?", (client_id,))
             self.conn.commit()
             return True

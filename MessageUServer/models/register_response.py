@@ -1,4 +1,4 @@
-from base_response import BaseResponse
+from models.base_response import BaseResponse
 
 class RegisterResponse(BaseResponse):
     def __init__(self, version, code, payload_size , client_id):

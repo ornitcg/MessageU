@@ -1,4 +1,4 @@
-from base_request import BaseRequest
+from models.base_request import BaseRequest
 
 class TargetClientRequest(BaseRequest):
     def __init__(self, client_id, version, code, payload_size, payload):

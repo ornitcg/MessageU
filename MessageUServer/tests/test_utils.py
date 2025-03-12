@@ -1,9 +1,7 @@
 import unittest
 import os
 from unittest.mock import patch
-from utils import read_port_from_file
-from constants.defines import *
-from constants.names import *
+from utils.utils_funcs import *
 
 class TestUtils(unittest.TestCase):
     # Removes the file if it exists before each test

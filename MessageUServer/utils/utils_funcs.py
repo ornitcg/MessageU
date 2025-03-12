@@ -1,5 +1,6 @@
-from constants.server_messages import *
-from constants.names import *
+from utils.server_messages import *
+from utils.names import *
+from utils.defines import *
 
 
 def read_port_from_file():

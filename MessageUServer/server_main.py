@@ -1,6 +1,7 @@
 import utils
-from selector_server import SelectorServer
-import constants.defines as defaults
+from services.selector_server import SelectorServer
+import utils.defines as defaults
+import utils.utils_funcs as utils
 
 if __name__ == "__main__":
     try:

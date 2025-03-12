@@ -24,10 +24,10 @@ class ResponseCode(Enum):
     GENERAL_ERROR = 9000
 
 class RequestCode(Enum):
-    REGISTER = (600, "Register a new client")
-    GET_CLIENT_LIST = (601, "Get the list of clients")
-    GET_PUBLIC_KEY = (602, "Get the public key of a client")
-    SEND_MESSAGE = (603, "Send a message to a client")
-    GET_WAITING_MESSAGES = (604, "Get waiting messages for a client")
+    REGISTER = 600, "Register a new client"
+    GET_CLIENT_LIST = 601, "Get the list of clients"
+    GET_PUBLIC_KEY = 602, "Get the public key of a client"
+    SEND_MESSAGE = 603, "Send a message to a client"
+    GET_WAITING_MESSAGES = 604, "Get waiting messages for a client"
 
 

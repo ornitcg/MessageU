@@ -1,5 +1,5 @@
-from constants.defines import *
-from base_request import BaseRequest
+from models.base_request import BaseRequest
+from utils.defines import *
 
 class RegisterRequest(BaseRequest):
     def __init__(self, client_id, version, code, payload_size, payload):
@@ -14,3 +14,4 @@ class RegisterRequest(BaseRequest):
 
     def __str__(self):
         return f"Client ID: {self.client_id}, Name: {self.name}, Public Key: {self.pub_key}"
+
