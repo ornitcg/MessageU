@@ -38,13 +38,22 @@ class SelectorServer:
         try:
             print("Server is running")
             while True:
+                print("Server is listening for events")  ## DEBUG TODO
                 events = self.selector.select(timeout=None)
                 for key, mask in events:
                     if key.data is None:
                         self.accept_connection(self.server_socket)
                     else:
                         client_handler = key.data
-                        client_handler.handle_event(key, mask)
+                        try:
+                            client_handler.handle_event(key, mask)
+                            binary_response = client_handler.response_handler.create_binary_response()
+                            client_handler.add_to_send_buf(binary_response)
+                        except Exception as e:
+                            print(f"Error handling client in event loop {client_handler.address}: {e}")
+                            binary_error_response = client_handler.response_handler.create_binary_error_response()
+                            client_handler.add_to_send_buf(binary_error_response)
+
         except KeyboardInterrupt:
             print("Server is shutting down")
         except Exception as e:
@@ -64,7 +73,16 @@ class SelectorServer:
         print(f"Client from {addr} registered with selector")  ## TODO DEBUG
         return client_handler
 
-
+    # def cleanup_client_connection(self, sock, client_handler=None):
+    #     """Safely clean up a client connection"""
+    #     try:
+    #         addr = getattr(client_handler, 'address', 'unknown')
+    #         print(f"Cleaning up connection for {addr}")
+    #         self.selector.unregister(sock)
+    #         sock.close()
+    #     except Exception as e:
+    #         print(f"Error during cleanup: {e}")
+    #
 
     def close(self):
         print("Closing server")

@@ -18,5 +18,5 @@ class RegisterRequest(BaseRequest):
         self.public_key = payload[USER_NAME_SIZE:USER_NAME_SIZE+PUBLIC_KEY_SIZE]
 
     def __str__(self):
-        return f"Client ID: {self.client_id}, Name: {self.name}, Public Key: {self.pub_key}"
+        return f"Client ID: {self.client_id}, Name: {self.user_name}, Public Key: {self.public_key}"
 

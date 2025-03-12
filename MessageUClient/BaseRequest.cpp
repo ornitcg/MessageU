@@ -5,7 +5,6 @@
 
 BaseRequest::BaseRequest(uint16_t requestCode) 
 {	
-	std::cout << "in BaseRequest constructor\n"; //DEBUG
 	this->code = requestCode;
 }
 

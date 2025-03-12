@@ -47,6 +47,7 @@ void RequestHandler::handleChoice(const int choice)
 		case MenuOption::SEND_FILE:
 			std::cout << "Send a file\n";
 			break;
+
 		default:
 			break;
 		}

@@ -3,6 +3,7 @@
 #include "UImanager.h"
 #include "RequestHandler.h"
 #include "ResponseHandler.h"
+#include "requestInfo.h"
 
 
 int main() {
@@ -18,6 +19,8 @@ int main() {
 			try {
 				uiManager.displayMenu();
 				int choice = uiManager.getChoice();	// only valid choice accepted				
+				if (static_cast<MenuOption>(choice) == MenuOption::EXIT)
+					break;
 				requestHandler.handleChoice(choice);	
 				responseHandler.handleServerResponse();
 			}			

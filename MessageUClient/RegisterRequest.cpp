@@ -7,7 +7,6 @@
 
 RegisterRequest::RegisterRequest(std::string& userName, std::string& publicKey) : BaseRequest(static_cast<uint16_t>(RequestCode::REGISTER))
 {
-	std::cout << "in RegisterRequest constructor\n"; //DEBUG	
 	payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE; 
 	padName(userName);
 	strncpy_s(this->publicKey, PUBLIC_KEY_SIZE, publicKey.c_str(), _TRUNCATE);
@@ -18,9 +17,7 @@ RegisterRequest::~RegisterRequest()
 }
 
 void RegisterRequest::padName(const std::string& userName) {
-	std::cout << "in padName\n"; //DEBUG
 	strncpy_s(nameBuffer, MAX_NAME_SIZE, userName.c_str(),  _TRUNCATE);
-	std::cout << "nameBuffer: " << nameBuffer << std::endl; //DEBUG	
 }
 
 std::string RegisterRequest::getBinary() const
