@@ -1,5 +1,6 @@
 import datetime
 import selectors
+import uuid
 
 from utils.defines import *
 from models.base_request import BaseRequest
@@ -7,11 +8,8 @@ from services.request_handler import Request_Handler
 from services.response_handler import Response_Handler
 
 
-# Handles the communication for a specific client
-
-
 class Client_Handler:
-    def __init__(self, socket, address, db_conn, db_mngr):
+    def __init__(self, socket, address, db_conn, db_mngr, selector):
         self.client_socket = socket
         self.address = address
         self.client_id = None
@@ -20,8 +18,10 @@ class Client_Handler:
         self.inb = b''  # for incoming binary data
         self.outb = b''  # for outgoing binary data
         self.last_seen = None
-        self.request_handler = Request_Handler(self, db_conn, db_mngr)
-        self.response_handler = Response_Handler(self, db_conn, db_mngr)
+        self.db_mngr = db_mngr
+        self.request_handler = Request_Handler(self, db_mngr)
+        self.response_handler = Response_Handler(self, db_mngr)
+        self.selector = selector
 
 
     def add_to_send_buf(self, data):
@@ -45,17 +45,16 @@ class Client_Handler:
 
     def handle_event(self, key, mask):
         try:
-            print(f"Event mask: {mask}, READ={selectors.EVENT_READ}, WRITE={selectors.EVENT_WRITE}")
             if mask & selectors.EVENT_READ:
                     self.handle_read_event()
-            if mask & selectors.EVENT_WRITE and self.outb:
+            if self.outb and (mask & selectors.EVENT_WRITE) :
                     self.handle_write_event()
                     if not self.outb:
-                        key.selector.modify(key.fileobj, selectors.EVENT_READ, data=self)
+                        self.selector.modify(key.fileobj, selectors.EVENT_READ, data=self)
         except Exception as e:
             print(f"Error handling client in handle event {self.address}: {e}")
             try:
-                key.selector.unregister(self.client_socket)
+                self.selector.unregister(self.client_socket)
                 self.client_socket.close()
             except Exception as cleanup_error:
                 print(f"Error during client cleanup: {cleanup_error}")
@@ -76,14 +75,11 @@ class Client_Handler:
             self.add_to_receive_buf(recv_data)
 
             total_message_size = self.request_handler.is_extract_complete_request(self.inb)
-            if total_message_size: #if not None then complete
+            if total_message_size: #if not None then it's complete
                 parsed_request = self.request_handler.parse_request(self.inb)
-                self.inb = self.inb[total_message_size:]  # remove the processed data
-                response = self.request_handler.handle_request(parsed_request)
-                print(f"Request: {parsed_request}")  # TODO DEBUG
-
-                if response:
-                    self.add_to_send_buf(response)
+                self.remove_processed_data_from_inb(total_message_size)
+                is_request_successful = self.request_handler.handle_request(parsed_request)
+                self.response_handler.handle_response(parsed_request, is_request_successful)
 
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
             print(f"Connection error with client {self.address}")
@@ -108,5 +104,30 @@ class Client_Handler:
 
 
 
+    def generate_client_id(self):
+        new_uuid = uuid.uuid4()
+        print(f"Generated new UUID: {new_uuid}")
+        self.client_id = new_uuid
+
+    def get_binary_client_id(self):
+        if not self.client_id:
+            return None
+        return self.client_id.bytes
+
+    def remove_processed_data_from_inb(self, total_message_size):
+        self.inb = self.inb[total_message_size:]  # remove the processed data
 
 
+    def update_client_with_request_payload(self, request):
+        self.user_name = request.user_name
+        self.public_key = request.public_key
+
+
+    def get_client_id(self):
+        return self.client_id
+
+    def get_user_name(self):
+        return self.user_name
+
+    def get_public_key(self):
+        return self.public_key

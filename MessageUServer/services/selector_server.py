@@ -2,7 +2,7 @@ import socket
 import selectors
 from services.client_handler import Client_Handler
 from utils.defines import MAX_CONNECTIONS, MAX_BUFFER_SIZE
-from data.database_manager import DatabaseManager
+from data.database_manager import Database_Manager
 
 
 '''Manages the selector and event loop for the server
@@ -15,7 +15,7 @@ class SelectorServer:
         self.port = port
         self.selector = selectors.DefaultSelector()
         self.server_socket = None
-        self.db_mngr = DatabaseManager()
+        self.db_mngr = Database_Manager()
         self.db_conn = self.db_mngr.initialize_db()
 
 
@@ -38,7 +38,6 @@ class SelectorServer:
         try:
             print("Server is running")
             while True:
-                print("Server is listening for events")  ## DEBUG TODO
                 events = self.selector.select(timeout=None)
                 for key, mask in events:
                     if key.data is None:
@@ -46,16 +45,18 @@ class SelectorServer:
                     else:
                         client_handler = key.data
                         try:
-                            client_handler.handle_event(key, mask)
+                            if not client_handler.handle_event(key, mask):
+                                raise Exception("Client handler returned False")
                             binary_response = client_handler.response_handler.create_binary_response()
-                            client_handler.add_to_send_buf(binary_response)
+                            client_handler.response_handler.send_response(binary_response)
+
                         except Exception as e:
                             print(f"Error handling client in event loop {client_handler.address}: {e}")
-                            binary_error_response = client_handler.response_handler.create_binary_error_response()
-                            client_handler.add_to_send_buf(binary_error_response)
+                            client_handler.response_handler.send_error_response()
+                            print("error response sent from event loop")
 
         except KeyboardInterrupt:
-            print("Server is shutting down")
+            print("KeyboardInterrupt Server is shutting down")
         except Exception as e:
             print(f"Error in event loop: {e}")
         finally:
@@ -66,7 +67,7 @@ class SelectorServer:
         client_socket, addr = sock.accept()
         print(f"Accepted connection from {addr}")
         client_socket.setblocking(False)
-        client_handler = Client_Handler(client_socket, addr, self.db_conn, self.db_mngr)
+        client_handler = Client_Handler(client_socket, addr, self.db_conn, self.db_mngr, self.selector)
         client_handler.update_last_seen()
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         self.selector.register(client_socket, events, data=client_handler)

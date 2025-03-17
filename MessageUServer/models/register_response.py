@@ -1,16 +1,15 @@
-from models.responses import Base_Response
+from models.base_response import Base_Response
+from utils.defines import *
 
 class Register_Response(Base_Response):
-    def __init__(self,  code, payload_size , client_id):
-        super().__init__( code, payload_size)
-        self.client_id = client_id
-
+    def __init__(self, binary_client_id):
+        super().__init__(Response_Code.REGISTER_SUCCEEDED.value[0], CLIENT_ID_SIZE)
+        self.binary_client_id = binary_client_id
 
     def get_binary_response(self):
-        binary_header = self.get_binary_header()
-        binary_client_id = self.client_id.to_bytes(4, byteorder='little')
-        binary_response = binary_header + binary_client_id
-        return binary_response
+        return self.get_binary_header() + self.binary_client_id
+
+
 
 ########## ******************************###########
 
@@ -29,18 +28,15 @@ class Users_List_Response(Register_Response):
 
 ########## ******************************###########
 
-
-class Public_key_response(Register_Response):
-    def __init__(self,  code, payload_size , client_id , public_key):
-        super().__init__( code, payload_size , client_id)
+class Public_Key_Response(Base_Response):
+    def __init__(self, public_key):
+        super().__init__(Response_Code.PUBLIC_KEY.value, len(public_key))
         self.public_key = public_key
 
-
     def get_binary_response(self):
-        binary_header_and_client_id = super().get_binary_response()
-        binary_public_key = self.public_key.encode()
-        binary_response = binary_header_and_client_id + binary_public_key
-        return binary_response
+        return self.get_binary_header() + self.public_key
+
+
 
 
 ########## ******************************###########

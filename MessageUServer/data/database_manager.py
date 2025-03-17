@@ -1,20 +1,27 @@
 import sqlite3
 from utils import utils_funcs as names
+from data.client_dao import *
+from data.message_dao import *
 
 
-class DatabaseManager:
+class Database_Manager:
     def __init__(self):
         self.conn = None
         self.cursor = None
+        self.client_dao = None
+        self.message_dao = None
 
     # manages the connection to the database
     def connect(self):
         try:
             self.conn = sqlite3.connect(names.DB_NAME)
             self.cursor = self.conn.cursor()
+            self.client_dao = Client_Dao(self.conn, self.cursor)
+            self.message_dao = Message_Dao(self.conn, self.cursor)
+            return True
         except sqlite3.Error as e:
             print("Error connecting to DB ", e)
-            return True
+            return False
 
     def initialize_db(self):
         try:
@@ -35,42 +42,10 @@ class DatabaseManager:
             print("Error checking table ", e)
             return False
 
-
-
-    def create_clients_table(self):
-        try:
-            if not self.table_exists("clients"):
-                self.cursor.execute('''CREATE TABLE IF NOT EXISTS clients
-                                    (ID BLOB(16) PRIMARY KEY, 
-                                    UserName TEXT NOT NULL,
-                                    PublicKey BLOB(160) NOT NULL, 
-                                    LastSeen INTEGER NOT NULL)''')
-                self.conn.commit()
-            return True
-        except sqlite3.Error as e:
-            print("Error creating clients table ", e)
-            return False
-
-    def create_messages_table(self):
-        try:
-            if not self.table_exists("messages"):
-                self.cursor.execute('''CREATE TABLE IF NOT EXISTS messages
-                                    (ToClient BLOB(16) NOT NULL, 
-                                    FromClient BLOB(16) NOT NULL,
-                                    Type INTEGER NOT NULL, 
-                                    Content BLOB,
-                                    FOREIGN KEY(ToClient) REFERENCES clients(ID),
-                                    FOREIGN KEY(FromClient) REFERENCES clients(ID))''')
-                self.conn.commit()
-            return True
-        except sqlite3.Error as e:
-            print("Error creating messages table ", e)
-            return False
-
     def create_tables(self):
-        if self.create_clients_table() and self.create_messages_table():
-            return True
-        return False
+        clients_created = self.client_dao.create_clients_table()
+        messages_created = self.message_dao.create_messages_table()
+        return clients_created and messages_created
 
 
     def disconnect(self):
@@ -78,98 +53,33 @@ class DatabaseManager:
             self.conn.close()
             self.conn = None
             self.cursor = None
+            self.client_dao = None # Reset the DAOs
+            self.message_dao = None # Reset the DAOs
 
     def is_exists_client_username(self, username):
-        try:
-            self.cursor.execute("SELECT * FROM clients WHERE UserName=?", (username,))
-            if self.cursor.fetchone():
-                return True
-            return False
-        except sqlite3.Error as e:
-            print("Error searching client ", e)
-            raise e
-
-
-
-
+        return self.client_dao.is_exists_client_username(username)
 
     def add_client(self, client_id, username, public_key):
-        try:
-            self.cursor.execute(
-                "INSERT INTO clients (ID, UserName, PublicKey, LastSeen) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
-                (client_id, username, public_key)
-            )
-
-            self.conn.commit()
-            return True
-
-        except sqlite3.IntegrityError as e:
-            print("Error adding client ", e)
-            return False
-
-
+        return self.client_dao.add_client(client_id, username, public_key)
 
     def get_client_by_id(self, client_id):
-        try:
-            self.cursor.execute("SELECT * FROM clients WHERE ID=?", (client_id,))
-            return self.cursor.fetchone()
-        except sqlite3.Error as e:
-            print("Error getting client ", e)
+        return self.client_dao.get_client_by_id(client_id)
 
     def get_client_by_username(self, username):
-        try:
-            self.cursor.execute("SELECT * FROM clients WHERE UserName=?", (username,))
-            return self.cursor.fetchone()
-        except sqlite3.Error as e:
-            print("Error getting client ", e)
-            return False
+        return self.client_dao.get_client_by_username(username)
 
     def get_all_clients(self, exclude_id=None):
-        try:
-            if exclude_id:
-                self.cursor.execute("SELECT * FROM clients WHERE ID != ?", (exclude_id,))
-            else:
-                self.cursor.execute("SELECT * FROM clients")
-            return self.cursor.fetchall()
-        except sqlite3.Error as e:
-            print("Error getting clients ", e)
-            return False
+        return self.client_dao.get_all_clients(exclude_id)
 
     def update_client_last_seen(self, client_id):
-        try:
-            print("Updating last seen") ## TODO DEBUG
-            self.cursor.execute("UPDATE clients SET LastSeen = CURRENT_TIMESTAMP WHERE ID=?", (client_id,))
-            self.conn.commit()
-            return True
-        except sqlite3.Error as e:
-            print("Error updating last seen ", e)
-            return False
+        return self.client_dao.update_client_last_seen(client_id)
 
     def add_message(self, to_client, from_client, message_type, content):
-        try:
-            self.cursor.execute(
-                "INSERT INTO messages (ToClient, FromClient, Type, Content) VALUES (?, ?, ?, ?)",
-                (to_client, from_client, message_type, content)
-            )
-            self.conn.commit()
-            return True
-        except sqlite3.Error as e:
-            print("Error adding message ", e)
-            return False
+        return self.message_dao.add_message(to_client, from_client, message_type, content)
 
     def get_pending_messages(self, client_id):
-        try:
-            self.cursor.execute("SELECT * FROM messages WHERE ToClient=?", (client_id,))
-            return self.cursor.fetchall()
-        except sqlite3.Error as e:
-            print("Error getting messages ", e)
-            return False
+        return self.message_dao.get_pending_messages(client_id)
 
     def delete_message(self, message_id):
-        try:
-            self.cursor.execute("DELETE FROM messages WHERE ID=?", (message_id,))
-            self.conn.commit()
-            return True
-        except sqlite3.Error as e:
-            print("Error deleting message ", e)
-            return False
+        return self.message_dao.delete_message(message_id)
+

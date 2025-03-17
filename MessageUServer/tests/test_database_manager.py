@@ -1,6 +1,6 @@
 import unittest
 import os
-from data.database_manager import DatabaseManager
+from data.database_manager import Database_Manager
 from utils import utils_funcs as names
 
 
@@ -10,7 +10,7 @@ class TestDatabaseManager(unittest.TestCase):
         """Sets up before each test"""
         # Change the database name for testing purposes
         names.DB_NAME = "test_defensive.db"
-        self.db_manager = DatabaseManager()
+        self.db_manager = Database_Manager()
         # Connect to the database
         self.db_manager.initialize_db()
         self.db_manager.create_tables()

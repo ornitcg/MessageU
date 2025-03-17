@@ -12,3 +12,5 @@ def read_port_from_file():
         print(FILE_NOT_FOUND)
         print(DEFAULT_PORT_USED)
         return DEFAULT_PORT
+
+

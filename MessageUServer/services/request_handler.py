@@ -1,51 +1,63 @@
 import utils
-from models.responses import *
+from models.base_response import *
 from utils.defines import *
 from models.register_request import RegisterRequest
 
 
-class Request_Handler:
-    def __init__(self, client_handler,  db_conn, db_mngr):
-        self.client_handler = client_handler
-        self.db_conn = db_conn
-        self.db_mngr = db_mngr
 
+class Request_Handler:
+    def __init__(self, client_handler,  db_mngr):
+        self.client_handler = client_handler
+        self._db_mngr = db_mngr
+
+    def get_client_handler(self):
+        return self.client_handler
+
+
+    def getDBmngr(self):
+        return self._db_mngr
 
 
     def handle_request(self, parsed_request):
-        print(f"Request code: {parsed_request}")
-        if parsed_request.code == RequestCode.REGISTER.value:
-            print("Register request handle") # TODO DEBUG
-            # self.register_client(parsed_request)
-            print(f"Request: {parsed_request}") # TODO DEBUG
-        elif parsed_request.code == RequestCode.GET_CLIENT_LIST.value:
-            pass
-        elif parsed_request.code == RequestCode.GET_PUBLIC_KEY.value:
-            pass
-        elif parsed_request.code == RequestCode.SEND_MESSAGE.value:
-            pass
-        elif parsed_request.code == RequestCode.GET_WAITING_MESSAGES.value:
-            pass
-        else:
-            pass
+        try:
+            if parsed_request.code == RequestCode.REGISTER.value[0]:
+                return self.register_client(parsed_request)
+
+                response = Register_Response(self.client_handler.get_binary_client_id())
+                print(f"in register_client : Response: {response}")  # TODO DEBUG
+                self.client_handler.add_to_send_buf(response.get_binary_response())
+            elif parsed_request.code == RequestCode.GET_CLIENT_LIST.value:
+                pass
+            elif parsed_request.code == RequestCode.GET_PUBLIC_KEY.value:
+                pass
+            elif parsed_request.code == RequestCode.SEND_MESSAGE.value:
+                pass
+            elif parsed_request.code == RequestCode.GET_WAITING_MESSAGES.value:
+                pass
+            else:
+                pass
+        except Exception as e:
+            print(f"Error handling request: {e}")
+            raise e
 
 
     def register_client(self, request):
         try:
-            is_user_name_registered = self.db_conn.is_exists_client_username(self.client_handler.user_name)
+            client_handler = self.get_client_handler()
+            client_handler.update_client_with_request_payload(request)
+            is_user_name_registered = self._db_mngr.is_exists_client_username(client_handler.user_name)
             if is_user_name_registered:
-                response = Error_Response(SERVER_VERSION)
-                self.client_handler.add_to_send_buf(response.get_binary_response())
+                raise Exception("User name already registered")
             else:
-                self.client_handler.client_id = utils.generate_client_id()
-                self.client_handler.public_key = request.public_key
-                self.db_conn.add_client(self.client_handler.client_id, self.client_handler.user_name, self.client_handler.public_key)
-                response = Base_Response(SERVER_VERSION, Response_Code.REGISTER_SUCCEEDED.value)
-                self.client_handler.add_to_send_buf(response.get_binary_response())
+                client_handler.generate_client_id()
+                binary_client_id = self.client_handler.get_binary_client_id()
+                user_name = self.client_handler.get_user_name()
+                public_key = self.client_handler.get_public_key()
+                print(f"in register_client Client ID: {binary_client_id}") # TODO DEBUG
+                self._db_mngr.add_client(binary_client_id ,user_name, public_key)
+                return True
         except Exception as e:
             print(f"Error registering client: {e}")
-            response = Error_Response(SERVER_VERSION)
-            self.client_handler.add_to_send_buf(response.get_binary_response())
             raise e
 
 
@@ -60,13 +72,13 @@ class Request_Handler:
             return None
         return request_size
 
-
     def parse_header(self, inb):
         client_id = inb[:CLIENT_ID_SIZE].decode()
         offset = CLIENT_ID_SIZE
-        version = inb[offset:offset + VERSION_SIZE]
+        version = int.from_bytes(inb[offset:offset + VERSION_SIZE], byteorder='little')
         offset += VERSION_SIZE
         code_bytes = inb[offset: offset + CODE_SIZE]
+        print(f"in parse_header Code bytes: {code_bytes}") # TODO DEBUG
         code = int.from_bytes(code_bytes, byteorder='little')
         offset += CODE_SIZE
         payload_size = int.from_bytes(inb[offset:offset + PAYLOAD_SIZE], byteorder='little')
@@ -76,8 +88,8 @@ class Request_Handler:
     def parse_request(self, inb):
         client_id, version, code, payload_size = self.parse_header(inb)
         offset = REQUEST_HEADER_SIZE
-        payload = inb[offset:offset + payload_size]
-        print(f"Client ID: {client_id}, Version: {version}, Code: {code}, Payload Size: {payload_size}, Payload: {payload}") # TODO DEBUG
+        payload = (inb[offset:offset + payload_size])
+        print(f"in parse_request Client ID: {client_id}, Version: {version}, Code: {code}, Payload Size: {payload_size}, Payload: {payload}") # TODO DEBUG
         return self.generate_request_by_code(code, client_id, version, payload_size, payload)
 
     def generate_request_by_code(self, code, client_id, version, payload_size, payload):
