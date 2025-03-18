@@ -23,9 +23,9 @@ class Request_Handler:
             if parsed_request.code == RequestCode.REGISTER.value[0]:
                 return self.register_client(parsed_request)
 
-                response = Register_Response(self.client_handler.get_binary_client_id())
-                print(f"in register_client : Response: {response}")  # TODO DEBUG
-                self.client_handler.add_to_send_buf(response.get_binary_response())
+                # response = Register_Response(self.client_handler.get_binary_client_id())
+                # print(f"in register_client : Response: {response}")  # TODO DEBUG
+                # self.client_handler.add_to_send_buf(response.get_binary_response())
             elif parsed_request.code == RequestCode.GET_CLIENT_LIST.value:
                 pass
             elif parsed_request.code == RequestCode.GET_PUBLIC_KEY.value:

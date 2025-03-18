@@ -23,8 +23,8 @@ class Response_Handler:
         return binary_response
 
 
-    def handle_response(self, parsed_request, is_request_success):
-        if not is_request_success:
+    def handle_response(self, parsed_request, is_request_successful):
+        if not is_request_successful:
             self.send_error_response()
             return
         try:

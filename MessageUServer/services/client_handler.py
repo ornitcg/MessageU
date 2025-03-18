@@ -45,17 +45,19 @@ class Client_Handler:
 
     def handle_event(self, key, mask):
         try:
+            is_read_event_handled = False
             if mask & selectors.EVENT_READ:
                     self.handle_read_event()
             if self.outb and (mask & selectors.EVENT_WRITE) :
                     self.handle_write_event()
                     if not self.outb:
                         self.selector.modify(key.fileobj, selectors.EVENT_READ, data=self)
+            return True
         except Exception as e:
             print(f"Error handling client in handle event {self.address}: {e}")
             try:
                 self.selector.unregister(self.client_socket)
-                self.client_socket.close()
+                self.client_socket.close()  ## TODO closing socket
             except Exception as cleanup_error:
                 print(f"Error during client cleanup: {cleanup_error}")
             return False  # Signal that this client has been handled
@@ -76,10 +78,9 @@ class Client_Handler:
 
             total_message_size = self.request_handler.is_extract_complete_request(self.inb)
             if total_message_size: #if not None then it's complete
-                parsed_request = self.request_handler.parse_request(self.inb)
+                self.parsed_request = self.request_handler.parse_request(self.inb)
                 self.remove_processed_data_from_inb(total_message_size)
-                is_request_successful = self.request_handler.handle_request(parsed_request)
-                self.response_handler.handle_response(parsed_request, is_request_successful)
+                self.is_request_successful = self.request_handler.handle_request(self.parsed_request)
 
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
             print(f"Connection error with client {self.address}")
@@ -131,3 +132,9 @@ class Client_Handler:
 
     def get_public_key(self):
         return self.public_key
+
+    def getParsedRequest(self):
+        return self.parsed_request
+
+    def is_request_success(self):
+        return self.is_request_successful

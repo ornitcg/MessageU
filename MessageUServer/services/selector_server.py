@@ -45,10 +45,12 @@ class SelectorServer:
                     else:
                         client_handler = key.data
                         try:
-                            if not client_handler.handle_event(key, mask):
+                            if client_handler.handle_event(key, mask):
+                                client_handler.response_handler.handle_response(client_handler.getParsedRequest(),
+                                                                                client_handler.is_request_success)
+
+                            else:
                                 raise Exception("Client handler returned False")
-                            binary_response = client_handler.response_handler.create_binary_response()
-                            client_handler.response_handler.send_response(binary_response)
 
                         except Exception as e:
                             print(f"Error handling client in event loop {client_handler.address}: {e}")
