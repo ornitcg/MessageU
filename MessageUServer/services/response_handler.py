@@ -43,7 +43,7 @@ class Response_Handler:
             self.send_response(response)
 
         except Exception as e:
-            print(f"Error handling request: {e}")
+            print(f"Error handling response: {e}")
             self.send_error_response()
             print("error response sent from handle response")
 

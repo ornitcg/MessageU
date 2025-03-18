@@ -22,6 +22,7 @@ class Client_Handler:
         self.request_handler = Request_Handler(self, db_mngr)
         self.response_handler = Response_Handler(self, db_mngr)
         self.selector = selector
+        self.is_request_successful = False
 
 
     def add_to_send_buf(self, data):
@@ -45,21 +46,18 @@ class Client_Handler:
 
     def handle_event(self, key, mask):
         try:
-            is_read_event_handled = False
+            is_request_processed = False #initialize to false
+            self.is_request_successful = False #initialize to false
             if mask & selectors.EVENT_READ:
-                    self.handle_read_event()
+                    is_request_processed = self.handle_read_event()
             if self.outb and (mask & selectors.EVENT_WRITE) :
                     self.handle_write_event()
                     if not self.outb:
                         self.selector.modify(key.fileobj, selectors.EVENT_READ, data=self)
-            return True
+            return is_request_processed
         except Exception as e:
             print(f"Error handling client in handle event {self.address}: {e}")
-            try:
-                self.selector.unregister(self.client_socket)
-                self.client_socket.close()  ## TODO closing socket
-            except Exception as cleanup_error:
-                print(f"Error during client cleanup: {cleanup_error}")
+            self.response_handler.send_error_response()
             return False  # Signal that this client has been handled
 
 
@@ -72,19 +70,19 @@ class Client_Handler:
                 print(f"Client {self.address} disconnected")
                 raise ConnectionError("Client disconnected")
 
-            if self.client_id:
+            if self.client_id: #case client already registered
                 self.db_mngr.update_client_last_seen(self.client_id)
             self.add_to_receive_buf(recv_data)
 
-            total_message_size = self.request_handler.is_extract_complete_request(self.inb)
-            if total_message_size: #if not None then it's complete
+            total_request_size = self.request_handler.is_extract_complete_request(self.inb)
+            if total_request_size: #if not None then it's complete
                 self.parsed_request = self.request_handler.parse_request(self.inb)
-                self.remove_processed_data_from_inb(total_message_size)
+                self.remove_processed_data_from_inb(total_request_size)
                 self.is_request_successful = self.request_handler.handle_request(self.parsed_request)
-
+            return True
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
             print(f"Connection error with client {self.address}")
-            raise e
+            self.disconnect_client()
         except Exception as e:
             print (f"Error in handling client {self.address}: {e} " )
             raise e
@@ -115,8 +113,8 @@ class Client_Handler:
             return None
         return self.client_id.bytes
 
-    def remove_processed_data_from_inb(self, total_message_size):
-        self.inb = self.inb[total_message_size:]  # remove the processed data
+    def remove_processed_data_from_inb(self, total_request_size):
+        self.inb = self.inb[total_request_size+1:]  # remove the processed data
 
 
     def update_client_with_request_payload(self, request):
@@ -133,8 +131,18 @@ class Client_Handler:
     def get_public_key(self):
         return self.public_key
 
-    def getParsedRequest(self):
+    def get_parsed_request(self):
         return self.parsed_request
 
-    def is_request_success(self):
+    def get_is_request_success(self):
         return self.is_request_successful
+
+    def disconnect_client(self):
+        try:
+            print("Disconnecting client")
+            self.client_socket.close()
+            self.selector.unregister(self.client_socket)
+            print("Disconnected client")
+            return
+        except Exception as cleanup_error:
+            print(f"Error during client cleanup: {cleanup_error}")
