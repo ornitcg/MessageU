@@ -2,28 +2,29 @@
 #include <string>
 #include <iostream>
 
-myUUID::myUUID() {}
+myUUID::myUUID() {
+	//initiallize uuidArray to 16 of 0
+	for (auto& i : uuidArray)
+	{
+		i = '0';
+	}
+}
 
 myUUID::~myUUID() {
 }
 
-std::array<uint8_t, 16> myUUID::getUUID()
+std::array<uint8_t, 16>& myUUID::getUUID() 
 {
-	return uuid;
+	return uuidArray;
 }
 
-std::string myUUID::getBinary() const//not LE yet DEBUG TODO
+std::string myUUID::getBinary() //not LE yet DEBUG TODO
 {
-	//std::string uuidString = "";
-	//for (int i = 0; i < 16; i++) {
-	//	uuidString += uuid[i];
-	//}
-	//std::cout << "uuidString: " << uuidString << std::endl; //DEBUG
-	//return uuidString;
-	return std::string(reinterpret_cast<const char*>(uuid.data()), 16);
+	return std::string(uuidArray.begin(), uuidArray.end());
 }
+
 
 
 void myUUID::setUUID(const void* binaryData) {
-	memcpy(uuid.data(), binaryData, 16);
+	memcpy(uuidArray.data(), binaryData, 16);
 }

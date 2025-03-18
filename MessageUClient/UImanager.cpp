@@ -45,7 +45,6 @@ std::string UImanager::getUserNameFromConsole()
 	std::string userName;
 	std::cin.ignore(); // clean the buffer from any garbage
 	std::getline(std::cin, userName);
-	std::cout << "userName size: " << userName.size() << std::endl; //DEBUG
 	if (userName.size() > MAX_NAME_SIZE) {
 		throw std::runtime_error("Error: user name is too long");
 	}

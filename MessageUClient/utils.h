@@ -16,6 +16,7 @@
 #define CLIENT_ID_SIZE 16
 #define RESPONSE_CODE_SIZE 2
 #define RESPONSE_PAYLOAD_SIZE 4
+#define NO_PAYLOAD 0
 
 
 #define REGISTER_REQUEST_PAYLOAD_SIZE MAX_NAME_SIZE + PUBLIC_KEY_SIZE + 1 
@@ -23,3 +24,9 @@
 
 
 std::array<std::string, 2> getServerIPfromFile(std::string fileName);
+std::string toLittleEndian32string(uint32_t value);
+uint32_t toLittleEndian32(uint32_t value);
+std::string toLittleEndian16string(uint16_t value);
+uint16_t toLittleEndian16(uint16_t value);
+//void printAsHex(const std::string& binaryData);
+bool isLittleEndian();

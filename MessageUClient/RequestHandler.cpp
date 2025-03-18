@@ -66,8 +66,10 @@ void RequestHandler::registerClient()
 		if (std::filesystem::exists(ME_INFO)) {
 			throw std::runtime_error("Error: user info file already exists");
 		}
-		std::string userName = uiManager.getUserNameFromConsole(); // checks if length is valid			
-		RegisterRequest registerReq = RegisterRequest(userName, client.getPublicKey());
+		std::string userName = uiManager.getUserNameFromConsole(); // checks if length is valid	
+		std::string publicKey = client.getPublicKey();
+		uint32_t payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE;
+		RegisterRequest registerReq = RegisterRequest(userName, publicKey, payloadSize);
 		std::string binaryData = registerReq.getBinary();
 		int sendRes = send(client.getConnection().getClientSocket(), binaryData.c_str(), static_cast<int>(binaryData.size()), 0);
 		

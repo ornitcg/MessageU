@@ -11,7 +11,20 @@ BaseResponse::~BaseResponse()
 {
 }
 
-
-void BaseResponse::handleResponse() {
-	std::cout << "in handleResponse of BaseResponse" << std::endl;
+//getters
+uint8_t BaseResponse::getVersion()
+{
+	return version;
 }
+
+uint16_t BaseResponse::getCode()
+{
+	return code;
+}
+
+uint32_t BaseResponse::getPayloadSize()
+{
+	return payloadSize;
+}
+
+

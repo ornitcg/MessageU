@@ -17,10 +17,11 @@ private:
 public:
 	ResponseHandler(Client& client, UImanager& uiManager);
 	~ResponseHandler();
-	void handleServerResponse();
+	void receiveServerResponse();
 	std::string receiveCompleteResponse();
-	void parseResponse(std::string completeResponse);
+	BaseResponse parseResponse(std::string completeResponse);
 	BaseResponse createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload);
-	
+	void useResponse(BaseResponse& response);
+
 };
 

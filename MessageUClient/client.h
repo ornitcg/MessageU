@@ -8,7 +8,7 @@ class Client
 private:
 	const Connection& conn ;
 	EncryptionManager encMngr;
-	std::string clientID = "";
+	std::string clientId = "";
 	std::string userName = "";	
 	std::vector<std::string> clientsList; //list of clientNamess
 	
@@ -22,7 +22,10 @@ public:
 	Client(const Connection& conn);
 	~Client();
 	std::string& getUserName() ;
-	std::string& getPublicKey() ;
+	std::string& getPublicKey();
+	std::string& getClientId();
 	const Connection& getConnection();
+	void setClientID(const std::string& line);
+	void setPrivateKey(const std::string& line);
 };
 

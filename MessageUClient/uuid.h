@@ -4,7 +4,7 @@
 
 
 class myUUID {
-	std::array<uint8_t, 16> uuid = {0}; //chose array for fixed size
+	std::array<uint8_t, 16> uuidArray = {0}; //chose array for fixed size
 	void setUUID(const void* binaryData);
  
 public:
@@ -12,7 +12,7 @@ public:
 	~myUUID();
 
 	
-	std::array<uint8_t, 16> getUUID();
-	std::string getBinary() const;
+	std::array<uint8_t, 16>& getUUID() ;
+	std::string getBinary() ;
 		
 };

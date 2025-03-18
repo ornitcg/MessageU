@@ -21,6 +21,9 @@ public:
 	bool generateAndSaveSymmetricKey(const std::string& clientId);
 
 	std::string& getPublicKey();
+	std::string& getPrivateKey();
+	std::string getPrivateKeyToBase64();
+	std::string getPrivateKeyFromBase64(std::string encodedPrivateKey);
 
 };
 

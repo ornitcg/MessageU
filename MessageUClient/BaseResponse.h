@@ -12,7 +12,8 @@ private:
 public:
 	BaseResponse(uint8_t version, uint16_t code, uint32_t payloadSize);
 	virtual ~BaseResponse();
-	
-	virtual void handleResponse();
+	uint8_t getVersion();
+	uint16_t getCode();
+	uint32_t getPayloadSize();	
 };
 

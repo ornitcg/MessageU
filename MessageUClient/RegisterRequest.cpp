@@ -5,29 +5,44 @@
 #include "utils.h"
 
 
-RegisterRequest::RegisterRequest(std::string& userName, std::string& publicKey) : BaseRequest(static_cast<uint16_t>(RequestCode::REGISTER))
+RegisterRequest::RegisterRequest(std::string& userName, std::string& pubKey, uint32_t payloadSize) : BaseRequest(static_cast<uint16_t>(RequestCode::REGISTER), payloadSize)
 {
-	payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE; 
-	padName(userName);
-	strncpy_s(this->publicKey, PUBLIC_KEY_SIZE, publicKey.c_str(), _TRUNCATE);
+	initializeUserNameWithPadding(userName);
+	initializePublicKey(pubKey);	
 }
 
 RegisterRequest::~RegisterRequest()
 {
 }
 
-void RegisterRequest::padName(const std::string& userName) {
-	strncpy_s(nameBuffer, MAX_NAME_SIZE, userName.c_str(),  _TRUNCATE);
+
+void RegisterRequest::initializeUserNameWithPadding(const std::string& userName) {
+	int userNameSize = userName.size();
+	memset(nameBuffer, '0', MAX_NAME_SIZE + 1);
+	if (userNameSize > MAX_NAME_SIZE) {
+		throw std::runtime_error("Error: user name is too long");
+	}
+	strncpy_s(nameBuffer, MAX_NAME_SIZE + 1, userName.c_str(),  _TRUNCATE);
 }
 
-std::string RegisterRequest::getBinary() const
+
+void RegisterRequest::initializePublicKey(const std::string& pubKey) {
+	memset(this->publicKey, '\0', PUBLIC_KEY_SIZE + 1);
+	std::cout << "in register req publicKey: \n" << pubKey << std::endl; //DEBUG
+	memcpy(this->publicKey, pubKey.c_str(),  (size_t)PUBLIC_KEY_SIZE);
+}
+
+
+std::string RegisterRequest::getBinary() 
 {
 	std::cout << "in getBinary\n"; //DEBUG
 	std::string binaryData = getBinaryHeader();
 	//add nameBuffer as binary
 	binaryData.append(nameBuffer, MAX_NAME_SIZE+1);
-	binaryData.append(this->publicKey, PUBLIC_KEY_SIZE);
+	size_t currentSize = binaryData.size();
+	size_t totalsize = currentSize + PUBLIC_KEY_SIZE + 1;
+	binaryData.resize(totalsize);
+	memcpy(&binaryData[currentSize], this->publicKey, PUBLIC_KEY_SIZE);
 
-	std::cout << "binaryData: " << binaryData << std::endl; //DEBUG
 	return binaryData;
 }
