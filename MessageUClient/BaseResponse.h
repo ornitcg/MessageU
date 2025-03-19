@@ -12,8 +12,8 @@ private:
 public:
 	BaseResponse(uint8_t version, uint16_t code, uint32_t payloadSize);
 	virtual ~BaseResponse();
-	uint8_t getVersion();
-	uint16_t getCode();
-	uint32_t getPayloadSize();	
+	uint8_t getVersion() const;
+	uint16_t getCode() const;
+	uint32_t getPayloadSize() const;
 };
 

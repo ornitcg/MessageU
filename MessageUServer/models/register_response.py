@@ -9,6 +9,10 @@ class Register_Response(Base_Response):
     def get_binary_response(self):
         return self.get_binary_header() + self.binary_client_id
 
+    def __str__(self):
+        super_str = super().__str__()
+        return f"{super_str}, binary_client_id={self.binary_client_id}"
+
 
 
 ########## ******************************###########

@@ -15,7 +15,8 @@ class Base_Response:
        return self.get_binary_header()
 
 
-
+    def __str__(self):
+        return f"Base_Response(version={self.version}, code={self.code}, payload_size={self.payload_size})"
 
 class Error_Response(Base_Response):
     def __init__(self, code = Response_Code.GENERAL_ERROR.value):

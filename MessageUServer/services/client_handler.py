@@ -105,7 +105,6 @@ class Client_Handler:
 
     def generate_client_id(self):
         new_uuid = uuid.uuid4()
-        print(f"Generated new UUID: {new_uuid}")
         self.client_id = new_uuid
 
     def get_binary_client_id(self):

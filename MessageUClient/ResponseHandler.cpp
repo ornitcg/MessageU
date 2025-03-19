@@ -1,8 +1,8 @@
 #include "ResponseHandler.h"
 #include <string>
-
 #include "utils.h"
 #include "ResponseType.h"
+#include "RequestInfo.h"
 #include "BaseResponse.h"
 #include "RegisterResponse.h"
 #include "client.h"
@@ -16,32 +16,54 @@ ResponseHandler::~ResponseHandler()
 {
 }
 
-void ResponseHandler::receiveServerResponse() {
-	std::string completeResponse = receiveCompleteResponse();
-	BaseResponse response = parseResponse(completeResponse);
-	useResponse(response);
-	
+void ResponseHandler::receiveServerResponse(int choice) {
+	std::string responseHeaderString = receiveResponseHeader();
+	const BaseResponse responseHeader = parseResponseHeader(responseHeaderString);
+	if (responseHeader.getPayloadSize() > 0) {
+		std::string payload = receivePayload(responseHeader.getPayloadSize());
+		handleResponse(choice,responseHeader, payload);
+	}	
 }
 
-
-
-std::string ResponseHandler::receiveCompleteResponse()
-{
-	try {//wait to get all response from server
-		std::string response = "";
+std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
+	try {
+		std::string payload = "";
 		char buffer[MAX_BUFF] = { 0 };
 		int bytesReceived = 0;
 		while (true) {
-			bytesReceived = recv(client.getConnection().getClientSocket(), buffer, MAX_BUFF, 0);
+			bytesReceived = recv(client.getConnection().getClientSocket(), buffer, payloadSize, 0);
 			if (bytesReceived > 0) {
-				response.append(buffer, bytesReceived);				
+				payload.append(buffer, bytesReceived);
 			}
-			if (bytesReceived < MAX_BUFF) {
+			if (payload.size() == payloadSize) {
 				break;
 			}
 			bytesReceived = 0;
-		}		
-		return response;
+		}
+		return payload;
+	}
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+		return "";
+	}
+}
+
+std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResponse
+	try {
+		std::string responseHeader = "";
+		char buffer[RESPONSE_HEADER_SIZE] = { 0 };
+		int bytesReceived = 0;
+		while (true) {
+			bytesReceived = recv(client.getConnection().getClientSocket(), buffer, RESPONSE_HEADER_SIZE, 0);
+			if (bytesReceived > 0) {
+				responseHeader.append(buffer, bytesReceived);
+			}
+			if (bytesReceived == RESPONSE_HEADER_SIZE) {
+				break;
+			}
+			bytesReceived = 0;
+		}
+		return responseHeader;
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -50,8 +72,7 @@ std::string ResponseHandler::receiveCompleteResponse()
 }
 
 
-
-BaseResponse ResponseHandler::parseResponse(std::string completeResponse)
+BaseResponse ResponseHandler::parseResponseHeader(std::string completeResponse)
 {
 	try {
 		uint8_t version = 0;
@@ -65,21 +86,7 @@ BaseResponse ResponseHandler::parseResponse(std::string completeResponse)
 
 		memcpy(&payloadSize, completeResponse.data() + SERVER_VERSION_SIZE + RESPONSE_CODE_SIZE, RESPONSE_PAYLOAD_SIZE);
 		uint32_t payloadSizeLE = toLittleEndian32(payloadSize);  // Convert 2-byte value
-		if (payloadSizeLE > 0) {
-			payload = completeResponse.substr(SERVER_VERSION_SIZE + RESPONSE_CODE_SIZE + RESPONSE_PAYLOAD_SIZE);
-			
-		}		 
-
-		// DEBUG REMOVE
-		std::cout << "in parseResponse" << std::endl;
-		std::cout << "parseResponse\n"  << std::endl;
-		std::cout << "Version: " << static_cast<int>(version) <<std::endl;
-		std::cout << "Code: " << code <<std::endl;
-		std::cout << "Payload size: "  << payloadSize << std::endl;
-		std::cout << "Payload: " << payload << std::endl;
-
-		return createResponse(version, code, payloadSize, payload);
-		
+		return BaseResponse(version, code, payloadSize);		
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -89,14 +96,15 @@ BaseResponse ResponseHandler::parseResponse(std::string completeResponse)
 
 
 
-BaseResponse& ResponseHandler::createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload)
+void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std::string& payload)
 {
-	BaseResponse response = BaseResponse(version, code, NO_PAYLOAD);
 	try {		
-		switch (static_cast<RsponseCode> (code)) {
+		switch (static_cast<RsponseCode> (header.getCode())) { //esch response object does its own payload parsing
 		case RsponseCode::REGISTER_SUCEEDED: {
 			std::cout << "Registration successful" << std::endl;
-			response = RegisterResponse(version, code, payloadSize, payload);
+			RegisterResponse response = RegisterResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+			this->client.setClientID(response.getClientId());
+			saveUserInfoToFile();
 			break;
 		}		
 		/*case RsponseCode::PUBLIC_KEY: {
@@ -116,13 +124,17 @@ BaseResponse& ResponseHandler::createResponse(uint8_t& version, uint16_t& code, 
 			break;
 		}*/
 		case RsponseCode::GENERAL_ERROR: {
-			std::cout << "Server responded with error" << std::endl;			
+			std::cout << "Server responded with error" << std::endl;	
+			if (static_cast<RequestCode>(choice) == RequestCode::REGISTER) {
+				std::cout << "Registration failed" << std::endl;
+				client.unsetUserName(); //revert userName to empty
+			}
 			break;
 		}
 		default:
 			break;
 		}
-		return response;
+		
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -131,49 +143,34 @@ BaseResponse& ResponseHandler::createResponse(uint8_t& version, uint16_t& code, 
 	
 }
 
-// ERROR HERE WITH CASTING
-void ResponseHandler::useResponse(BaseResponse& response) {
-	try {
-		switch (static_cast<RsponseCode> (response.getCode())) {
-		case RsponseCode::REGISTER_SUCEEDED: {
-
-			RegisterResponse* registerResponse = dynamic_cast<RegisterResponse*>(&response);
-			if (registerResponse) {
-				saveUserInfoToFile(registerResponse->getClientId());
-			}
-			else {
-				throw std::runtime_error("Error: response is not of type RegisterResponse");
-			}
-			break;
-		}
-		default:
-			break;
-		}
-
-	}
-	catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
-	}
-}
-
-
 	
 
-void ResponseHandler::saveUserInfoToFile(const std::string & clientId) {
+void ResponseHandler::saveUserInfoToFile() {
 	try {
+		//std::string filename = "me" + std::to_string(rand() % 1000) + ".info"; //TODO remove
 		std::ofstream file(ME_INFO, std::ios::binary);
 		if (!file) {
 			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
 		}
 
+		std::cout << "Registration successful. userName: " << client.getUserName() << std::endl;
+		std::cout << "Registration successful. Client ID: " << client.getClientId() << std::endl;
+		std::cout << "Registration successful. privateKey: " << client.getEncodedToBase64PrivateKey() << std::endl;
+
 		file << client.getUserName() << std::endl;
 		file << client.getClientId() << std::endl;
-		file << client.getEncodedPrivateKey() << std::endl;
+		file << client.getEncodedToBase64PrivateKey() << std::endl;
 
+		std::cout << "Registration successful. userName: " << client.getUserName() << std::endl;
 		std::cout << "Registration successful. Client ID: " << client.getClientId() << std::endl;
+		std::cout << "Registration successful. privateKey: " << client.getEncodedToBase64PrivateKey() << std::endl;
+
 		file.close();
 	}
 	catch (const std::exception& e) {
 		std::cout << "Error saving user info to file: " << e.what() << std::endl;
 	}
 }
+
+
+

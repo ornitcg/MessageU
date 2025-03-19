@@ -13,7 +13,7 @@ class ResponseHandler
 private:
 	Client& client;
 	UImanager& uiManager;
-	void saveUserInfoToFile(const std::string& clientId);
+	void saveUserInfoToFile();
 
 
 	
@@ -21,10 +21,11 @@ private:
 public:
 	ResponseHandler(Client& client, UImanager& uiManager);
 	~ResponseHandler();
-	void receiveServerResponse();
-	std::string receiveCompleteResponse();
-	BaseResponse parseResponse(std::string completeResponse);
-	BaseResponse& createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload);
-	void useResponse(BaseResponse& response);
+	void receiveServerResponse(int choice);
+	std::string receivePayload(uint32_t getPayloadSize);
+	std::string receiveResponseHeader();
+	BaseResponse parseResponseHeader(std::string completeResponse);
+	void handleResponse(int choice, const BaseResponse& responseHeader, std::string& payload);
+	
 };
 

@@ -12,8 +12,8 @@ private:
 	std::string userName = "";	
 	std::vector<std::string> clientsList; //list of clientNamess
 	
-	void setUserName(const std::string& userName);
-	void setPublicKey(const std::string& publicKey);
+	
+	void setPublicKey(std::string& publicKey);
 
 	
 		
@@ -21,13 +21,15 @@ private:
 public:
 	Client(const Connection& conn);
 	~Client();
+	void setUserName(std::string& userName);
+	void unsetUserName();
 	std::string& getUserName() ;
 	std::string& getPublicKey();
 	std::string& getClientId();
 	const Connection& getConnection();
-	void setClientID(const std::string& line);
-	void setPrivateKey(const std::string& line);
+	void setClientID(const std::string& clientId);
+	void setPrivateKey(const std::string& keyString);
 	std::string& getPrivateKey();
-	std::string getEncodedPrivateKey();
+	std::string getEncodedToBase64PrivateKey();
 };
 

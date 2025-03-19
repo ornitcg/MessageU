@@ -51,9 +51,10 @@ class Request_Handler:
             else:
                 client_handler.generate_client_id()
                 binary_client_id = self.client_handler.get_binary_client_id()
+                print(f"in register_client new UUID: {binary_client_id}")
+
                 user_name = self.client_handler.get_user_name()
                 public_key = self.client_handler.get_public_key()
-                print(f"in register_client Client ID: {binary_client_id}") # TODO DEBUG
                 self._db_mngr.add_client(binary_client_id ,user_name, public_key)
                 return True
         except Exception as e:

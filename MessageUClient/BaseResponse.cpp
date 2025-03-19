@@ -12,17 +12,17 @@ BaseResponse::~BaseResponse()
 }
 
 //getters
-uint8_t BaseResponse::getVersion()
+uint8_t BaseResponse::getVersion() const
 {
 	return version;
 }
 
-uint16_t BaseResponse::getCode()
+uint16_t BaseResponse::getCode() const
 {
 	return code;
 }
 
-uint32_t BaseResponse::getPayloadSize()
+uint32_t BaseResponse::getPayloadSize() const
 {
 	return payloadSize;
 }

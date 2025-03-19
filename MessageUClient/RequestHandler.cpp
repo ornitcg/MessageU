@@ -67,6 +67,7 @@ void RequestHandler::registerClient()
 			throw std::runtime_error("Error: user info file already exists");
 		}
 		std::string userName = uiManager.getUserNameFromConsole(); // checks if length is valid	
+		client.setUserName(userName);
 		std::string publicKey = client.getPublicKey();
 		uint32_t payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE;
 		RegisterRequest registerReq = RegisterRequest(userName, publicKey, payloadSize);

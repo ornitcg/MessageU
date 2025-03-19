@@ -15,7 +15,7 @@ Client::Client(const Connection& conn) : conn(conn)
 			if (!file) {
 				throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
 			}
-			else {
+			else { // set from file
 				std::string line;
 				std::getline(file, line);
 				setUserName(line);
@@ -29,7 +29,7 @@ Client::Client(const Connection& conn) : conn(conn)
 				std::cout << "Private key: " << encMngr.getPrivateKey() << std::endl;
 			}
 		}
-		else {
+		else {// no ME_INFO file so generate keys
 			if (!encMngr.generateAndSaveRSAKeys()) {
 				throw std::runtime_error("Error: RSA key generation failed");
 			}
@@ -76,20 +76,27 @@ std::string& Client::getPrivateKey()
 	return encMngr.getPrivateKey();
 }
 
-std::string Client::getEncodedPrivateKey()
+std::string Client::getEncodedToBase64PrivateKey()
 {
-	return encMngr.getPrivateKeyToBase64();
+	std::string key = encMngr.getPrivateKeyToBase64();
+	std::cout << "in client getEncodedToBase64PrivateKey: " << key << std::endl;
+	return key;
 }
 
 
-void Client::setUserName(const std::string& userName)
+void Client::setUserName(std::string& userName)
 {
 	if (this->userName.empty())
 		this->userName = userName;
 	else throw std::runtime_error("Error: user name already set");
 }
 
-void Client::setPublicKey(const std::string& publicKey)
+void Client::unsetUserName()
+{
+	this->userName = "";
+}
+
+void Client::setPublicKey(std::string& publicKey)
 {
 }
 
@@ -99,16 +106,16 @@ const Connection& Client::getConnection()
 }
 
 
-void Client::setClientID(const std::string& line)
+void Client::setClientID(const std::string& clientId)
 {
 	if (this->clientId.empty())
 		this->clientId = clientId;
 	else throw std::runtime_error("Error: client ID already set");
 }
 
-void Client::setPrivateKey(const std::string& line)
+void Client::setPrivateKey(const std::string& keyString)
 {
 	if (this->encMngr.getPrivateKey().empty())
-		this->encMngr.getPrivateKey() = Base64Wrapper::decode(line);
+		this->encMngr.getPrivateKey() = Base64Wrapper::decode(keyString);
 	else throw std::runtime_error("Error: private key already set");
 }

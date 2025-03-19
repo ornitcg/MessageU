@@ -22,7 +22,7 @@ int main() {
 				if (static_cast<MenuOption>(choice) == MenuOption::EXIT)
 					break;
 				requestHandler.handleChoice(choice);	
-				responseHandler.receiveServerResponse();
+				responseHandler.receiveServerResponse(choice);
 			}			
 			catch (const std::exception& e) {
 				std::cout << e.what() << std::endl;							
