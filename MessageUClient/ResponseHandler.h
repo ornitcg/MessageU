@@ -4,6 +4,8 @@
 #include "Connection.h"
 #include "UImanager.h"
 #include "BaseResponse.h"	
+#include <fstream>
+#include <iostream>
 
 
 class ResponseHandler
@@ -11,6 +13,8 @@ class ResponseHandler
 private:
 	Client& client;
 	UImanager& uiManager;
+	void saveUserInfoToFile(const std::string& clientId);
+
 
 	
 
@@ -20,8 +24,7 @@ public:
 	void receiveServerResponse();
 	std::string receiveCompleteResponse();
 	BaseResponse parseResponse(std::string completeResponse);
-	BaseResponse createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload);
+	BaseResponse& createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload);
 	void useResponse(BaseResponse& response);
-
 };
 

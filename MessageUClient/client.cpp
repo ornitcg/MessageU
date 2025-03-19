@@ -71,6 +71,17 @@ std::string& Client::getPublicKey()
 	return encMngr.getPublicKey();
 }
 
+std::string& Client::getPrivateKey()
+{
+	return encMngr.getPrivateKey();
+}
+
+std::string Client::getEncodedPrivateKey()
+{
+	return encMngr.getPrivateKeyToBase64();
+}
+
+
 void Client::setUserName(const std::string& userName)
 {
 	if (this->userName.empty())

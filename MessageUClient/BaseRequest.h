@@ -9,18 +9,13 @@ class BaseRequest
 {
 protected:
 	std::string clientId;
-	uint8_t version = SERVER_VERSION;
+	uint8_t version;
 	uint16_t requestCode;
 	uint32_t payloadSize; 
 
 public:
+	std::string getBinaryHeader() ;
 	BaseRequest(uint16_t requestCode, uint32_t payloadSize);
 	virtual ~BaseRequest();
-	void send();
-
-	std::string getBinaryHeader() ;
-
-	virtual std::string getBinaryRequest() ;
-
 };
 

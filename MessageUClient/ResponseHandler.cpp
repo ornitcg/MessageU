@@ -83,12 +83,13 @@ BaseResponse ResponseHandler::parseResponse(std::string completeResponse)
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
+		throw std::runtime_error("Failed to parse response");
 	}
 }
 
 
 
-BaseResponse ResponseHandler::createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload)
+BaseResponse& ResponseHandler::createResponse(uint8_t& version, uint16_t& code, uint32_t& payloadSize, std::string& payload)
 {
 	BaseResponse response = BaseResponse(version, code, NO_PAYLOAD);
 	try {		
@@ -130,21 +131,49 @@ BaseResponse ResponseHandler::createResponse(uint8_t& version, uint16_t& code, u
 	
 }
 
-
+// ERROR HERE WITH CASTING
 void ResponseHandler::useResponse(BaseResponse& response) {
 	try {
 		switch (static_cast<RsponseCode> (response.getCode())) {
 		case RsponseCode::REGISTER_SUCEEDED: {
-			RegisterResponse& regResponse = dynamic_cast<RegisterResponse&>(response);
-			
+
+			RegisterResponse* registerResponse = dynamic_cast<RegisterResponse*>(&response);
+			if (registerResponse) {
+				saveUserInfoToFile(registerResponse->getClientId());
+			}
+			else {
+				throw std::runtime_error("Error: response is not of type RegisterResponse");
+			}
 			break;
-		
-		
-		
 		}
+		default:
+			break;
+		}
+
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
 }
 
+
+	
+
+void ResponseHandler::saveUserInfoToFile(const std::string & clientId) {
+	try {
+		std::ofstream file(ME_INFO, std::ios::binary);
+		if (!file) {
+			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
+		}
+
+		file << client.getUserName() << std::endl;
+		file << client.getClientId() << std::endl;
+		file << client.getEncodedPrivateKey() << std::endl;
+
+		std::cout << "Registration successful. Client ID: " << client.getClientId() << std::endl;
+		file.close();
+	}
+	catch (const std::exception& e) {
+		std::cout << "Error saving user info to file: " << e.what() << std::endl;
+	}
+}

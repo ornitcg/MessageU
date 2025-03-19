@@ -27,5 +27,7 @@ public:
 	const Connection& getConnection();
 	void setClientID(const std::string& line);
 	void setPrivateKey(const std::string& line);
+	std::string& getPrivateKey();
+	std::string getEncodedPrivateKey();
 };
 

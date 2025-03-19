@@ -10,7 +10,7 @@ int main() {
 	
 	try {
 		Connection conn = Connection();
-		Client client = Client(conn);
+		Client client = Client(conn);  // takes details from file if exists
 		UImanager uiManager = UImanager();		
 		RequestHandler requestHandler = RequestHandler(client, uiManager);
 		ResponseHandler responseHandler = ResponseHandler(client, uiManager);

@@ -10,12 +10,6 @@ private:
 public:
 	RegisterResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string clientId);
 	virtual ~RegisterResponse();
-
-	void handleResponse();
-
-
-
-
-
+	std::string getClientId();
 };
 
