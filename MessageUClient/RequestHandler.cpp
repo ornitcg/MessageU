@@ -8,6 +8,8 @@
 #include "RegisterRequest.h"
 #include "Client.h"
 #include "UImanager.h"
+#include "UserNameException.h"
+
 
 namespace fs = std::filesystem;
 
@@ -18,7 +20,7 @@ RequestHandler::~RequestHandler(){
 }
 
 
-void RequestHandler::handleChoice(const int choice)
+bool RequestHandler::handleChoice(const int choice)
 {
 	std::cout << "in handleChoice " << std::endl; // TODO DEBUG
 	try {
@@ -51,17 +53,21 @@ void RequestHandler::handleChoice(const int choice)
 		default:
 			break;
 		}
+		return true;
+	}
+	catch (const UserNameException& e) {
+		std::cout << e.what() << std::endl;
+		throw e;		
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
+		return false;
 	}
-
 }
 
 
 void RequestHandler::registerClient()
 {
-	std::cout << "in registerClient\n"; //TODO REMOVE DEBUG
 	try {
 		if (std::filesystem::exists(ME_INFO)) {
 			throw std::runtime_error("Error: user info file already exists");
@@ -77,7 +83,7 @@ void RequestHandler::registerClient()
 		if (sendRes == SOCKET_ERROR) {
 			throw std::runtime_error("Error: send failed");
 		}
-		std::cout << "sendRes: " << sendRes << std::endl; //DEBUG		
+		std::cout << "DEBUG sendRes: " << sendRes << std::endl; //DEBUG		
 	}
 	catch (const std::exception& e) {
 		throw e;

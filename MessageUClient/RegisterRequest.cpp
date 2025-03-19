@@ -28,21 +28,17 @@ void RegisterRequest::initializeUserNameWithPadding(const std::string& userName)
 
 void RegisterRequest::initializePublicKey(const std::string& pubKey) {
 	memset(this->publicKey, '\0', PUBLIC_KEY_SIZE + 1);
-	std::cout << "in register req publicKey: \n" << pubKey << std::endl; //DEBUG
 	memcpy(this->publicKey, pubKey.c_str(),  (size_t)PUBLIC_KEY_SIZE);
 }
 
 
 std::string RegisterRequest::getBinary() 
 {
-	std::cout << "in getBinary\n"; //DEBUG
 	std::string binaryData = getBinaryHeader();
-	//add nameBuffer as binary
 	binaryData.append(nameBuffer, MAX_NAME_SIZE+1);
 	size_t currentSize = binaryData.size();
 	size_t totalsize = currentSize + PUBLIC_KEY_SIZE + 1;
 	binaryData.resize(totalsize);
 	memcpy(&binaryData[currentSize], this->publicKey, PUBLIC_KEY_SIZE);
-
 	return binaryData;
 }

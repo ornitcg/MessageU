@@ -15,6 +15,7 @@ public:
 	Connection();
 	~Connection();
 	SOCKET getClientSocket() const;
+	void disconnect();
 	bool connectionInit();
 };
 

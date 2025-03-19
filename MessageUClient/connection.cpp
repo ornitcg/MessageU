@@ -13,15 +13,19 @@ Connection::Connection()
 
 Connection::~Connection()
 {
-	if (clientSocket != 0) {
-		closesocket(clientSocket);
-	}
-	WSACleanup();
+	disconnect();	
 }
 
 SOCKET Connection::getClientSocket() const
 {
 	return clientSocket;
+}
+
+void Connection::disconnect() {
+	if (clientSocket != 0) {
+		closesocket(clientSocket);
+	}
+	WSACleanup();
 }
 
 bool Connection::connectionInit()
@@ -45,7 +49,6 @@ bool Connection::connectionInit()
 		std::string serverIp = serverInfo[0];
 		int port = std::stoi(serverInfo[1]);
 		
-		//std::cout << "Connecting to server " << serverIp << " on port " << port << std::endl;	// TODO DEBUG
 		struct sockaddr_in serverAddr = { 0 }; // struct that holds the server address
 		serverAddr.sin_family = AF_INET; // IPv4
 		serverAddr.sin_port = htons(port); // turns the endianess of the port to network endianess

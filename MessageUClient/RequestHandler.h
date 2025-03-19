@@ -19,8 +19,6 @@ private:
 	Client& client;
 	UImanager& uiManager;
 	
-
-
 	void registerClient();
 	void requestClientsList();
 	void requestPublicKey();
@@ -35,7 +33,7 @@ public:
 	RequestHandler(Client& client, UImanager& uiManager);
 	~RequestHandler();
 	
-	void handleChoice(const int choice);
+	bool handleChoice(const int choice);
 
 };
 

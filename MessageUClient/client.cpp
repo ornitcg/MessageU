@@ -21,32 +21,26 @@ Client::Client(const Connection& conn) : conn(conn)
 				setUserName(line);
 				std::getline(file, line);
 				setClientID(line);
-				std::getline(file, line);
-				setPrivateKey(line);	
-				// print all 3
-				std::cout << "in client ctor : User name: " << getUserName() << std::endl;
-				std::cout << "Client ID: " << getClientId() << std::endl;
-				std::cout << "Private key: " << encMngr.getPrivateKey() << std::endl;
+				// get private key from multiline
+				std::string key;
+				while (true)
+				{
+					std::getline(file, line);
+					if (line.empty())
+						break;
+					key += line;
+				}				
+				setPrivateKey(key);			
 			}
 		}
-		else {// no ME_INFO file so generate keys
+		else {// there is no ME_INFO file so generate keys
 			if (!encMngr.generateAndSaveRSAKeys()) {
 				throw std::runtime_error("Error: RSA key generation failed");
 			}
 		}
-
-
-
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
-	}
-	try{
-		encMngr = EncryptionManager();		
-	}
-	catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
-		throw e;
 	}	
 }
 
@@ -88,7 +82,8 @@ void Client::setUserName(std::string& userName)
 {
 	if (this->userName.empty())
 		this->userName = userName;
-	else throw std::runtime_error("Error: user name already set");
+	else 
+		throw std::runtime_error("Error: user name already set");
 }
 
 void Client::unsetUserName()

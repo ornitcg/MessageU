@@ -51,8 +51,6 @@ class Request_Handler:
             else:
                 client_handler.generate_client_id()
                 binary_client_id = self.client_handler.get_binary_client_id()
-                print(f"in register_client new UUID: {binary_client_id}")
-
                 user_name = self.client_handler.get_user_name()
                 public_key = self.client_handler.get_public_key()
                 self._db_mngr.add_client(binary_client_id ,user_name, public_key)
@@ -79,7 +77,6 @@ class Request_Handler:
         version = int.from_bytes(inb[offset:offset + VERSION_SIZE], byteorder='little')
         offset += VERSION_SIZE
         code_bytes = inb[offset: offset + CODE_SIZE]
-        print(f"in parse_header Code bytes: {code_bytes}") # TODO DEBUG
         code = int.from_bytes(code_bytes, byteorder='little')
         offset += CODE_SIZE
         payload_size = int.from_bytes(inb[offset:offset + PAYLOAD_SIZE], byteorder='little')
@@ -90,13 +87,10 @@ class Request_Handler:
         client_id, version, code, payload_size = self.parse_header(inb)
         offset = REQUEST_HEADER_SIZE
         payload = (inb[offset:offset + payload_size])
-        print(f"in parse_request Client ID: {client_id}, Version: {version}, Code: {code}, Payload Size: {payload_size}, Payload: {payload}") # TODO DEBUG
         return self.generate_request_by_code(code, client_id, version, payload_size, payload)
 
     def generate_request_by_code(self, code, client_id, version, payload_size, payload):
-        print(f"Code: {code}, Register value: {RequestCode.REGISTER.value[0]}")
         if code == RequestCode.REGISTER.value[0]:
-            print(" generate_request_by_code RegisterRequest") # TODO DEBUG
             return RegisterRequest(client_id, version, code, payload_size, payload)
         # elif code == RequestCode.GET_CLIENT_LIST[0]:
         #     return GetClientListRequest(client_id, version, code, payload_size, payload)

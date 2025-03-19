@@ -148,6 +148,7 @@
     <ClInclude Include="RSAWrapper.h" />
     <ClInclude Include="TargetClientRequest.h" />
     <ClInclude Include="UImanager.h" />
+    <ClInclude Include="UserNameException.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="uuid.h" />
   </ItemGroup>
@@ -170,6 +171,7 @@
     <ClCompile Include="RSAWrapper.cpp" />
     <ClCompile Include="TargetClientRequest.cpp" />
     <ClCompile Include="UImanager.cpp" />
+    <ClCompile Include="UserNameException.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="uuid.cpp" />
   </ItemGroup>

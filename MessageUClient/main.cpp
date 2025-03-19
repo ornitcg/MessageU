@@ -3,7 +3,8 @@
 #include "UImanager.h"
 #include "RequestHandler.h"
 #include "ResponseHandler.h"
-#include "requestInfo.h"
+#include "UserNameException.h"
+#include "Client.h"
 
 
 int main() {
@@ -21,9 +22,15 @@ int main() {
 				int choice = uiManager.getChoice();	// only valid choice accepted				
 				if (static_cast<MenuOption>(choice) == MenuOption::EXIT)
 					break;
-				requestHandler.handleChoice(choice);	
-				responseHandler.receiveServerResponse(choice);
-			}			
+				bool handled = requestHandler.handleChoice(choice);	
+				if (handled) 
+					responseHandler.receiveServerResponse(choice);
+			}	
+			catch (const UserNameException& e) {
+				std::cout << e.what() << std::endl;
+				conn.disconnect();
+				break;
+			}
 			catch (const std::exception& e) {
 				std::cout << e.what() << std::endl;							
 			}

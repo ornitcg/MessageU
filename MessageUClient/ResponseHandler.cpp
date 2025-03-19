@@ -152,19 +152,10 @@ void ResponseHandler::saveUserInfoToFile() {
 		if (!file) {
 			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
 		}
-
-		std::cout << "Registration successful. userName: " << client.getUserName() << std::endl;
-		std::cout << "Registration successful. Client ID: " << client.getClientId() << std::endl;
-		std::cout << "Registration successful. privateKey: " << client.getEncodedToBase64PrivateKey() << std::endl;
-
+		
 		file << client.getUserName() << std::endl;
 		file << client.getClientId() << std::endl;
-		file << client.getEncodedToBase64PrivateKey() << std::endl;
-
-		std::cout << "Registration successful. userName: " << client.getUserName() << std::endl;
-		std::cout << "Registration successful. Client ID: " << client.getClientId() << std::endl;
-		std::cout << "Registration successful. privateKey: " << client.getEncodedToBase64PrivateKey() << std::endl;
-
+		file << client.getEncodedToBase64PrivateKey() << std::endl;	
 		file.close();
 	}
 	catch (const std::exception& e) {
