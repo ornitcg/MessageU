@@ -1,6 +1,6 @@
 from  models.base_response import *
 from utils.defines import *
-from models.register_response import Register_Response
+from models.register_response import *
 
 
 
@@ -23,23 +23,26 @@ class Response_Handler:
         return binary_response
 
 
-    def handle_response(self, parsed_request, is_request_successful):
+    def handle_response(self, request_object, is_request_successful):
+        print(f"DEBUG in Handling response for request: ")
+        print(request_object)
         if not is_request_successful:
             self.send_error_response()
             return
         try:
-            if parsed_request.code == RequestCode.REGISTER.value[0]:
+            if request_object.code == RequestCode.REGISTER.value[0]:
                 response = self.create_binary_register_response()
-            elif parsed_request.code == RequestCode.GET_CLIENT_LIST.value:
+            elif request_object.code == RequestCode.GET_CLIENT_LIST.value[0]:
+                response = self.create_binary_users_list_response()
+            elif request_object.code == RequestCode.GET_PUBLIC_KEY.value[0]:
                 pass
-            elif parsed_request.code == RequestCode.GET_PUBLIC_KEY.value:
+            elif request_object.code == RequestCode.SEND_MESSAGE.value[0]:
                 pass
-            elif parsed_request.code == RequestCode.SEND_MESSAGE.value:
-                pass
-            elif parsed_request.code == RequestCode.GET_WAITING_MESSAGES.value:
+            elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
                 pass
             else:
                 pass
+            print(f"Response: {response}")
             self.send_response(response)
 
         except Exception as e:
@@ -56,3 +59,11 @@ class Response_Handler:
         self.send_response(binary_error_response)
 
 
+    def create_binary_users_list_response(self):
+        users_list = self.client_handler.get_client_list()
+        client_id = self.client_handler.get_client_id()
+        binaryUsersList = names_list_to_binary(users_list)
+        payload_size = binaryUsersList.size()
+        response = Users_List_Response(client_id, binaryUsersList, payload_size)
+        binary_response = response.get_binary_response()
+        return binary_response

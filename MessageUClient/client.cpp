@@ -73,7 +73,6 @@ std::string& Client::getPrivateKey()
 std::string Client::getEncodedToBase64PrivateKey()
 {
 	std::string key = encMngr.getPrivateKeyToBase64();
-	std::cout << "in client getEncodedToBase64PrivateKey: " << key << std::endl;
 	return key;
 }
 

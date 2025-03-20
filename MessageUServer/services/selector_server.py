@@ -20,8 +20,7 @@ class SelectorServer:
 
 
         if not self.db_conn:
-            print("Failed to initialize the database")
-            raise Exception("Failed to initialize the database")
+            raise Exception("ERROR: Failed to initialize the database")
 
     def connect(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +28,7 @@ class SelectorServer:
         self.server_socket.setblocking(False)  # non-blocking mode
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(MAX_CONNECTIONS)
-        print(f"Server is listening on port {self.port}")
+        print(f"DEBUG Server is listening on port {self.port}")
         self.selector.register(self.server_socket, selectors.EVENT_READ , data=None)
         self.event_loop()
 
@@ -47,32 +46,32 @@ class SelectorServer:
                         try:
                             request_processed = client_handler.handle_event(key, mask)
                             if request_processed and client_handler.get_is_request_success():
-                                print("Request processed successfully") # TODO DEBUG
+                                print("DEBUG Request processed successfully") # TODO DEBUG
                                 client_handler.response_handler.handle_response(client_handler.get_parsed_request(),
                                                                                 client_handler.get_is_request_success)
 
                         except Exception as e:
-                            print(f"Error handling client in event loop {client_handler.address}: {e}")
+                            print(f"ERROR: Error handling client in event loop {client_handler.address}: {e}")
                             client_handler.response_handler.send_error_response()
-                            print("error response sent from event loop")
+                            print("DEBUG error response sent from event loop")
 
         except KeyboardInterrupt:
-            print("KeyboardInterrupt Server is shutting down")
+            print("ERROR: KeyboardInterrupt Server is shutting down")
         except Exception as e:
-            print(f"Error in event loop: {e}")
+            print(f"ERROR: Error in event loop: {e}")
         finally:
             self.close()
 
     def accept_connection(self, sock):
         # Accept the connection
         client_socket, addr = sock.accept()
-        print(f"Accepted connection from {addr}")
+        print(f"LOG: Accepted connection from {addr}")
         client_socket.setblocking(False)
         client_handler = Client_Handler(client_socket, addr, self.db_conn, self.db_mngr, self.selector)
         client_handler.update_last_seen()
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         self.selector.register(client_socket, events, data=client_handler)
-        print(f"Client from {addr} registered with selector")  ## TODO DEBUG
+        print(f"DEBUG Client from {addr} registered with selector")  ## TODO DEBUG
         return client_handler
 
     # def cleanup_client_connection(self, sock, client_handler=None):
@@ -87,7 +86,7 @@ class SelectorServer:
     #
 
     def close(self):
-        print("Closing server")
+        print("LOG: Closing server")
         self.db_mngr.disconnect()
         self.selector.close()
         if self.server_socket:

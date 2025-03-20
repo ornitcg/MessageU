@@ -3,7 +3,7 @@ import selectors
 import uuid
 
 from utils.defines import *
-from models.base_request import BaseRequest
+from models.base_request import Base_Request
 from services.request_handler import Request_Handler
 from services.response_handler import Response_Handler
 
@@ -13,6 +13,7 @@ class Client_Handler:
         self.client_socket = socket
         self.address = address
         self.client_id = None
+        self.clientList = []
         self.user_name = None
         self.public_key = None
         self.inb = b''  # for incoming binary data
@@ -63,9 +64,9 @@ class Client_Handler:
 
     def handle_read_event(self):
         try:
-            print("in handle_read") # TODO DEBUG
+            print("DEBUG in handle_read_event") # TODO DEBUG
             recv_data = self.client_socket.recv(MAX_BUFFER_SIZE)
-            print(f"Received data from client {self.address}: {recv_data}")  # TODO DEBUG
+            print(f"DEBUG Received data from client {self.address}: {recv_data}")  # TODO DEBUG
             if not recv_data:
                 print(f"Client {self.address} disconnected")
                 raise ConnectionError("Client disconnected")
@@ -76,15 +77,15 @@ class Client_Handler:
 
             total_request_size = self.request_handler.is_extract_complete_request(self.inb)
             if total_request_size: #if not None then it's complete
-                self.parsed_request = self.request_handler.parse_request(self.inb)
+                self.request_object = self.request_handler.get_request_object(self.inb)
                 self.remove_processed_data_from_inb(total_request_size)
-                self.is_request_successful = self.request_handler.handle_request(self.parsed_request)
+                self.is_request_successful = self.request_handler.handle_request(self.request_object)
             return True
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
-            print(f"Connection error with client {self.address}")
+            print(f"ERROR: Connection error with client {self.address}")
             self.disconnect_client()
         except Exception as e:
-            print (f"Error in handling client {self.address}: {e} " )
+            print (f"ERROR: Error in handling client {self.address}: {e} " )
             raise e
 
 
@@ -92,13 +93,13 @@ class Client_Handler:
         try:
             sent = self.client_socket.send(self.get_final_send_data())
             if sent == 0:
-                print(f"Failed to send data to client {self.address}")
+                print(f"ERROR: Failed to send data to client {self.address}")
 
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
-            print(f"Connection error with client {self.address}")
+            print(f"ERROR: Connection error with client {self.address}")
             raise e
         except Exception as e:
-            print(f"Error in handling client {self.address}: {e} ")
+            print(f"ERROR: Error in handling client {self.address}: {e} ")
             raise e
 
 
@@ -131,17 +132,24 @@ class Client_Handler:
         return self.public_key
 
     def get_parsed_request(self):
-        return self.parsed_request
+        return self.request_object
 
     def get_is_request_success(self):
         return self.is_request_successful
 
     def disconnect_client(self):
         try:
-            print("Disconnecting client")
             self.client_socket.close()
             self.selector.unregister(self.client_socket)
-            print("Disconnected client")
+            print("DEBUG Disconnected client")
             return
         except Exception as cleanup_error:
-            print(f"Error during client cleanup: {cleanup_error}")
+            print(f"ERROR: Error during client cleanup: {cleanup_error}")
+
+
+
+    def set_client_list(self, list):
+        self.clientList = list
+
+    def get_client_list(self):
+        return self.clientList

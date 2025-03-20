@@ -1,9 +1,9 @@
-from models.base_request import BaseRequest
+from models.base_request import Base_Request
 from utils.defines import *
 
-class RegisterRequest(BaseRequest):
-    def __init__(self, client_id, version, code, payload_size, payload):
-        super().__init__(client_id, version, code, payload_size)
+class Register_Request(Base_Request):
+    def __init__(self, header, payload):
+        super().__init__(header)
         self.user_name = None
         self.public_key = None
         self.parse_payload(payload)
@@ -19,10 +19,17 @@ class RegisterRequest(BaseRequest):
         offset = USER_NAME_SIZE
         self.public_key = payload[offset : offset + PUBLIC_KEY_SIZE]
 
+    def __str__(self):
+        if not self.client_id:
+            return ""
+        return f"Client ID: {self.client_id.hex()}, Name: {self.user_name}, Public Key: {self.public_key}"
 
 
 
+class Client_List_Request(Base_Request):
+    def __init__(self, header):
+        super().__init__(request = header)
 
     def __str__(self):
-        return f"Client ID: {self.client_id}, Name: {self.user_name}, Public Key: {self.public_key}"
+        super_str = super().__str__()
 

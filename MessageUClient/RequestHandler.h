@@ -19,13 +19,15 @@ private:
 	Client& client;
 	UImanager& uiManager;
 	
-	void registerClient();
-	void requestClientsList();
+	std::string getRegisterClientBinaryRequest();
+	std::string getClientsListBinaryRequest();
 	void requestPublicKey();
 	void requestWaitingMessages();
 	void sendTextMessage();
 	void requestSymmetricKey();
 	void sendSymmetricKey();
+
+	void sendBinaryData(std::string& binaryData);
 
 
 

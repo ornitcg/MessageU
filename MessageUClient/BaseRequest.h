@@ -15,6 +15,7 @@ protected:
 
 public:
 	std::string getBinaryHeader() ;
+	BaseRequest(uint16_t requestCode, std::string& clientId);
 	BaseRequest(uint16_t requestCode, uint32_t payloadSize);
 	virtual ~BaseRequest();
 };

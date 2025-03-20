@@ -1,5 +1,6 @@
 from models.base_response import Base_Response
 from utils.defines import *
+from utils.utils_funcs import *
 
 class Register_Response(Base_Response):
     def __init__(self, binary_client_id):
@@ -10,6 +11,8 @@ class Register_Response(Base_Response):
         return self.get_binary_header() + self.binary_client_id
 
     def __str__(self):
+        if not self.binary_client_id:
+            return ""
         super_str = super().__str__()
         return f"{super_str}, binary_client_id={self.binary_client_id}"
 
@@ -19,15 +22,13 @@ class Register_Response(Base_Response):
 
 
 class Users_List_Response(Register_Response):
-    def __init__(self,  code, payload_size , client_id , users_list):
-        super().__init__( code, payload_size , client_id)
+    def __init__(self, client_id, users_list, payload_size):
+        super().__init__( Response_Code.CLIENT_LIST.value[0]  , payload_size , client_id)
         self.users_list = users_list
-
 
     def get_binary_response(self):
         binary_header_and_client_id = super().get_binary_response()
-        binary_users_list = self.users_list.encode()
-        binary_response = binary_header_and_client_id + binary_users_list
+        binary_response = binary_header_and_client_id + self.users_list
         return binary_response
 
 ########## ******************************###########

@@ -23,13 +23,16 @@ RequestHandler::~RequestHandler(){
 bool RequestHandler::handleChoice(const int choice)
 {
 	std::cout << "in handleChoice " << std::endl; // TODO DEBUG
+	std::string binaryData = "";
 	try {
 		switch (static_cast<MenuOption> (choice)) {
 		case MenuOption::REGISTER:
-			RequestHandler::registerClient();
+			binaryData = RequestHandler::getRegisterClientBinaryRequest();
+			std::cout << "DEBUG Request for register client\n";
 			break;
 		case MenuOption::GET_CLIENT_LIST:
-			std::cout << "Request for clients list\n";
+			binaryData = RequestHandler::getClientsListBinaryRequest();
+			std::cout << "DEBUG Request for clients list\n";
 			break;
 		case MenuOption::GET_PUBLIC_KEY:
 			std::cout << "Request for public key\n";
@@ -53,6 +56,7 @@ bool RequestHandler::handleChoice(const int choice)
 		default:
 			break;
 		}
+		sendBinaryData(binaryData);
 		return true;
 	}
 	catch (const UserNameException& e) {
@@ -66,7 +70,7 @@ bool RequestHandler::handleChoice(const int choice)
 }
 
 
-void RequestHandler::registerClient()
+std::string RequestHandler::getRegisterClientBinaryRequest()
 {
 	try {
 		if (std::filesystem::exists(ME_INFO)) {
@@ -78,20 +82,23 @@ void RequestHandler::registerClient()
 		uint32_t payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE;
 		RegisterRequest registerReq = RegisterRequest(userName, publicKey, payloadSize);
 		std::string binaryData = registerReq.getBinary();
-		int sendRes = send(client.getConnection().getClientSocket(), binaryData.c_str(), static_cast<int>(binaryData.size()), 0);
-		
-		if (sendRes == SOCKET_ERROR) {
-			throw std::runtime_error("Error: send failed");
-		}
-		std::cout << "DEBUG sendRes: " << sendRes << std::endl; //DEBUG		
+		return binaryData;			
 	}
 	catch (const std::exception& e) {
 		throw e;
 	}
 }
 
-void RequestHandler::requestClientsList()
+std::string RequestHandler::getClientsListBinaryRequest()
 {
+	try {
+		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_CLIENT_LIST), client.getClientId());
+		std::string binaryData = request.getBinaryHeader();
+		return binaryData;
+	}
+	catch (const std::exception& e) {
+		throw e;
+	}
 }
 
 void RequestHandler::requestPublicKey()
@@ -117,3 +124,14 @@ void RequestHandler::sendSymmetricKey()
 
 
 
+
+
+void RequestHandler::sendBinaryData(std::string& binaryData) {
+	int sendRes = send(client.getConnection().getClientSocket(), binaryData.c_str(), static_cast<int>(binaryData.size()), 0);
+
+	if (sendRes == SOCKET_ERROR) {
+		throw std::runtime_error("Error: send failed");
+	}
+	std::cout << "DEBUG sendRes: " << sendRes << std::endl; //DEBUG	
+
+}

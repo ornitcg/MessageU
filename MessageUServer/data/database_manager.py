@@ -20,7 +20,7 @@ class Database_Manager:
             self.message_dao = Message_Dao(self.conn, self.cursor)
             return True
         except sqlite3.Error as e:
-            print("Error connecting to DB ", e)
+            print("ERROR: Error connecting to DB ", e)
             return False
 
     def initialize_db(self):
@@ -29,7 +29,7 @@ class Database_Manager:
             self.create_tables()
             return True
         except sqlite3.Error as e:
-            print("Error initializing the database ", e)
+            print("ERROR: Error initializing the database ", e)
             return False
 
     def table_exists(self, table_name):

@@ -14,3 +14,9 @@ def read_port_from_file():
         return DEFAULT_PORT
 
 
+def names_list_to_binary(users_list):
+    binary_users_list = b''
+    for user_name in users_list:
+        binary_user_name = user_name.encode()
+        binary_users_list += binary_user_name + b'\0'
+    return binary_users_list
