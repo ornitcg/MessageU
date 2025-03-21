@@ -24,16 +24,18 @@ class Request_Handler:
         self.client_handler.set_client_list(client_list)
 
     def handle_request(self, request_object):
+        code = request_object.get_code()
         try:
-            if request_object.code == RequestCode.REGISTER.value[0]:
+            if code == RequestCode.REGISTER.value[0]:
                 return self.register_client(request_object)
-            elif request_object.code == RequestCode.GET_CLIENT_LIST.value[0]:
+            elif code == RequestCode.GET_CLIENT_LIST.value[0]:
+                self.client_handler.set_client_with_request_object(request_object)
                 return self.get_client_list(request_object)
-            elif request_object.code == RequestCode.GET_PUBLIC_KEY.value[0]:
+            elif code == RequestCode.GET_PUBLIC_KEY.value[0]:
                 pass
-            elif request_object.code == RequestCode.SEND_MESSAGE.value[0]:
+            elif code == RequestCode.SEND_MESSAGE.value[0]:
                 pass
-            elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
+            elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
                 pass
             else:
                 pass

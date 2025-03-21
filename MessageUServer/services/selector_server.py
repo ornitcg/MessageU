@@ -50,6 +50,7 @@ class SelectorServer:
                                 client_handler.response_handler.handle_response(client_handler.get_parsed_request(),
                                                                                 client_handler.get_is_request_success)
 
+
                         except Exception as e:
                             print(f"ERROR: Error handling client in event loop {client_handler.address}: {e}")
                             client_handler.response_handler.send_error_response()

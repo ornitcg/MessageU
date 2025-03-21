@@ -3,18 +3,18 @@ from utils.defines import *
 from utils.utils_funcs import *
 
 class Register_Response(Base_Response):
-    def __init__(self, binary_client_id):
-        super().__init__(Response_Code.REGISTER_SUCCEEDED.value[0], CLIENT_ID_SIZE)
+    def __init__(self, binary_client_id , payload_size = CLIENT_ID_SIZE):
+        super().__init__(Response_Code.REGISTER_SUCCEEDED.value[0], payload_size)
         self.binary_client_id = binary_client_id
 
     def get_binary_response(self):
         return self.get_binary_header() + self.binary_client_id
 
-    def __str__(self):
-        if not self.binary_client_id:
-            return ""
-        super_str = super().__str__()
-        return f"{super_str}, binary_client_id={self.binary_client_id}"
+    # def __str__(self):
+    #     if not self.binary_client_id:
+    #         return ""
+    #     super_str = super().__str__()
+    #     return f"{super_str}, binary_client_id={self.binary_client_id}"
 
 
 
@@ -22,13 +22,13 @@ class Register_Response(Base_Response):
 
 
 class Users_List_Response(Register_Response):
-    def __init__(self, client_id, users_list, payload_size):
-        super().__init__( Response_Code.CLIENT_LIST.value[0]  , payload_size , client_id)
-        self.users_list = users_list
+    def __init__(self, client_id, binary_users_list, payload_size):
+        super().__init__(  client_id, payload_size)
+        self.binary_users_list = binary_users_list
 
     def get_binary_response(self):
         binary_header_and_client_id = super().get_binary_response()
-        binary_response = binary_header_and_client_id + self.users_list
+        binary_response = binary_header_and_client_id + self.binary_users_list
         return binary_response
 
 ########## ******************************###########

@@ -69,7 +69,8 @@ class Database_Manager:
         return self.client_dao.get_client_by_username(username)
 
     def get_all_clients(self, exclude_id=None):
-        return self.client_dao.get_all_clients(exclude_id)
+        tuples_ls = self.client_dao.get_all_clients(exclude_id)
+        return tuples_ls
 
     def update_client_last_seen(self, client_id):
         return self.client_dao.update_client_last_seen(client_id)

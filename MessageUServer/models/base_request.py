@@ -11,11 +11,11 @@ class Base_Request:
             self.code = code
             self.payload_size = payload_size
 
-    def __str__(self):
-        if not self.client_id:
-            return ""
-        st = f"Client ID: {self.client_id.hex()  }, Version: {self.version}, Code: {self.code}, Payload Size: {self.payload_size}"
-        return st
+    # def __str__(self):
+    #     if not self.client_id:
+    #         return ""
+    #     st = f"Client ID: {self.client_id.hex()  }, Version: {self.version}, Code: {self.code}, Payload Size: {self.payload_size}"
+    #     return st
 
 
 

@@ -8,7 +8,6 @@ class Base_Response:
         self.payload_size = payload_size
 
     def get_binary_header(self):
-        print(f"in get_binary_header Version: {self.version}, Code: {self.code}, Payload Size: {self.payload_size}")
         return struct.pack('<BHI', self.version, self.code, self.payload_size)
 
     def get_binary_response(self):

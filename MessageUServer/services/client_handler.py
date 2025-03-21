@@ -25,6 +25,10 @@ class Client_Handler:
         self.selector = selector
         self.is_request_successful = False
 
+    def set_client_with_request_object(self, request):
+        self.client_id = request.get_client_id()
+
+
 
     def add_to_send_buf(self, data):
         self.outb += data
@@ -124,6 +128,12 @@ class Client_Handler:
 
     def get_client_id(self):
         return self.client_id
+
+    def set_client_id(self, id):
+        if not self.client_id:
+            self.client_id = id
+        else:
+            raise Exception("ERROR: Client ID already set")
 
     def get_user_name(self):
         return self.user_name

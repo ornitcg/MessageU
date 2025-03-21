@@ -3,7 +3,7 @@ from utils.defines import *
 
 class Register_Request(Base_Request):
     def __init__(self, header, payload):
-        super().__init__(header)
+        super().__init__(request = header)
         self.user_name = None
         self.public_key = None
         self.parse_payload(payload)
@@ -19,10 +19,10 @@ class Register_Request(Base_Request):
         offset = USER_NAME_SIZE
         self.public_key = payload[offset : offset + PUBLIC_KEY_SIZE]
 
-    def __str__(self):
-        if not self.client_id:
-            return ""
-        return f"Client ID: {self.client_id.hex()}, Name: {self.user_name}, Public Key: {self.public_key}"
+    # def __str__(self):
+    #     if not self.client_id:
+    #         return ""
+    #     return f"Client ID: {self.client_id.hex()}, Name: {self.user_name}, Public Key: {self.public_key}"
 
 
 
@@ -30,6 +30,6 @@ class Client_List_Request(Base_Request):
     def __init__(self, header):
         super().__init__(request = header)
 
-    def __str__(self):
-        super_str = super().__str__()
+    # def __str__(self):
+    #     super_str = super().__str__()
 

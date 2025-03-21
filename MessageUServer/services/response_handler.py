@@ -1,6 +1,7 @@
 from  models.base_response import *
 from utils.defines import *
 from models.register_response import *
+import sys
 
 
 
@@ -61,9 +62,16 @@ class Response_Handler:
 
     def create_binary_users_list_response(self):
         users_list = self.client_handler.get_client_list()
+        # list_payload = get_biary_data_from_list(users_list)
+        binary_names_list = from_tup_to_items(users_list)
+        padded_binary = pad_list_items(binary_names_list, USER_NAME_SIZE , ZERO_CHAR)
+        list_payload = concat_binary_items(padded_binary)
+        print(len(list_payload))
+        print(type(list_payload))
+
         client_id = self.client_handler.get_client_id()
-        binaryUsersList = names_list_to_binary(users_list)
-        payload_size = binaryUsersList.size()
-        response = Users_List_Response(client_id, binaryUsersList, payload_size)
+        payload_size = CLIENT_ID_SIZE + len(list_payload)
+
+        response = Users_List_Response(client_id, list_payload, payload_size)
         binary_response = response.get_binary_response()
         return binary_response

@@ -6,8 +6,8 @@ class MessageRequest(TargetClientRequest):
     def __init__(self, client_id, version, code, payload_size, payload):
         super().__init__(client_id, version, code, payload_size, payload)
 
-    def __str__(self):
-        return f"Client ID: {self.client_id.hex()}, Version: {self.version}, Code: {self.code}, Payload Size: {self.payload_size}, Payload: {self.payload}"
+    # def __str__(self):
+    #     return f"Client ID: {self.client_id.hex()}, Version: {self.version}, Code: {self.code}, Payload Size: {self.payload_size}, Payload: {self.payload}"
 
     def process_request(self, client):
         pass
