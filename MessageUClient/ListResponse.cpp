@@ -1,9 +1,14 @@
-#include "ListResponse.h"
+﻿#include "ListResponse.h"
 #include "utils.h"
+#include <algorithm>
 
 ListResponse::ListResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string payload)
 	: RegisterResponse(version, code, payloadSize, payload)
 {	
+	//print payloaseSize and payload size
+	
+	if (payloadSize > 0)
+		parsePayload(payload);
 }
 
 ListResponse::~ListResponse()
@@ -12,10 +17,45 @@ ListResponse::~ListResponse()
 
 void ListResponse::parsePayload(std::string payload)
 {
+	int singleRecordSize = MAX_NAME_SIZE + CLIENT_ID_SIZE + 1;
+	if ((this->getPayloadSize() % singleRecordSize) != 0) {
+		throw std::runtime_error("Error: List size is invalid");
+	}
+	int usersCount = this->getPayloadSize() / singleRecordSize;
+	uint32_t offset = 0;
+	for (int i = 0; i < usersCount; i++) {
+		
+		std::string name;		
+		name.resize(MAX_NAME_SIZE);
+		std::string id;
+		id.resize(CLIENT_ID_SIZE);
+		
+		memcpy(&name[0], payload.data() + offset, MAX_NAME_SIZE);
+		offset += MAX_NAME_SIZE;	
+		memcpy(&id[0], payload.data() + offset, CLIENT_ID_SIZE);
+		offset += CLIENT_ID_SIZE;
+		clientList.push_back(std::make_pair(name, id));
+	}
 	
 }
 
-std::vector<std::string> ListResponse::displayClientList()
+void ListResponse::displayClientList()
 {
-	return std::vector<std::string>();
+	if (clientList.size() == 0) {
+		std::cout << "No clients registered" << std::endl;
+	}
+	else {
+		for (auto& client : clientList) {
+			std::cout << client.first << std::endl;
+		}
+	}
+	
+}
+
+void ListResponse::sortClientList()
+{
+	std::sort(clientList.begin(), clientList.end(), [](const std::pair<std::string, std::string>& a, const std::pair<std::string, std::string>& b) {
+		return a.second < b.second;
+		});
+	
 }

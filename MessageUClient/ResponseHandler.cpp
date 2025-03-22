@@ -5,6 +5,7 @@
 #include "RequestInfo.h"
 #include "BaseResponse.h"
 #include "RegisterResponse.h"
+#include "ListResponse.h"
 #include "client.h"
 #include "UImanager.h"
 
@@ -61,8 +62,11 @@ std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResp
 			if (bytesReceived == RESPONSE_HEADER_SIZE) {
 				break;
 			}
+			if (bytesReceived == 0) {
+				throw std::runtime_error("Error: connection closed by server");
+			}
 			bytesReceived = 0;
-		}
+		}		
 		return responseHeader;
 	}
 	catch (const std::exception& e) {
@@ -120,7 +124,9 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			break;
 		}*/
 		case RsponseCode::CLIENT_LIST: {
-			std::cout << "list received" << std::endl;
+			std::cout << "Users list:" << std::endl;
+			ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+			listResponse.displayClientList();
 			break;
 		}
 		case RsponseCode::GENERAL_ERROR: {

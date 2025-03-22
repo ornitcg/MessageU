@@ -27,7 +27,6 @@ void RegisterResponse::parsePayload(std::string payload) {
 	}
 	clientId.resize(CLIENT_ID_SIZE);
 	memcpy(&clientId[0], payload.data(), CLIENT_ID_SIZE);
-	std::cout << "in RegisterResponse::parsePayload Client ID: " << clientId << std::endl;
 }
 
 

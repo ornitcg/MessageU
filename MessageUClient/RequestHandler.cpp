@@ -22,17 +22,14 @@ RequestHandler::~RequestHandler(){
 
 bool RequestHandler::handleChoice(const int choice)
 {
-	std::cout << "in handleChoice " << std::endl; // TODO DEBUG
 	std::string binaryData = "";
 	try {
 		switch (static_cast<MenuOption> (choice)) {
 		case MenuOption::REGISTER:
 			binaryData = RequestHandler::getRegisterClientBinaryRequest();
-			std::cout << "DEBUG Request for register client\n";
 			break;
 		case MenuOption::GET_CLIENT_LIST:
 			binaryData = RequestHandler::getClientsListBinaryRequest();
-			std::cout << "DEBUG Request for clients list\n";
 			break;
 		case MenuOption::GET_PUBLIC_KEY:
 			std::cout << "Request for public key\n";
@@ -43,7 +40,7 @@ bool RequestHandler::handleChoice(const int choice)
 		case MenuOption::SEND_TEXT_MESSAGE:
 			std::cout << "Send a text message\n";
 			break;
-			case MenuOption::GET_SYMMETRIC_KEY:
+		case MenuOption::GET_SYMMETRIC_KEY:
 			std::cout << "Send a request for symmetric key\n";
 			break;
 		case MenuOption::SEND_SYMMETRIC_KEY:
@@ -132,6 +129,6 @@ void RequestHandler::sendBinaryData(std::string& binaryData) {
 	if (sendRes == SOCKET_ERROR) {
 		throw std::runtime_error("Error: send failed");
 	}
-	std::cout << "DEBUG sendRes: " << sendRes << std::endl; //DEBUG	
+	std::cout << "DEBUG in RequestHandler sendBinaryData sendRes: " << sendRes << std::endl; //DEBUG	
 
 }
