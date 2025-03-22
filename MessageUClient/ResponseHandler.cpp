@@ -118,11 +118,11 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 		case RsponseCode::MESSAGE_SENT: {
 			std::cout << "Text message received" << std::endl;
 			break;
-		}
-		case RsponseCode::CLIENT_LIST: {
-			std::cout << "Symmetric key received" << std::endl;
-			break;
 		}*/
+		case RsponseCode::CLIENT_LIST: {
+			std::cout << "list received" << std::endl;
+			break;
+		}
 		case RsponseCode::GENERAL_ERROR: {
 			std::cout << "Server responded with error" << std::endl;	
 			if (static_cast<RequestCode>(choice) == RequestCode::REGISTER) {

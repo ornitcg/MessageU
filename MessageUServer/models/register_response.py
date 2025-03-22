@@ -21,14 +21,14 @@ class Register_Response(Base_Response):
 ########## ******************************###########
 
 
-class Users_List_Response(Register_Response):
-    def __init__(self, client_id, binary_users_list, payload_size):
-        super().__init__(  client_id, payload_size)
-        self.binary_users_list = binary_users_list
+class Users_List_Response(Base_Response):
+    def __init__(self, list_payload, payload_size):
+        super().__init__(payload_size = payload_size, code = Response_Code.CLIENT_LIST.value[0])
+        self.binary_users_list = list_payload
 
     def get_binary_response(self):
-        binary_header_and_client_id = super().get_binary_response()
-        binary_response = binary_header_and_client_id + self.binary_users_list
+        binary_header= super().get_binary_response()
+        binary_response = binary_header + self.binary_users_list
         return binary_response
 
 ########## ******************************###########

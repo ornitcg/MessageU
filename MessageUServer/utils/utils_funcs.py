@@ -1,6 +1,7 @@
 from utils.server_messages import *
 from utils.names import *
 from utils.defines import *
+import uuid
 
 
 def read_port_from_file():
@@ -26,11 +27,22 @@ def get_binary_data_from_list(list):
 
 
 def from_tup_to_items(list):
-    items = [tup[0] for tup in list]
+    items = [(tup[0] , tup[1]) for tup in list]
     return items
 
 def pad_list_items(list,max,char):
     return [item.ljust(max,char) for item in list]
+
+def get_binary_list_payload(list, max, char):
+    st = b''
+    for item in list:
+        id = item[0]
+        user_name = str(item[1])
+        user_name = user_name.ljust(max,char)
+        user_name = user_name.encode()
+        record = user_name + id
+        st += record
+    return st
 
 
 def concat_binary_items(list):

@@ -61,9 +61,9 @@ class Client_Dao:
     def get_all_clients(self, exclude_id=None):
         try:
             if exclude_id:
-                self.cursor.execute("SELECT UserName FROM clients WHERE ID != ?", (exclude_id,))
+                self.cursor.execute("SELECT ID ,UserName FROM clients WHERE ID != ?", (exclude_id,))
             else:
-                self.cursor.execute("SELECT UserName FROM clients")
+                self.cursor.execute("SELECT ID, UserName FROM clients")
             return self.cursor.fetchall()
         except sqlite3.Error as e:
             print("ERROR: Error getting clients ", e)

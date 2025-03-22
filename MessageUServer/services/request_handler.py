@@ -111,6 +111,7 @@ class Request_Handler:
         client_id = request_object.get_client_id()
         try:
             client_list = self.db_mngr.get_all_clients(exclude_id = client_id)
+
             self.set_client_list(client_list)
             print(f"DEBUG: Client list:") # TODO DEBUG
             pprint.pprint(client_list)
