@@ -14,6 +14,6 @@ public:
 	~ListResponse();
 	void displayClientList();
 	void sortClientList();
-	std::vector<std::pair<std::string, Client>>& getClientList();
+	std::vector<std::pair<std::string, Client>> getClientList();
 };
 

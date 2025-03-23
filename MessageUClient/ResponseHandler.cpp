@@ -128,7 +128,7 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			std::cout << "Users list:" << std::endl;
 			ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
 			listResponse.displayClientList();
-
+			currentClient.setClientsList(listResponse.getClientList());
 			break;
 		}
 		case RsponseCode::GENERAL_ERROR: {

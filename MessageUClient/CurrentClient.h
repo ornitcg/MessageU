@@ -20,7 +20,7 @@ public:
 	void saveToFile() ;
 	void generateNewKeys();
 
-	void setClientsList(std::vector<std::pair<std::string, Client>>& clientList);
+	void setClientsList(std::vector<std::pair<std::string, Client>> clientList);
 	void updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList);
 
 	// Getter for the client list

@@ -78,7 +78,7 @@ void CurrentClient::generateNewKeys()
 	}
 }
 
-void CurrentClient::setClientsList(std::vector<std::pair<std::string, Client>>& clientList)
+void CurrentClient::setClientsList(std::vector<std::pair<std::string, Client>> clientList)
 {
 	this->clientList = clientList;
 }

@@ -65,7 +65,7 @@ void ListResponse::sortClientList()
 	
 }
 
-std::vector<std::pair<std::string, Client>>& ListResponse::getClientList() 
+std::vector<std::pair<std::string, Client>> ListResponse::getClientList() 
 {
 	return clientList;
 }
