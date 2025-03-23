@@ -35,6 +35,7 @@ bool RequestHandler::handleChoice(const int choice)
 			break;
 		case MenuOption::GET_PUBLIC_KEY:
 			binaryData = RequestHandler::getPublicKeyBinaryRequest();
+			std::cout << "Request for public key\n";
 			break;
 		case MenuOption::GET_WAITING_MESSAGES:
 			std::cout << "Request for waiting messages\n";

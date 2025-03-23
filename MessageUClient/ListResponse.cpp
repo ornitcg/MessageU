@@ -21,7 +21,7 @@ ListResponse::~ListResponse()
 
 void ListResponse::parsePayload(std::string payload)
 {
-	int singleRecordSize = MAX_NAME_SIZE + CLIENT_ID_SIZE + 1;
+	int singleRecordSize = MAX_NAME_SIZE + CLIENT_ID_SIZE +1;
 	if ((this->getPayloadSize() % singleRecordSize) != 0) {
 		throw std::runtime_error("Error: List size is invalid");
 	}
@@ -35,14 +35,20 @@ void ListResponse::parsePayload(std::string payload)
 		id.resize(CLIENT_ID_SIZE);
 		
 		memcpy(&name[0], payload.data() + offset, MAX_NAME_SIZE);
-		offset += MAX_NAME_SIZE;	
+		offset += MAX_NAME_SIZE + 1;	
 		memcpy(&id[0], payload.data() + offset, CLIENT_ID_SIZE);
 		offset += CLIENT_ID_SIZE;
 		Client newClient = Client(id, name);
+		
+		name = removeZeroPadding(name);
+		//name = trimNonPrintableChars(name);
 		clientList.push_back(std::make_pair(name, newClient));
 	}
 	
 }
+
+
+
 
 void ListResponse::displayClientList()
 {

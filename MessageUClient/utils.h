@@ -31,3 +31,5 @@ std::string toLittleEndian16string(uint16_t value);
 uint16_t toLittleEndian16(uint16_t value);
 //void printAsHex(const std::string& binaryData);
 bool isLittleEndian();
+std::string trimNonPrintableChars(const std::string& str);
+std::string removeZeroPadding(const std::string& str);

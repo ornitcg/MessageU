@@ -87,3 +87,23 @@ bool isLittleEndian() {
 	static const uint16_t test = 0x0001;
 	return (*reinterpret_cast<const uint8_t*>(&test) == 1);
 }
+
+std::string trimNonPrintableChars(const std::string& str)
+{
+	size_t firstPrintable = 0;
+	
+	while (firstPrintable < str.length() && (str[firstPrintable] < 32 || str[firstPrintable] > 126)) {
+		firstPrintable++;
+	}
+	return  str.substr(firstPrintable);
+}
+
+std::string removeZeroPadding(const std::string& str)
+{
+	size_t nullPos = str.find('\0');
+	std::string noPaddingStr = "";
+	if (nullPos != std::string::npos) {
+		noPaddingStr = str.substr(0, nullPos);
+	}
+	return noPaddingStr;
+}
