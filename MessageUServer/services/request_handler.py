@@ -3,6 +3,7 @@ from models.base_response import *
 from utils.defines import *
 from models.register_request import *
 from models.base_request import Base_Request
+from models.public_key_request import *
 import pprint
 
 
@@ -32,7 +33,7 @@ class Request_Handler:
                 self.client_handler.set_client_with_request_object(request_object)
                 return self.get_client_list(request_object)
             elif code == RequestCode.GET_PUBLIC_KEY.value[0]:
-                pass
+                return self.get_target_public_key(request_object)
             elif code == RequestCode.SEND_MESSAGE.value[0]:
                 pass
             elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
@@ -85,6 +86,7 @@ class Request_Handler:
         offset += CODE_SIZE
         payload_size = int.from_bytes(inb[offset:offset + PAYLOAD_SIZE], byteorder='little')
         offset += PAYLOAD_SIZE
+        print(f"DEBUG: Header: {client_id}, {version}, {code}, {payload_size}") # TODO DEBUG
         self.header = Base_Request(client_id, version, code, payload_size)
 
     def get_request_object(self, inb):
@@ -98,8 +100,8 @@ class Request_Handler:
             return Register_Request(self.header, payload)
         elif code == RequestCode.GET_CLIENT_LIST.value[0]:
             return Client_List_Request(self.header)
-        # elif code == RequestCode.GET_PUBLIC_KEY.value[0]:
-        #     return GetPublicKeyRequest(client_id, version, code, payload_size, payload)
+        elif code == RequestCode.GET_PUBLIC_KEY.value[0]:
+            return Public_Key_Request(self.header, payload)
         # elif code == RequestCode.SEND_MESSAGE.value[0]:
         #     return SendMessageRequest(client_id, version, code, payload_size, payload)
         # elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
@@ -118,4 +120,20 @@ class Request_Handler:
             return True
         except Exception as e:
             print(f"ERROR: Error getting client list: {e}")
+            raise e
+
+
+    def get_target_public_key(self, request_object):
+        target_client_id = request_object.get_target_client_id()
+        print(f"DEBUG: Getting public key for client {target_client_id}") # TODO DEBUG
+        try:
+            public_key = self.db_mngr.get_public_key_by_id(target_client_id)
+            if public_key:
+                self.client_handler.set_target_public_key(public_key[0])
+                self.client_handler.set_target_client_id(target_client_id)
+                return True
+            else:
+                raise Exception("ERROR: Client not found")
+        except Exception as e:
+            print(f"ERROR: Error getting public key: {e}")
             raise e

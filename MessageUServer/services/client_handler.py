@@ -16,6 +16,7 @@ class Client_Handler:
         self.clientList = []
         self.user_name = None
         self.public_key = None
+        self.target_public_key = None
         self.inb = b''  # for incoming binary data
         self.outb = b''  # for outgoing binary data
         self.last_seen = None
@@ -163,3 +164,16 @@ class Client_Handler:
 
     def get_client_list(self):
         return self.clientList
+
+
+    def set_target_public_key(self, key):
+        self.target_public_key = key
+
+    def get_target_public_key(self):
+        return self.target_public_key
+
+    def set_target_client_id(self, client_id):
+        self.target_client_id = client_id
+
+    def get_target_client_id(self):
+        return self.target_client_id

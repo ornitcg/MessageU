@@ -1,6 +1,8 @@
 from  models.base_response import *
 from utils.defines import *
 from models.register_response import *
+from models.public_key_response import *
+
 import sys
 
 
@@ -36,6 +38,7 @@ class Response_Handler:
             elif request_object.code == RequestCode.GET_CLIENT_LIST.value[0]:
                 response = self.create_binary_users_list_response()
             elif request_object.code == RequestCode.GET_PUBLIC_KEY.value[0]:
+                response = self.create_binary_public_key_response()
                 pass
             elif request_object.code == RequestCode.SEND_MESSAGE.value[0]:
                 pass
@@ -65,5 +68,18 @@ class Response_Handler:
         list_payload = get_binary_list_payload(users_list, USER_NAME_SIZE, ZERO_CHAR)
         payload_size = len(list_payload)
         response = Users_List_Response(list_payload, payload_size)
+        binary_response = response.get_binary_response()
+        return binary_response
+
+
+
+    def create_binary_public_key_response(self):
+        target_public_key = self.client_handler.get_target_public_key()
+        target_client_id = self.client_handler.get_target_client_id()
+        print(f"DEBUG: Public key response payload: {target_public_key}")
+        if target_public_key is None:
+            print("DEBUG: Public key not found")
+            raise Exception("Public key not found")
+        response = Public_Key_Response(target_client_id, target_public_key)
         binary_response = response.get_binary_response()
         return binary_response

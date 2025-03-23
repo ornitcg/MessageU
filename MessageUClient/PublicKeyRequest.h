@@ -7,12 +7,12 @@ class PublicKeyRequest :
     public BaseRequest
 {
 private:
-	std::string clientId;
+	std::string payloadClientId;
 
 
 public:
 	
-	PublicKeyRequest(std::string& userName);
+	PublicKeyRequest(std::string& payloadClientId);
 	~PublicKeyRequest();
 
 	std::string getBinaryRequest();

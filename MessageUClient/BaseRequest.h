@@ -18,5 +18,7 @@ public:
 	BaseRequest(uint16_t requestCode, std::string& clientId);
 	BaseRequest(uint16_t requestCode, uint32_t payloadSize);
 	virtual ~BaseRequest();
+	void setClientId(std::string& clientId);
 };
+
 

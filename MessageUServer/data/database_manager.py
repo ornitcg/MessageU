@@ -65,6 +65,10 @@ class Database_Manager:
     def get_client_by_id(self, client_id):
         return self.client_dao.get_client_by_id(client_id)
 
+    def get_public_key_by_id(self, client_id):
+        print(f"DEBUG: in db manager Getting public key for client {client_id}")
+        return self.client_dao.get_public_key_by_id(client_id)
+
     def get_client_by_username(self, username):
         return self.client_dao.get_client_by_username(username)
 

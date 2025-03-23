@@ -103,11 +103,12 @@ std::string RequestHandler::getClientsListBinaryRequest()
 std::string RequestHandler::getPublicKeyBinaryRequest()
 {
 	try {
-		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), currentClient.getClientId());
+		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), CLIENT_ID_SIZE);
+		request.setClientId(currentClient.getClientId());
 		std::string binaryData = request.getBinaryHeader();
 		std::string requestedUserName = uiManager.getUserNameFromConsole();
-		std::string requestedClientId = currentClient.getClientIdByName(requestedUserName);
-		binaryData.append(requestedClientId);
+		std::string payload = currentClient.getClientIdByName(requestedUserName);
+		binaryData.append(payload);
 		return binaryData;
 	}
 	catch (const std::exception& e) {

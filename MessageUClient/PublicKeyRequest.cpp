@@ -2,9 +2,9 @@
 #include "RequestInfo.h"
 
 
-PublicKeyRequest::PublicKeyRequest(std::string& clientId) : BaseRequest(static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), CLIENT_ID_SIZE)
+PublicKeyRequest::PublicKeyRequest(std::string& payloadClientId) : BaseRequest(static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), CLIENT_ID_SIZE)
 {
-	this->clientId = clientId;
+	this->payloadClientId = payloadClientId;
 }
 
 PublicKeyRequest::~PublicKeyRequest()

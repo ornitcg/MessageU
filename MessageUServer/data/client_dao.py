@@ -50,6 +50,15 @@ class Client_Dao:
             print("ERROR: Error getting client ", e)
             return None
 
+    def get_public_key_by_id(self, client_id):
+        try:
+            print(f"DEBUG: in client dao Getting public key for client {client_id}")
+            self.cursor.execute("SELECT PublicKey FROM clients WHERE ID=?", (client_id,))
+            return self.cursor.fetchone()
+        except sqlite3.Error as e:
+            print("ERROR: Error getting client ", e)
+            return None
+
     def get_client_by_username(self, username):
         try:
             self.cursor.execute("SELECT * FROM clients WHERE UserName=?", (username,))

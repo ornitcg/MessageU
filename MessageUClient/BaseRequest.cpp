@@ -12,8 +12,17 @@ BaseRequest::BaseRequest(uint16_t requestCode, uint32_t payloadSize)
 	this->payloadSize = payloadSize;
 }
 
+
+
 BaseRequest::~BaseRequest()
 {
+}
+
+
+
+void BaseRequest::setClientId(std::string& clientId)
+{
+	this->clientId = clientId;
 }
 
 
