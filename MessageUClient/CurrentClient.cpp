@@ -112,3 +112,13 @@ void CurrentClient::updateClientList(const std::vector<std::pair<std::string, Cl
 {
 	clientList = newClientList;
 }
+
+std::string CurrentClient::getClientIdByName(const std::string& name) const
+{
+	for (auto client : clientList) {
+		if (client.first == name) {
+			return client.second.getClientId();
+		}
+	}
+	throw std::runtime_error("Error: client not found");
+}

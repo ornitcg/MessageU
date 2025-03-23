@@ -34,7 +34,7 @@ bool RequestHandler::handleChoice(const int choice)
 			binaryData = RequestHandler::getClientsListBinaryRequest();
 			break;
 		case MenuOption::GET_PUBLIC_KEY:
-			//binaryData = RequestHandler::getPublicKeyBinaryRequest();
+			binaryData = RequestHandler::getPublicKeyBinaryRequest();
 			std::cout << "Request for public key\n";
 			break;
 		case MenuOption::GET_WAITING_MESSAGES:
@@ -101,8 +101,20 @@ std::string RequestHandler::getClientsListBinaryRequest()
 	}
 }
 
-void RequestHandler::requestPublicKey()
+std::string RequestHandler::getPublicKeyBinaryRequest()
 {
+	try {
+		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), currentClient.getClientId());
+		std::string binaryData = request.getBinaryHeader();
+		std::string requestedUserName = uiManager.getUserNameFromConsole();
+		std::string requestedClientId = currentClient.getClientIdByName(requestedUserName);
+		binaryData.append(requestedClientId);
+		return binaryData;
+	}
+	catch (const std::exception& e) {
+		throw e;
+	}
+
 }
 
 void RequestHandler::requestWaitingMessages()

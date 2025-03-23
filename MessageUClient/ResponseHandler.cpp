@@ -11,7 +11,6 @@
 
 
 ResponseHandler::ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager) : conn(conn), currentClient(currentClient), uiManager(uiManager){
-
 }
 
 ResponseHandler::~ResponseHandler()

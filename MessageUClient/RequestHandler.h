@@ -24,7 +24,7 @@ private:
 	
 	std::string getRegisterClientBinaryRequest();
 	std::string getClientsListBinaryRequest();
-	void requestPublicKey();
+	std::string getPublicKeyBinaryRequest();
 	void requestWaitingMessages();
 	void sendTextMessage();
 	void requestSymmetricKey();
