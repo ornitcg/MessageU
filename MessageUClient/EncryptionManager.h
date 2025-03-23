@@ -8,9 +8,9 @@
 class EncryptionManager
 {
 private:
-	std::string publicKey;
-	std::string privateKey;
-	std::map<std::string, std::string> symmetricKeys; //client id, symmetric key
+	std::string publicKey = "";
+	std::string privateKey = "";
+	std::string symKey = "";
 
 public:
 	EncryptionManager();

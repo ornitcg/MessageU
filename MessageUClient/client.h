@@ -1,35 +1,38 @@
 #pragma once
-#include "utils.h"
-#include "Connection.h"
+#include <string>
 #include "EncryptionManager.h"
+
 
 class Client
 {
-private:
-	const Connection& conn ;
-	EncryptionManager encMngr;
+protected:
+	//EncryptionManager encMngr;
 	std::string clientId = "";
-	std::string userName = "";	
-	std::vector<std::string> clientsList; //list of clientNamess
-	
-	
-	void setPublicKey(std::string& publicKey);
+	std::string userName = "";
+	EncryptionManager encMngr;
 
-	
+	void setPublicKey(std::string& publicKey);	
 		
 
 public:
-	Client(const Connection& conn);
-	~Client();
+	Client();
+	Client(std::string& clientId , std::string& userName);
+	virtual ~Client();
 	void setUserName(std::string& userName);
 	void unsetUserName();
-	std::string& getUserName() ;
-	std::string& getPublicKey();
-	std::string& getClientId();
-	const Connection& getConnection();
+	virtual std::string& getUserName() ;
+	virtual std::string& getPublicKey();
+	virtual std::string& getClientId();
 	void setClientID(const std::string& clientId);
 	void setPrivateKey(const std::string& keyString);
-	std::string& getPrivateKey();
-	std::string getEncodedToBase64PrivateKey();
+	virtual std::string& getPrivateKey();
+	virtual std::string getEncodedToBase64PrivateKey();
+
+
+	bool operator<(const Client& other) const {
+		return userName < other.userName;
+	}
+
+	
 };
 

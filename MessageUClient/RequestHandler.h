@@ -9,6 +9,8 @@
 #include "Base64Wrapper.h"
 #include "EncryptionManager.h"
 #include "Client.h"
+#include "CurrentClient.h"
+#include "Connection.h"
 #include "UImanager.h"
 
 //create enum for menu options
@@ -16,7 +18,8 @@
 class RequestHandler
 {
 private:		
-	Client& client;
+	const Connection& conn;
+	CurrentClient& currentClient;
 	UImanager& uiManager;
 	
 	std::string getRegisterClientBinaryRequest();
@@ -29,10 +32,12 @@ private:
 
 	void sendBinaryData(std::string& binaryData);
 
+	//std::string getPublicKeyBinaryRequest();
+
 
 
 public:
-	RequestHandler(Client& client, UImanager& uiManager);
+	RequestHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager);
 	~RequestHandler();
 	
 	bool handleChoice(const int choice);

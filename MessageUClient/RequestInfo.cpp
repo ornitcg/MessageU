@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-
+/* retrieves the textual description from info vector*/
 std::string getRequestDescription(MenuOption request) {
 	for (const auto& pair : requestInfoVector) {
 		if (pair.first == request) {

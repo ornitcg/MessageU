@@ -50,3 +50,15 @@ std::string UImanager::getUserNameFromConsole()
 	}
 	return userName;
 }
+
+std::string UImanager::getClientIdFromConsole()
+{
+	std::cout << "Enter Client ID: " << std::endl;
+	std::string clientId;
+	std::cin.ignore(); // clean the buffer from any garbage
+	std::getline(std::cin, clientId);
+	if (clientId.size() > CLIENT_ID_SIZE) {
+		throw std::runtime_error("Error: client ID is too long");
+	}
+	return clientId;
+}

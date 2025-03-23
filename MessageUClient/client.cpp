@@ -4,49 +4,25 @@
 #include <fstream>
 #include <iostream>
 #include "Base64Wrapper.h"
+#include "EncryptionManager.h"
 
-Client::Client(const Connection& conn) : conn(conn)
-{	
-	encMngr = EncryptionManager();
-	// if ME_INFO exists take private key from file
-	try {
-		if (std::filesystem::exists(ME_INFO)) {
-			std::ifstream file(ME_INFO, std::ios::binary);
-			if (!file) {
-				throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
-			}
-			else { // set from file
-				std::string line;
-				std::getline(file, line);
-				setUserName(line);
-				std::getline(file, line);
-				setClientID(line);
-				// get private key from multiline
-				std::string key;
-				while (true)
-				{
-					std::getline(file, line);
-					if (line.empty())
-						break;
-					key += line;
-				}				
-				setPrivateKey(key);			
-			}
-		}
-		else {// there is no ME_INFO file so generate keys
-			if (!encMngr.generateAndSaveRSAKeys()) {
-				throw std::runtime_error("Error: RSA key generation failed");
-			}
-		}
-	}
-	catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
-	}	
+
+
+Client::Client() 
+{		
+}
+
+Client::Client(std::string& clientId, std::string& userName)
+{
+	this->clientId = clientId;
+	this->userName = userName;
+	this->encMngr = EncryptionManager();
 }
 
 
 Client::~Client()
 {
+	this->encMngr = EncryptionManager();
 }
 
 std::string& Client::getUserName() 
@@ -94,10 +70,6 @@ void Client::setPublicKey(std::string& publicKey)
 {
 }
 
-const Connection& Client::getConnection()
-{
-	return conn;
-}
 
 
 void Client::setClientID(const std::string& clientId)
@@ -113,3 +85,4 @@ void Client::setPrivateKey(const std::string& keyString)
 		this->encMngr.getPrivateKey() = Base64Wrapper::decode(keyString);
 	else throw std::runtime_error("Error: private key already set");
 }
+

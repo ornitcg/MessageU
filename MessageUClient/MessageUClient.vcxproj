@@ -137,9 +137,11 @@
     <ClInclude Include="BaseResponse.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="CurrentClient.h" />
     <ClInclude Include="EncryptionManager.h" />
     <ClInclude Include="ListResponse.h" />
     <ClInclude Include="MessageRequest.h" />
+    <ClInclude Include="PublicKeyRequest.h" />
     <ClInclude Include="RegisterRequest.h" />
     <ClInclude Include="RegisterResponse.h" />
     <ClInclude Include="RequestHandler.h" />
@@ -160,10 +162,12 @@
     <ClCompile Include="BaseResponse.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="CurrentClient.cpp" />
     <ClCompile Include="EncryptionManager.cpp" />
     <ClCompile Include="ListResponse.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageRequest.cpp" />
+    <ClCompile Include="PublicKeyRequest.cpp" />
     <ClCompile Include="RegisterRequest.cpp" />
     <ClCompile Include="RegisterResponse.cpp" />
     <ClCompile Include="RequestHandler.cpp" />

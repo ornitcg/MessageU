@@ -1,6 +1,9 @@
 ﻿#include "ListResponse.h"
 #include "utils.h"
 #include <algorithm>
+#include <iostream>
+#include "Client.h"
+#include "CurrentClient.h"
 
 ListResponse::ListResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string payload)
 	: RegisterResponse(version, code, payloadSize, payload)
@@ -9,6 +12,7 @@ ListResponse::ListResponse(uint8_t version, uint16_t code, uint32_t payloadSize,
 	
 	if (payloadSize > 0)
 		parsePayload(payload);
+		
 }
 
 ListResponse::~ListResponse()
@@ -34,7 +38,8 @@ void ListResponse::parsePayload(std::string payload)
 		offset += MAX_NAME_SIZE;	
 		memcpy(&id[0], payload.data() + offset, CLIENT_ID_SIZE);
 		offset += CLIENT_ID_SIZE;
-		clientList.push_back(std::make_pair(name, id));
+		Client newClient = Client(id, name);
+		clientList.push_back(std::make_pair(name, newClient));
 	}
 	
 }
@@ -54,8 +59,15 @@ void ListResponse::displayClientList()
 
 void ListResponse::sortClientList()
 {
-	std::sort(clientList.begin(), clientList.end(), [](const std::pair<std::string, std::string>& a, const std::pair<std::string, std::string>& b) {
+	std::sort(clientList.begin(), clientList.end(), [](const std::pair<std::string, Client>& a, const std::pair<std::string, Client>& b) {
 		return a.second < b.second;
 		});
 	
 }
+
+std::vector<std::pair<std::string, Client>>& ListResponse::getClientList() 
+{
+	return clientList;
+}
+
+

@@ -6,11 +6,12 @@
 #include "BaseResponse.h"
 #include "RegisterResponse.h"
 #include "ListResponse.h"
-#include "client.h"
+#include "CurrentClient.h"
 #include "UImanager.h"
 
 
-ResponseHandler::ResponseHandler(Client& client, UImanager& uiManager) : client(client), uiManager(uiManager){
+ResponseHandler::ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager) : conn(conn), currentClient(currentClient), uiManager(uiManager){
+
 }
 
 ResponseHandler::~ResponseHandler()
@@ -32,7 +33,7 @@ std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
 		char buffer[MAX_BUFF] = { 0 };
 		int bytesReceived = 0;
 		while (true) {
-			bytesReceived = recv(client.getConnection().getClientSocket(), buffer, payloadSize, 0);
+			bytesReceived = recv(conn.getClientSocket(), buffer, payloadSize, 0);
 			if (bytesReceived > 0) {
 				payload.append(buffer, bytesReceived);
 			}
@@ -55,7 +56,7 @@ std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResp
 		char buffer[RESPONSE_HEADER_SIZE] = { 0 };
 		int bytesReceived = 0;
 		while (true) {
-			bytesReceived = recv(client.getConnection().getClientSocket(), buffer, RESPONSE_HEADER_SIZE, 0);
+			bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE, 0);
 			if (bytesReceived > 0) {
 				responseHeader.append(buffer, bytesReceived);
 			}
@@ -107,15 +108,15 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 		case RsponseCode::REGISTER_SUCEEDED: {
 			std::cout << "Registration successful" << std::endl;
 			RegisterResponse response = RegisterResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
-			this->client.setClientID(response.getClientId());
+			this->currentClient.setClientID(response.getClientId());
 			saveUserInfoToFile();
 			break;
 		}		
-		/*case RsponseCode::PUBLIC_KEY: {
+		case RsponseCode::PUBLIC_KEY: {
 			std::cout << "Public key received" << std::endl;
 			break;
 		}
-		case RsponseCode::WAITING_MESSAGES: {
+		/*case RsponseCode::WAITING_MESSAGES: {
 			std::cout << "Waiting messages received" << std::endl;
 			break;
 		}
@@ -127,13 +128,14 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			std::cout << "Users list:" << std::endl;
 			ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
 			listResponse.displayClientList();
+
 			break;
 		}
 		case RsponseCode::GENERAL_ERROR: {
 			std::cout << "Server responded with error" << std::endl;	
 			if (static_cast<RequestCode>(choice) == RequestCode::REGISTER) {
 				std::cout << "Registration failed" << std::endl;
-				client.unsetUserName(); //revert userName to empty
+				currentClient.unsetUserName(); //revert userName to empty
 			}
 			break;
 		}
@@ -152,21 +154,7 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 	
 
 void ResponseHandler::saveUserInfoToFile() {
-	try {
-		//std::string filename = "me" + std::to_string(rand() % 1000) + ".info"; //TODO remove
-		std::ofstream file(ME_INFO, std::ios::binary);
-		if (!file) {
-			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
-		}
-		
-		file << client.getUserName() << std::endl;
-		file << client.getClientId() << std::endl;
-		file << client.getEncodedToBase64PrivateKey() << std::endl;	
-		file.close();
-	}
-	catch (const std::exception& e) {
-		std::cout << "Error saving user info to file: " << e.what() << std::endl;
-	}
+	currentClient.saveToFile();
 }
 
 

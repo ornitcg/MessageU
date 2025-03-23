@@ -1,12 +1,12 @@
 #pragma once
 #include "RegisterResponse.h"
 #include <vector>
+#include "Client.h"
 
-class ListResponse :
-    public RegisterResponse
+class ListResponse :  public RegisterResponse
 {
 private:
-	std::vector<std::pair<std::string, std::string>> clientList;
+	std::vector<std::pair<std::string, Client>> clientList;
 	void parsePayload(std::string payload);
 
 public:
@@ -14,6 +14,6 @@ public:
 	~ListResponse();
 	void displayClientList();
 	void sortClientList();
-
+	std::vector<std::pair<std::string, Client>>& getClientList();
 };
 

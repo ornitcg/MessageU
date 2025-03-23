@@ -4,17 +4,17 @@
 #include "RequestHandler.h"
 #include "ResponseHandler.h"
 #include "UserNameException.h"
-#include "Client.h"
+#include "CurrentClient.h"
 
 
 int main() {
 	
 	try {
 		Connection conn = Connection();
-		Client client = Client(conn);  // takes details from file if exists
+		CurrentClient currentClient = CurrentClient();  // takes details from file if exists
 		UImanager uiManager = UImanager();		
-		RequestHandler requestHandler = RequestHandler(client, uiManager);
-		ResponseHandler responseHandler = ResponseHandler(client, uiManager);
+		RequestHandler requestHandler = RequestHandler(conn, currentClient, uiManager);
+		ResponseHandler responseHandler = ResponseHandler(conn, currentClient , uiManager);
 		
 		while (true) {			
 			try {

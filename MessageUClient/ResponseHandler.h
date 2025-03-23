@@ -1,17 +1,18 @@
 #pragma once
 #include <string>
-#include "Client.h"
+#include "CurrentClient.h"
 #include "Connection.h"
 #include "UImanager.h"
 #include "BaseResponse.h"	
-#include <fstream>
-#include <iostream>
+
+
 
 
 class ResponseHandler
 {
 private:
-	Client& client;
+	const Connection& conn;
+	CurrentClient& currentClient;
 	UImanager& uiManager;
 	void saveUserInfoToFile();
 
@@ -19,7 +20,7 @@ private:
 	
 
 public:
-	ResponseHandler(Client& client, UImanager& uiManager);
+	ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager);
 	~ResponseHandler();
 	void receiveServerResponse(int choice);
 	std::string receivePayload(uint32_t getPayloadSize);
