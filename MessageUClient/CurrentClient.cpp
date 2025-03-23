@@ -108,9 +108,34 @@ bool CurrentClient::hasSymmetricKey(const std::string& clientId) const
 
 }
 
+void CurrentClient::updateTargetPublicKey(const std::string& targetClientId, const std::string& targetPublicKey)
+{
+	for (auto& client : clientList) {
+		if (client.second.getClientId() == targetClientId) {
+			client.second.setPublicKey(targetPublicKey);
+			break;
+		}
+	}
+}
+
+
+
+//Adds to clients list, clients that their user name does not appear in it
 void CurrentClient::updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList)
 {
-	clientList = newClientList;
+	for (auto client : newClientList) {
+		bool found = false;
+		for (auto existingClient : clientList) {
+			if (client.first == existingClient.first) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			clientList.push_back(client);
+		}
+	}
+
 }
 
 std::string CurrentClient::getClientIdByName(const std::string& name) const

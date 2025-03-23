@@ -50,7 +50,7 @@ void ListResponse::parsePayload(std::string payload)
 
 
 
-void ListResponse::displayClientList()
+void ListResponse::displayClientListNames()
 {
 	if (clientList.size() == 0) {
 		std::cout << "No clients registered" << std::endl;

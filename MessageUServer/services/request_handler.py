@@ -127,9 +127,11 @@ class Request_Handler:
         target_client_id = request_object.get_target_client_id()
         print(f"DEBUG: Getting public key for client {target_client_id}") # TODO DEBUG
         try:
-            public_key = self.db_mngr.get_public_key_by_id(target_client_id)
-            if public_key:
-                self.client_handler.set_target_public_key(public_key[0])
+            target_public_key = self.db_mngr.get_public_key_by_id(target_client_id)
+            print(f"Type: {type(target_public_key)}, Content: {target_public_key}")
+            print(f"Type after indexing: {type(target_public_key[0])}, Length: {len(target_public_key[0]) if hasattr(target_public_key[0], '__len__') else 'Not a sequence'}")
+            if target_public_key:
+                self.client_handler.set_target_public_key(target_public_key[0])
                 self.client_handler.set_target_client_id(target_client_id)
                 return True
             else:

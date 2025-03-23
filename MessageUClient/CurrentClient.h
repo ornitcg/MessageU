@@ -30,5 +30,7 @@ public:
 	// Methods for symmetric key management not implemented yet
 	void addSymmetricKey(const std::string& clientId, const std::string& key);
 	bool hasSymmetricKey(const std::string& clientId) const;
+
+	void updateTargetPublicKey(const std::string& clientId, const std::string& publicKey);
 };
 

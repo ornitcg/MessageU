@@ -5,6 +5,7 @@
 #include "RequestInfo.h"
 #include "BaseResponse.h"
 #include "RegisterResponse.h"
+#include "PublicKeyResponse.h"
 #include "ListResponse.h"
 #include "CurrentClient.h"
 #include "UImanager.h"
@@ -113,6 +114,8 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 		}		
 		case RsponseCode::PUBLIC_KEY: {
 			std::cout << "Public key received" << std::endl;
+			PublicKeyResponse response = PublicKeyResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+			currentClient.updateTargetPublicKey(response.getTargetClientId(), response.getTargetPublicKey());
 			break;
 		}
 		/*case RsponseCode::WAITING_MESSAGES: {
@@ -126,7 +129,7 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 		case RsponseCode::CLIENT_LIST: {
 			std::cout << "Users list:" << std::endl;
 			ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
-			listResponse.displayClientList();
+			listResponse.displayClientListNames();
 			currentClient.setClientsList(listResponse.getClientList());
 			break;
 		}

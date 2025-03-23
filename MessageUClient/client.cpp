@@ -66,8 +66,11 @@ void Client::unsetUserName()
 	this->userName = "";
 }
 
-void Client::setPublicKey(std::string& publicKey)
+void Client::setPublicKey(const std::string& publicKey)
 {
+	if(this->encMngr.getPublicKey().empty())
+		this->encMngr.getPublicKey() = publicKey;
+	else throw std::runtime_error("Error: public key already set");
 }
 
 

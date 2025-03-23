@@ -11,7 +11,6 @@ protected:
 	std::string userName = "";
 	EncryptionManager encMngr;
 
-	void setPublicKey(std::string& publicKey);	
 		
 
 public:
@@ -27,6 +26,7 @@ public:
 	void setPrivateKey(const std::string& keyString);
 	virtual std::string& getPrivateKey();
 	virtual std::string getEncodedToBase64PrivateKey();
+	void setPublicKey(const std::string& publicKey);
 
 
 	bool operator<(const Client& other) const {

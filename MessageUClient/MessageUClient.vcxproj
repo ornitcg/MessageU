@@ -142,6 +142,7 @@
     <ClInclude Include="ListResponse.h" />
     <ClInclude Include="MessageRequest.h" />
     <ClInclude Include="PublicKeyRequest.h" />
+    <ClInclude Include="PublicKeyResponse.h" />
     <ClInclude Include="RegisterRequest.h" />
     <ClInclude Include="RegisterResponse.h" />
     <ClInclude Include="RequestHandler.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageRequest.cpp" />
     <ClCompile Include="PublicKeyRequest.cpp" />
+    <ClCompile Include="PublicKeyResponse.cpp" />
     <ClCompile Include="RegisterRequest.cpp" />
     <ClCompile Include="RegisterResponse.cpp" />
     <ClCompile Include="RequestHandler.cpp" />

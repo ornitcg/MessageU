@@ -39,7 +39,6 @@ class Response_Handler:
                 response = self.create_binary_users_list_response()
             elif request_object.code == RequestCode.GET_PUBLIC_KEY.value[0]:
                 response = self.create_binary_public_key_response()
-                pass
             elif request_object.code == RequestCode.SEND_MESSAGE.value[0]:
                 pass
             elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
@@ -76,7 +75,9 @@ class Response_Handler:
     def create_binary_public_key_response(self):
         target_public_key = self.client_handler.get_target_public_key()
         target_client_id = self.client_handler.get_target_client_id()
-        print(f"DEBUG: Public key response payload: {target_public_key}")
+        print(f"DEBUG: Public key response target_public_key: {target_public_key}")
+        print(f"DEBUG: Public key response target_client_id: {target_client_id}")
+
         if target_public_key is None:
             print("DEBUG: Public key not found")
             raise Exception("Public key not found")
