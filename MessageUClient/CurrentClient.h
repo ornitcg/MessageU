@@ -6,29 +6,36 @@
 class CurrentClient : public Client
 {
 private:
-	std::vector<std::pair<std::string, Client>> clientList ;
-	std::map<std::string, std::string> symmetricKeys; //client id, symmetric key
+	std::string privateKey = "";
+	std::vector<std::pair<std::string, Client>> clientList;  //<userName, client>
 
 
 public:
 
 	CurrentClient();
+	CurrentClient(std::pair < std::string, std::string> rsaKeys);
 	~CurrentClient();
 
-
 	void loadFromFile();
-	void saveToFile() ;
-	void generateNewKeys();
+
+	void saveToFile(EncryptionManager& encMngr);
 
 	void setClientsList(std::vector<std::pair<std::string, Client>> clientList);
+	
 	void updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList);
-	std::string getClientIdByName(const std::string& name) const;
+
+	std::string getTargetClientIdByName(const std::string& userName) const;
+
+	Client getTargetClientByUserName(std::string userName) const;
+
+	void setRSAKeys(std::pair<std::string, std::string> rsaKeys);
+
+	void setPrivateKey(std::string& privateKey);
+	
 	const std::vector<std::pair<std::string, Client>>& getClientList() const;
+
 	std::string getSymmetricKey(const std::string& clientId) const;
 
-
-	// Methods for symmetric key management not implemented yet
-	void addSymmetricKey(const std::string& clientId, const std::string& key);
 	bool hasSymmetricKey(const std::string& clientId) const;
 
 	void updateTargetPublicKey(const std::string& clientId, const std::string& publicKey);

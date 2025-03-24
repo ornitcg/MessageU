@@ -21,14 +21,15 @@ private:
 	const Connection& conn;
 	CurrentClient& currentClient;
 	UImanager& uiManager;
+	EncryptionManager encMngr;
 	
-	std::string getRegisterClientBinaryRequest();
-	std::string getClientsListBinaryRequest();
-	std::string getPublicKeyBinaryRequest();
-	void requestWaitingMessages();
-	void sendTextMessage();
-	void requestSymmetricKey();
-	void sendSymmetricKey();
+	std::string registerClientBinaryRequest();
+	std::string clientsListBinaryRequest();
+	std::string publicKeyBinaryRequest();
+	std::string WaitingMessagesBinaryRequest();
+	std::string sendTextMessageBinaryRequest();
+	std::string symmetricKeyBinaryRequest();
+	//std::string sendSymmetricKeyBinaryRequest();
 
 	void sendBinaryData(std::string& binaryData);
 
@@ -37,7 +38,7 @@ private:
 
 
 public:
-	RequestHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager);
+	RequestHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, EncryptionManager& encMngr);
 	~RequestHandler();
 	
 	bool handleChoice(const int choice);

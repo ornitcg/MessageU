@@ -8,22 +8,21 @@
 class EncryptionManager
 {
 private:
-	std::string publicKey = "";
-	std::string privateKey = "";
-	std::string symKey = "";
+	
 
 public:
 	EncryptionManager();
 	~EncryptionManager();
 
-	bool generateAndSaveRSAKeys();
+	std::pair<std::string, std::string> generateRSAKeys();
+	
+	std::string encodeToBase64(std::string& key);
 
-	bool generateAndSaveSymmetricKey(const std::string& clientId);
+	std::string decodeFromBase64(std::string encodedKey);
 
-	std::string& getPublicKey();
-	std::string& getPrivateKey();
-	std::string getPrivateKeyToBase64();
-	std::string getPrivateKeyFromBase64(std::string encodedPrivateKey);
+	std::string encryptedWithTargetPublicKey(const std::string& PubKey, const std::string& somethingtoEncrypt);
 
+	std::string decryptedWithMyPrivateKey(const std::string& PrivateKey, const std::string& encryptedSomething);
+	
 };
 

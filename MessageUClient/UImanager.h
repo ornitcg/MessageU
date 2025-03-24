@@ -28,5 +28,6 @@ public:
 	int getChoice();
 	std::string getUserNameFromConsole();
 	std::string getClientIdFromConsole();
+	std::string getCurrentUserTextMessageFromConsole();
 };
 

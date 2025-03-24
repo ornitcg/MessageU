@@ -5,16 +5,26 @@
 #include "ResponseHandler.h"
 #include "UserNameException.h"
 #include "CurrentClient.h"
-
+#include "EncryptionManager.h"
+#include <filesystem>	
+#include "utils.h"
 
 int main() {
 	
 	try {
-		Connection conn = Connection();
-		CurrentClient currentClient = CurrentClient();  // takes details from file if exists
+		CurrentClient currentClient;
+		EncryptionManager encMngr = EncryptionManager();
+
+		if (std::filesystem::exists(ME_INFO))
+			currentClient = CurrentClient();  // takes details from file if exists
+		else {
+			currentClient = CurrentClient(encMngr.generateRSAKeys());  // generates new keys for new registration
+		}
+
+		Connection conn = Connection();		
 		UImanager uiManager = UImanager();		
-		RequestHandler requestHandler = RequestHandler(conn, currentClient, uiManager);
-		ResponseHandler responseHandler = ResponseHandler(conn, currentClient , uiManager);
+		RequestHandler requestHandler = RequestHandler(conn, currentClient, uiManager, encMngr);
+		ResponseHandler responseHandler = ResponseHandler(conn, currentClient , uiManager, encMngr);
 		
 		while (true) {			
 			try {
@@ -25,12 +35,23 @@ int main() {
 				bool handled = requestHandler.handleChoice(choice);	
 				if (handled) 
 					responseHandler.receiveServerResponse(choice);
+				
+				//reconnection to make sure the connection is still alive			
+				conn.disconnect();
+				if (!conn.connectionInit()) {
+					//throw ConnectionError("Failed to connect"); //TODO
+					break;
+				}				
 			}	
 			catch (const UserNameException& e) {
 				std::cout << e.what() << std::endl;
 				conn.disconnect();
 				break;
 			}
+			/*catch (const ConnectionError& e) { //TODO
+				throw e;
+			}*/
+
 			catch (const std::exception& e) {
 				std::cout << e.what() << std::endl;							
 			}

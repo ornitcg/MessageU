@@ -140,7 +140,6 @@
     <ClInclude Include="CurrentClient.h" />
     <ClInclude Include="EncryptionManager.h" />
     <ClInclude Include="ListResponse.h" />
-    <ClInclude Include="MessageRequest.h" />
     <ClInclude Include="PublicKeyRequest.h" />
     <ClInclude Include="PublicKeyResponse.h" />
     <ClInclude Include="RegisterRequest.h" />
@@ -150,11 +149,10 @@
     <ClInclude Include="ResponseHandler.h" />
     <ClInclude Include="ResponseType.h" />
     <ClInclude Include="RSAWrapper.h" />
-    <ClInclude Include="TargetClientRequest.h" />
+    <ClInclude Include="MessageRequest.h" />
     <ClInclude Include="UImanager.h" />
     <ClInclude Include="UserNameException.h" />
     <ClInclude Include="utils.h" />
-    <ClInclude Include="uuid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AESWrapper.cpp" />
@@ -167,7 +165,6 @@
     <ClCompile Include="EncryptionManager.cpp" />
     <ClCompile Include="ListResponse.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MessageRequest.cpp" />
     <ClCompile Include="PublicKeyRequest.cpp" />
     <ClCompile Include="PublicKeyResponse.cpp" />
     <ClCompile Include="RegisterRequest.cpp" />
@@ -177,11 +174,10 @@
     <ClCompile Include="ResponseHandler.cpp" />
     <ClCompile Include="ResponseType.cpp" />
     <ClCompile Include="RSAWrapper.cpp" />
-    <ClCompile Include="TargetClientRequest.cpp" />
+    <ClCompile Include="MessageRequest.cpp" />
     <ClCompile Include="UImanager.cpp" />
     <ClCompile Include="UserNameException.cpp" />
     <ClCompile Include="utils.cpp" />
-    <ClCompile Include="uuid.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

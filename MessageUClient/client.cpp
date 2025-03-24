@@ -16,19 +16,22 @@ Client::Client(std::string& clientId, std::string& userName)
 {
 	this->clientId = clientId;
 	this->userName = userName;
-	this->encMngr = EncryptionManager();
 }
 
 
 Client::~Client()
 {
-	this->encMngr = EncryptionManager();
 }
 
-std::string& Client::getUserName() 
+
+
+void Client::setClientID(std::string& clientId)
 {
-	return userName;
+	if (this->clientId.empty())
+		this->clientId = clientId;
+	else throw std::runtime_error("Error: client ID already set");
 }
+
 
 std::string& Client::getClientId()
 {
@@ -36,20 +39,17 @@ std::string& Client::getClientId()
 }
 
 
+
+void Client::setPublicKey(const std::string& publicKey)
+{
+	if (this->publicKey.empty())
+		this->publicKey = publicKey;
+	else throw std::runtime_error("Error: public key already set");
+}
+
 std::string& Client::getPublicKey()
 {
-	return encMngr.getPublicKey();
-}
-
-std::string& Client::getPrivateKey()
-{
-	return encMngr.getPrivateKey();
-}
-
-std::string Client::getEncodedToBase64PrivateKey()
-{
-	std::string key = encMngr.getPrivateKeyToBase64();
-	return key;
+	return publicKey;
 }
 
 
@@ -66,26 +66,26 @@ void Client::unsetUserName()
 	this->userName = "";
 }
 
-void Client::setPublicKey(const std::string& publicKey)
+std::string& Client::getUserName()
 {
-	if(this->encMngr.getPublicKey().empty())
-		this->encMngr.getPublicKey() = publicKey;
-	else throw std::runtime_error("Error: public key already set");
+	return userName;
 }
 
 
 
-void Client::setClientID(const std::string& clientId)
+void Client::setSymKey(std::string& key)
 {
-	if (this->clientId.empty())
-		this->clientId = clientId;
-	else throw std::runtime_error("Error: client ID already set");
+	if (this->symKey.empty())
+		this->symKey = key;
+	else throw std::runtime_error("Error: symmetric key already set");
 }
 
-void Client::setPrivateKey(const std::string& keyString)
+std::string& Client::getSymKey()
 {
-	if (this->encMngr.getPrivateKey().empty())
-		this->encMngr.getPrivateKey() = Base64Wrapper::decode(keyString);
-	else throw std::runtime_error("Error: private key already set");
+	return symKey;
 }
+
+
+
+
 

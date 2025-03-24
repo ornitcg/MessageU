@@ -1,4 +1,4 @@
-#include "ResponseHandler.h"
+﻿#include "ResponseHandler.h"
 #include <string>
 #include "utils.h"
 #include "ResponseType.h"
@@ -11,8 +11,11 @@
 #include "UImanager.h"
 
 
-ResponseHandler::ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager) : conn(conn), currentClient(currentClient), uiManager(uiManager){
+ResponseHandler::ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, EncryptionManager& encMngr) : conn(conn),currentClient(currentClient), uiManager(uiManager), encMngr(encMngr)
+{
 }
+
+
 
 ResponseHandler::~ResponseHandler()
 {
@@ -21,7 +24,9 @@ ResponseHandler::~ResponseHandler()
 void ResponseHandler::receiveServerResponse(int choice) {
 	std::string responseHeaderString = receiveResponseHeader();
 	const BaseResponse responseHeader = parseResponseHeader(responseHeaderString);
-	if (responseHeader.getPayloadSize() > 0) {
+	uint32_t payloadSize = responseHeader.getPayloadSize();
+	std::cout << "in receiveServerResponse : Payload size: " << payloadSize << std::endl;
+	if (payloadSize > 0) {
 		std::string payload = receivePayload(responseHeader.getPayloadSize());
 		handleResponse(choice,responseHeader, payload);
 	}	
@@ -32,10 +37,12 @@ std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
 		std::string payload = "";
 		char buffer[MAX_BUFF] = { 0 };
 		int bytesReceived = 0;
-		while (true) {
-			bytesReceived = recv(conn.getClientSocket(), buffer, payloadSize, 0);
+		int bytesLeftToReceive = payloadSize;
+		while (bytesReceived < payloadSize) {
+			bytesReceived = recv(conn.getClientSocket(), buffer, min(MAX_BUFF, bytesLeftToReceive), 0);
 			if (bytesReceived > 0) {
 				payload.append(buffer, bytesReceived);
+				bytesLeftToReceive -= bytesReceived;
 			}
 			if (payload.size() == payloadSize) {
 				break;
@@ -50,24 +57,52 @@ std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
 	}
 }
 
-std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResponse
+//old func
+//std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResponse
+//	try {
+//		std::string responseHeader = "";
+//		char buffer[RESPONSE_HEADER_SIZE] = { 0 };
+//		int bytesReceived = 0;
+//		while (true) {
+//			bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE, 0);
+//			if (bytesReceived > 0) {
+//				responseHeader.append(buffer, bytesReceived);
+//			}
+//			if (bytesReceived == RESPONSE_HEADER_SIZE) {
+//				break;
+//			}
+//			if (bytesReceived == 0) {
+//				throw std::runtime_error("Error: connection closed by server");
+//			}
+//			bytesReceived = 0;
+//		}		
+//		return responseHeader;
+//	}
+//	catch (const std::exception& e) {
+//		std::cout << e.what() << std::endl;
+//		return "";
+//	}
+//}
+
+
+std::string ResponseHandler::receiveResponseHeader() {
 	try {
-		std::string responseHeader = "";
-		char buffer[RESPONSE_HEADER_SIZE] = { 0 };
-		int bytesReceived = 0;
-		while (true) {
-			bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE, 0);
-			if (bytesReceived > 0) {
-				responseHeader.append(buffer, bytesReceived);
-			}
-			if (bytesReceived == RESPONSE_HEADER_SIZE) {
-				break;
-			}
-			if (bytesReceived == 0) {
+		std::string responseHeader;
+		int totalReceived = 0;
+		char buffer[RESPONSE_HEADER_SIZE];
+
+		// Keep receiving until we have the complete header
+		while (totalReceived < RESPONSE_HEADER_SIZE) {
+			int bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE - totalReceived, 0);
+			std::cout << "in receiveResponseHeader Bytes received: " << bytesReceived << std::endl;
+
+			if (bytesReceived <= 0) {
 				throw std::runtime_error("Error: connection closed by server");
 			}
-			bytesReceived = 0;
-		}		
+			responseHeader.append(buffer, bytesReceived);
+			totalReceived += bytesReceived;
+		}
+
 		return responseHeader;
 	}
 	catch (const std::exception& e) {
@@ -77,6 +112,7 @@ std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResp
 }
 
 
+// parses the response header and returns a BaseResponse object
 BaseResponse ResponseHandler::parseResponseHeader(std::string completeResponse)
 {
 	try {
@@ -88,10 +124,11 @@ BaseResponse ResponseHandler::parseResponseHeader(std::string completeResponse)
 
 		memcpy(&code, completeResponse.data() + SERVER_VERSION_SIZE, RESPONSE_CODE_SIZE);
 		uint16_t codeLE = toLittleEndian16(code);  // Convert 2-byte value
-
+	
 		memcpy(&payloadSize, completeResponse.data() + SERVER_VERSION_SIZE + RESPONSE_CODE_SIZE, RESPONSE_PAYLOAD_SIZE);
 		uint32_t payloadSizeLE = toLittleEndian32(payloadSize);  // Convert 2-byte value
-		return BaseResponse(version, code, payloadSize);		
+	
+		return BaseResponse(version, codeLE, payloadSizeLE);
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -100,22 +137,17 @@ BaseResponse ResponseHandler::parseResponseHeader(std::string completeResponse)
 }
 
 
-
+//handles the response according to the response code
 void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std::string& payload)
 {
 	try {		
 		switch (static_cast<RsponseCode> (header.getCode())) { //esch response object does its own payload parsing
 		case RsponseCode::REGISTER_SUCEEDED: {
-			std::cout << "Registration successful" << std::endl;
-			RegisterResponse response = RegisterResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
-			this->currentClient.setClientID(response.getClientId());
-			saveUserInfoToFile();
+			handleRegisterResponse(header, payload);			
 			break;
 		}		
 		case RsponseCode::PUBLIC_KEY: {
-			std::cout << "Public key received" << std::endl;
-			PublicKeyResponse response = PublicKeyResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
-			currentClient.updateTargetPublicKey(response.getTargetClientId(), response.getTargetPublicKey());
+			handlePublicKeyRecieved(header, payload);			
 			break;
 		}
 		/*case RsponseCode::WAITING_MESSAGES: {
@@ -155,9 +187,24 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 
 	
 
+
+
+
+
+void ResponseHandler::handleRegisterResponse(const BaseResponse& header, std::string& payload) {
+	std::cout << "Registration successful" << std::endl;
+	RegisterResponse response = RegisterResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+	std::string clientId = response.getClientId();
+	this->currentClient.setClientID(clientId);	
+	saveUserInfoToFile();
+}
+
 void ResponseHandler::saveUserInfoToFile() {
-	currentClient.saveToFile();
+	currentClient.saveToFile(encMngr);
 }
 
 
-
+void ResponseHandler::handlePublicKeyRecieved(const BaseResponse& header, std::string& payload) {	
+	PublicKeyResponse response = PublicKeyResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+	currentClient.updateTargetPublicKey(response.getTargetClientId(), response.getTargetPublicKey());
+}

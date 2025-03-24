@@ -16,35 +16,56 @@ EncryptionManager::~EncryptionManager()
 {
 }
 
-bool EncryptionManager::generateAndSaveRSAKeys() {
+std::pair<std::string,std::string> EncryptionManager::generateRSAKeys() {
 	try {
 		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper();
-		privateKey = rsaPrivate.getPrivateKey();
-		publicKey = rsaPrivate.getPublicKey();		
-		return true;
+		std::string privateKey = rsaPrivate.getPrivateKey();
+		std::string publicKey = rsaPrivate.getPublicKey();
+		return std::make_pair(privateKey, publicKey);
 	}
 	catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
-		return false;
+		std::cout << "generateRSAKeys: " << e.what() << std::endl;
+		throw e;
+	}
+	
+}
+
+
+
+std::string EncryptionManager::encodeToBase64(std::string& key) {
+	return Base64Wrapper::encode(key);
+}
+
+std::string EncryptionManager::decodeFromBase64(std::string encodedKey) {
+	return Base64Wrapper::decode(encodedKey);
+}
+
+
+
+std::string EncryptionManager::encryptedWithTargetPublicKey(const std::string& PubKey, const std::string& somethingToEncrypt)
+{
+	try {
+		RSAPublicWrapper rsaPublic = RSAPublicWrapper(PubKey);
+		std::string encrypted = rsaPublic.encrypt(somethingToEncrypt);
+		return encrypted;
+	}
+	catch (const std::exception& e) {
+		std::cout << "Error encoding : " << e.what() << std::endl;
+		throw e;
 	}
 }
+	
+std::string EncryptionManager::decryptedWithMyPrivateKey(const std::string& privateKey, const std::string& encryptedSomething) {
+	try {
+		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper(privateKey);
+		std::string decrypted = rsaPrivate.decrypt(encryptedSomething);
+		return decrypted;
+	}
+	catch (const std::exception& e) {
+		std::cout << "Error decoding : " << e.what() << std::endl;
+		throw e;
+	}
 
-bool EncryptionManager::generateAndSaveSymmetricKey(const std::string& clientId) {
-	return false; //TODO
 }
 
-std::string& EncryptionManager::getPublicKey() {
-	return publicKey;
-}
 
-std::string& EncryptionManager::getPrivateKey() {
-	return privateKey;
-}
-
-std::string EncryptionManager::getPrivateKeyToBase64() {
-	return Base64Wrapper::encode(privateKey);
-}
-
-std::string EncryptionManager::getPrivateKeyFromBase64(std::string encodedPrivateKey) {
-	return Base64Wrapper::decode(encodedPrivateKey);
-}

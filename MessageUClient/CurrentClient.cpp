@@ -6,15 +6,21 @@
 #include <iostream>
 #include "EncryptionManager.h"
 
-CurrentClient::CurrentClient() : Client(), clientList(), symmetricKeys()
-{
+CurrentClient::CurrentClient() : Client(), clientList()
+{	
 	loadFromFile();
 }
 
 
+CurrentClient::CurrentClient(std::pair<std::string, std::string> rsaKeys) : Client(), clientList()
+{
+	setRSAKeys(rsaKeys);
+}
+
 
 CurrentClient::~CurrentClient()
 {
+	
 }
 
 void CurrentClient::loadFromFile()
@@ -45,15 +51,17 @@ void CurrentClient::loadFromFile()
 			}
 		}
 		else {// there is no ME_INFO file so generate keys
-			generateNewKeys();			
+			throw std::runtime_error("Error: user info file does not exist");
 		}
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
+		throw e;
 	}
 }
 
-void CurrentClient::saveToFile() 
+
+void CurrentClient::saveToFile(EncryptionManager& encMngr) 
 {
 	try {
 		//std::string filename = "me" + std::to_string(rand() % 1000) + ".info"; //TODO remove
@@ -61,9 +69,11 @@ void CurrentClient::saveToFile()
 		if (!file) {
 			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
 		}
+		std::string encodedPrivateKey = encMngr.encodeToBase64(privateKey);
+
 		file << getUserName() << std::endl;
 		file << getClientId() << std::endl;
-		file << getEncodedToBase64PrivateKey() << std::endl;
+		file << encodedPrivateKey << std::endl;
 		file.close();
 	}
 	catch (const std::exception& e) {
@@ -71,12 +81,6 @@ void CurrentClient::saveToFile()
 	}
 }
 
-void CurrentClient::generateNewKeys()
-{
-	if (!encMngr.generateAndSaveRSAKeys()) {
-		throw std::runtime_error("Error: RSA key generation failed");
-	}
-}
 
 void CurrentClient::setClientsList(std::vector<std::pair<std::string, Client>> clientList)
 {
@@ -88,31 +92,34 @@ const std::vector<std::pair<std::string, Client>>& CurrentClient::getClientList(
 	return clientList;
 }
 
-void CurrentClient::addSymmetricKey(const std::string& clientId, const std::string& key)
-{
-	symmetricKeys[clientId] = key;
-}
 
-std::string CurrentClient::getSymmetricKey(const std::string& clientId) const
+
+std::string CurrentClient::getSymmetricKey(const std::string& userName) const
 {
-	auto it = symmetricKeys.find(clientId);
-	if (it != symmetricKeys.end()) {
-		return it->second;
+	//search client list , find with user name, what the sym key
+	for (auto client : clientList) {
+		if (client.first == userName) {
+			Client targetClient = client.second;
+			std::string& symKey = targetClient.getSymKey();
+			return symKey;
+		}
 	}
-	return "";
 }
 
-bool CurrentClient::hasSymmetricKey(const std::string& clientId) const
+bool CurrentClient::hasSymmetricKey(const std::string& userName) const
 {
-	return symmetricKeys.find(clientId) != symmetricKeys.end();
-
+	if (getSymmetricKey(userName).empty()) {
+		return false;
+	}
 }
 
 void CurrentClient::updateTargetPublicKey(const std::string& targetClientId, const std::string& targetPublicKey)
 {
 	for (auto& client : clientList) {
-		if (client.second.getClientId() == targetClientId) {
-			client.second.setPublicKey(targetPublicKey);
+		Client& targetClient = client.second;
+		if (targetClient.getClientId() == targetClientId) {
+			targetClient.setPublicKey(targetPublicKey);
+			std::cout << "Public key received for " <<  client.first << std::endl;
 			break;
 		}
 	}
@@ -135,15 +142,38 @@ void CurrentClient::updateClientList(const std::vector<std::pair<std::string, Cl
 			clientList.push_back(client);
 		}
 	}
-
 }
 
-std::string CurrentClient::getClientIdByName(const std::string& name) const
+//finds just the clientId
+std::string CurrentClient::getTargetClientIdByName(const std::string& userName) const
 {
 	for (auto client : clientList) {
-		if (client.first == name) {
+		if (client.first == userName) {
 			return client.second.getClientId();
 		}
 	}
 	throw std::runtime_error("Error: client not found");
 }
+
+//finds the Client object
+Client CurrentClient::getTargetClientByUserName(std::string userName) const
+{
+	for (auto client : clientList) {
+		if (client.first == userName) {
+			return client.second;
+		}
+	}
+	throw std::runtime_error("Error: client not found");
+}
+
+void CurrentClient::setRSAKeys(std::pair<std::string,std::string> rsaKeys)
+{
+	setPrivateKey(rsaKeys.first);
+	setPublicKey(rsaKeys.second);
+}
+
+void CurrentClient::setPrivateKey(std::string& privateKey)
+{
+	this-> privateKey = privateKey;
+}
+

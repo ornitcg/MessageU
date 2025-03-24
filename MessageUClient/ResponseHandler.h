@@ -3,7 +3,8 @@
 #include "CurrentClient.h"
 #include "Connection.h"
 #include "UImanager.h"
-#include "BaseResponse.h"	
+#include "BaseResponse.h"
+#include "EncryptionManager.h"
 
 
 
@@ -14,19 +15,24 @@ private:
 	const Connection& conn;
 	CurrentClient& currentClient;
 	UImanager& uiManager;
+	EncryptionManager encMngr;
 	void saveUserInfoToFile();
+
+
+	void handleRegisterResponse(const BaseResponse& header, std::string& payload);
+	void handlePublicKeyRecieved(const BaseResponse& header, std::string& payload);
 
 
 	
 
 public:
-	ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager);
+	ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, EncryptionManager& encMngr);
 	~ResponseHandler();
 	void receiveServerResponse(int choice);
 	std::string receivePayload(uint32_t getPayloadSize);
 	std::string receiveResponseHeader();
 	BaseResponse parseResponseHeader(std::string completeResponse);
-	void handleResponse(int choice, const BaseResponse& responseHeader, std::string& payload);
+	void handleResponse(int choice,const  BaseResponse& responseHeader, std::string& payload);
 	
 };
 
