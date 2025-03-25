@@ -35,7 +35,7 @@ int main() {
 					break;
 				bool handled = requestHandler.handleChoice(choice);	
 				if (handled) 
-					responseHandler.receiveServerResponse(choice);
+				responseHandler.receiveServerResponse(choice);
 				
 				//reconnection to make sure the connection is still alive			
 				conn.disconnect();

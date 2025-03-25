@@ -143,8 +143,11 @@ class Request_Handler:
     def handle_send_message(self, message_request_object):
         try:
             message = message_request_object.get_message()
-            self.db_mngr.add_message(message)
+            msg_id = self.db_mngr.add_message(message)
+            self.client_handler.set_message_id(msg_id)
             return True
         except Exception as e:
             print(f"ERROR: Error sending message: {e}")
             raise e
+
+

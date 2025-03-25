@@ -127,11 +127,12 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 		/*case RsponseCode::WAITING_MESSAGES: {
 			std::cout << "Waiting messages received" << std::endl;
 			break;
-		}
+		}*/
 		case RsponseCode::MESSAGE_SENT: {
 			std::cout << "Text message received" << std::endl;
+			handleMessageSentAckResponse();
 			break;
-		}*/
+		}
 		case RsponseCode::CLIENT_LIST: {
 			handleListResponse(header, payload);
 			
@@ -188,4 +189,9 @@ void ResponseHandler::handleListResponse(const BaseResponse& header, std::string
 	clientsList.updateClientsList(listResponse.getClientList());
 	clientsList.displayClientListNames();
 
+}
+
+
+void ResponseHandler::handleMessageSentAckResponse() {
+	std::cout << "Message sent successfully" << std::endl;
 }

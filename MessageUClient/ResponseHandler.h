@@ -26,6 +26,8 @@ private:
 
 	void handleListResponse(const BaseResponse& header, std::string& payload);
 
+	void handleMessageSentAckResponse();
+
 
 	
 

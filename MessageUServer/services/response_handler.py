@@ -1,9 +1,7 @@
 from  models.base_response import *
-from utils.defines import *
 from models.register_response import *
 from models.public_key_response import *
-
-import sys
+from models.message_response import *
 
 
 
@@ -40,7 +38,7 @@ class Response_Handler:
             elif request_object.code == RequestCode.GET_PUBLIC_KEY.value[0]:
                 response = self.create_binary_public_key_response()
             elif request_object.code == RequestCode.MESSAGE.value[0]:
-                pass
+                response = self.create_binary_message_response()
             elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
                 pass
             else:
@@ -84,3 +82,17 @@ class Response_Handler:
         response = Public_Key_Response(target_client_id, target_public_key)
         binary_response = response.get_binary_response()
         return binary_response
+
+
+    def create_binary_message_response(self):
+        #do according to message object message type
+        messageRequest = self.client_handler.get_parsed_request()
+        messageType = messageRequest.get_message_type()
+        if messageType == Message_Type.GET_SYM_KEY.value:
+            msg_id = self.client_handler.get_message_id()
+            target_client_id = self.client_handler.get_request_object().get_target_client_id()
+            response = Message_Response(msg_id, target_client_id)
+            binary_response = response.get_binary_response()
+            return binary_response
+        else:
+            raise Exception("Message type not supported")

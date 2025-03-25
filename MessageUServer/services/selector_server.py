@@ -68,7 +68,7 @@ class SelectorServer:
         client_socket, addr = sock.accept()
         print(f"LOG: Accepted connection from {addr}")
         client_socket.setblocking(False)
-        client_handler = Client_Handler(client_socket, addr, self.db_conn, self.db_mngr, self.selector)
+        client_handler = Client_Handler(client_socket, addr, self.db_mngr, self.selector)
         client_handler.update_last_seen()
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         self.selector.register(client_socket, events, data=client_handler)

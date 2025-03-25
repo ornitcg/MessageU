@@ -29,10 +29,10 @@ class Message_Dao:
                 (message.get_to_client(), message.get_from_client(), message.get_message_type(), message.get_content())
             )
             self.conn.commit()
-            return True
+            return self.cursor.lastrowid
         except sqlite3.Error as e:
             print("Error adding message ", e)
-            return False
+            return None
 
     def get_pending_messages(self, client_id):
         try:

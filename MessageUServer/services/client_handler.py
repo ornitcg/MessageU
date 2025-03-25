@@ -3,33 +3,33 @@ import selectors
 import uuid
 
 from utils.defines import *
-from models.base_request import Base_Request
 from services.request_handler import Request_Handler
 from services.response_handler import Response_Handler
 
 
 class Client_Handler:
-    def __init__(self, socket, address, db_conn, db_mngr, selector):
+    def __init__(self, socket, address, db_mngr, selector):
         self.client_socket = socket
         self.address = address
-        self.client_id = None
-        self.clientList = []
-        self.user_name = None
-        self.public_key = None
-        self.target_public_key = None
+        self.db_mngr = db_mngr
+        self.selector = selector
         self.inb = b''  # for incoming binary data
         self.outb = b''  # for outgoing binary data
         self.last_seen = None
-        self.db_mngr = db_mngr
         self.request_handler = Request_Handler(self, db_mngr)
         self.response_handler = Response_Handler(self, db_mngr)
-        self.selector = selector
+        self.user_name = None
+        self.client_id = None
+        self.public_key = None
+        self.clientList = []
+        self.target_public_key = None
         self.is_request_successful = False
+        self.message_id = None
+        self.request_object = None
+        self.response_object = None
 
     def set_client_with_request_object(self, request):
         self.client_id = request.get_client_id()
-
-
 
     def add_to_send_buf(self, data):
         self.outb += data
@@ -108,7 +108,6 @@ class Client_Handler:
             raise e
 
 
-
     def generate_client_id(self):
         new_uuid = uuid.uuid4()
         self.client_id = new_uuid
@@ -177,3 +176,13 @@ class Client_Handler:
 
     def get_target_client_id(self):
         return self.target_client_id
+
+
+    def set_message_id(self, msg_id):
+        self.message_id = msg_id
+
+    def get_message_id(self):
+        return self.message_id
+
+    def get_request_object(self):
+        return self.request_object
