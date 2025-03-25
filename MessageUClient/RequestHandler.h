@@ -28,8 +28,8 @@ private:
 	std::string registerClientBinaryRequest();
 	std::string clientsListBinaryRequest();
 	std::string publicKeyBinaryRequest();
-	std::string WaitingMessagesBinaryRequest();
-	std::string sendTextMessageBinaryRequest();
+	/*std::string WaitingMessagesBinaryRequest();
+	std::string sendTextMessageBinaryRequest();*/
 	std::string symmetricKeyBinaryRequest();
 	//std::string sendSymmetricKeyBinaryRequest();
 

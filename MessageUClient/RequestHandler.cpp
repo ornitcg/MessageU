@@ -40,11 +40,11 @@ bool RequestHandler::handleChoice(const int choice)
 			binaryData = RequestHandler::publicKeyBinaryRequest();
 			break;
 		case MenuOption::GET_WAITING_MESSAGES:
-			binaryData = RequestHandler::WaitingMessagesBinaryRequest();
+			//binaryData = RequestHandler::WaitingMessagesBinaryRequest();
 			std::cout << "Request for waiting messages\n";
 			break;
 		case MenuOption::SEND_TEXT_MESSAGE:
-			binaryData = RequestHandler::sendTextMessageBinaryRequest();
+			//binaryData = RequestHandler::sendTextMessageBinaryRequest();
 			std::cout << "Send a text message\n";
 			break;
 		case MenuOption::GET_SYMMETRIC_KEY:
@@ -90,7 +90,10 @@ std::string RequestHandler::registerClientBinaryRequest()
 		currentClient.setUserName(userName);	
 
 		uint32_t payloadSize = REGISTER_REQUEST_PAYLOAD_SIZE;
-		RegisterRequest registerReq = RegisterRequest(userName, currentClient.getPublicKey(), payloadSize);
+		std::string clientId = currentClient.getClientId();
+		if (clientId.empty())
+			clientId = std::string(CLIENT_ID_SIZE, '\0');
+		RegisterRequest registerReq = RegisterRequest(clientId, userName, currentClient.getPublicKey(), payloadSize);
 		std::string binaryData = registerReq.getBinary();
 		return binaryData;			
 	}
@@ -117,7 +120,7 @@ std::string RequestHandler::clientsListBinaryRequest()
 std::string RequestHandler::publicKeyBinaryRequest()
 {
 	try {
-		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), CLIENT_ID_SIZE);
+		BaseRequest request = BaseRequest( currentClient.getClientId() , static_cast<uint16_t>(RequestCode::GET_PUBLIC_KEY), CLIENT_ID_SIZE);
 		request.setClientId(currentClient.getClientId());
 		std::string binaryData = request.getBinaryHeader();
 		std::string requestedUserName = uiManager.getUserNameFromConsole();
@@ -131,34 +134,34 @@ std::string RequestHandler::publicKeyBinaryRequest()
 
 }
 
-std::string RequestHandler::WaitingMessagesBinaryRequest() //604
-{
-	try {
-		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_WAITING_MESSAGES), currentClient.getClientId());
-		std::string binaryData = request.getBinaryHeader();
-		return binaryData;
-	}
-	catch (const std::exception& e) {
-		throw e;	
-	}	
-}
+//std::string RequestHandler::WaitingMessagesBinaryRequest() //604
+//{
+//	try {
+//		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_WAITING_MESSAGES), currentClient.getClientId());
+//		std::string binaryData = request.getBinaryHeader();
+//		return binaryData;
+//	}
+//	catch (const std::exception& e) {
+//		throw e;	
+//	}	
+//}
 
-std::string RequestHandler::sendTextMessageBinaryRequest()
-{
-	try {
-		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_TEXT_MESSAGE);
-		std::string targetUserName = uiManager.getUserNameFromConsole();
-		std::string messageToTargetUser = uiManager.getCurrentUserTextMessageFromConsole();
-		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
-		uint32_t contentSize = static_cast<uint32_t>(messageToTargetUser.size());
-		MessageRequest request = MessageRequest(currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, messageToTargetUser);
-		std::string binaryData = request.getBinary();
-		return binaryData;
-	}
-	catch (const std::exception& e) {
-		throw e;
-	}
-}
+//std::string RequestHandler::sendTextMessageBinaryRequest()
+//{
+//	try {
+//		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_TEXT_MESSAGE);
+//		std::string targetUserName = uiManager.getUserNameFromConsole();
+//		std::string messageToTargetUser = uiManager.getCurrentUserTextMessageFromConsole();
+//		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
+//		uint32_t contentSize = static_cast<uint32_t>(messageToTargetUser.size());
+//		MessageRequest request = MessageRequest(currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, messageToTargetUser);
+//		std::string binaryData = request.getBinary();
+//		return binaryData;
+//	}
+//	catch (const std::exception& e) {
+//		throw e;
+//	}
+//}
 
 
 
@@ -172,7 +175,8 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 		}
 		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		uint32_t contentSize = 0;
-		MessageRequest request = MessageRequest(currentClient.getClientId(), targetClient.getClientId(), messageType, NO_CONTENT, EMPTY_CONTENT);
+		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + contentSize;
+		MessageRequest request = MessageRequest(payloadSize, currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, EMPTY_CONTENT);
 		std::string binaryData = request.getBinary();
 		return binaryData;
 	}

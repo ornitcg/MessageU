@@ -16,7 +16,7 @@ int main() {
 		EncryptionManager encMngr = EncryptionManager();
 		CurrentClient* currentClient = nullptr;
 		if (std::filesystem::exists(ME_INFO))
-			currentClient = new CurrentClient();  // takes details from file if exists
+			currentClient = new CurrentClient();  // loads details from file if file exists
 		else {
 			currentClient = new CurrentClient(encMngr.generateRSAKeys());  // generates new keys for new registration
 		}

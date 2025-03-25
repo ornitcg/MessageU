@@ -8,10 +8,11 @@ class Message_Request(Base_Request):
         self.parse_payload(payload)
 
     def parse_payload(self, payload):
+        print("Full payload (hex):", payload.hex())
         self.target_client_id = payload[:CLIENT_ID_SIZE]
         print("in message_request.py, target_client_id: ", self.target_client_id)
         offset = CLIENT_ID_SIZE
-        self.message_type = int.from_bytes(payload[offset:MESSAGE_TYPE_SIZE], byteorder='little')
+        self.message_type = int.from_bytes(payload[offset:offset+MESSAGE_TYPE_SIZE], byteorder='little')
         offset += MESSAGE_TYPE_SIZE
         self.content_size = int.from_bytes(payload[offset:offset + CONTENT_SIZE],byteorder='little')
         offset += CONTENT_SIZE

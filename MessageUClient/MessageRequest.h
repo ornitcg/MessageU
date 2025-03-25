@@ -13,7 +13,7 @@ private:
 
 
 public:
-	MessageRequest( std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSizem, std::string content);
+	MessageRequest(uint32_t payloadSize ,std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSizem, std::string content);
 	~MessageRequest();
 	std::string getBinary();
 

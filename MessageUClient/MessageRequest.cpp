@@ -3,7 +3,7 @@
 #include "BaseRequest.h"
 #include <string>
 
-MessageRequest::MessageRequest(std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSize , std::string content) : BaseRequest(static_cast<uint16_t>(RequestCode::SEND_MESSAGE), currenClientId)
+MessageRequest::MessageRequest(uint32_t payloadSize,  std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSize , std::string content) : BaseRequest(currenClientId, static_cast<uint16_t>(RequestCode::SEND_MESSAGE), payloadSize)
 {
 	this->targetClientId = targetClientId;
 	this->messageType = messageType;

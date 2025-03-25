@@ -4,18 +4,18 @@
 #include "utils.h"	
 
 
-BaseRequest::BaseRequest(uint16_t requestCode, uint32_t payloadSize)
+BaseRequest::BaseRequest(std::string& clientId, uint16_t requestCode, uint32_t payloadSize)
 {	
-	this->clientId = std::string(16, '\0');
+	this->clientId = clientId;
 	this->version = SERVER_VERSION;
 	this->requestCode = requestCode;
 	this->payloadSize = payloadSize;
 }
 
-BaseRequest::BaseRequest(uint16_t requestCode, std::string& clientId) :BaseRequest(requestCode, 0)
-{
-	setClientId(clientId);
-}
+//BaseRequest::BaseRequest(uint16_t requestCode, std::string& clientId) :BaseRequest(requestCode, 0)
+//{
+//	setClientId(clientId);
+//}
 
 
 

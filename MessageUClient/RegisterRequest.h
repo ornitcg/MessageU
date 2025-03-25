@@ -10,7 +10,7 @@ private:
 	char publicKey[PUBLIC_KEY_SIZE + 1] = {};// +1 for null terminator
 
 public:
-	RegisterRequest(std::string& userName, std::string& publicKey, uint32_t payloadSize); // request code is known for register
+	RegisterRequest(std::string& clientId,std::string& userName, std::string& publicKey, uint32_t payloadSize); // request code is known for register
 	virtual ~RegisterRequest();
 	void initializePublicKey(const std::string& pubKey);
 	void initializeUserNameWithPadding(const std::string& userName);
