@@ -6,13 +6,13 @@
 #include <iostream>
 #include "EncryptionManager.h"
 
-CurrentClient::CurrentClient() : Client(), clientList()
+CurrentClient::CurrentClient() : Client() 
 {	
 	loadFromFile();
 }
 
 
-CurrentClient::CurrentClient(std::pair<std::string, std::string> rsaKeys) : Client(), clientList()
+CurrentClient::CurrentClient(std::pair<std::string, std::string> rsaKeys) : Client()
 {
 	setRSAKeys(rsaKeys);
 }
@@ -79,91 +79,6 @@ void CurrentClient::saveToFile(EncryptionManager& encMngr)
 	catch (const std::exception& e) {
 		std::cout << "Error saving user info to file: " << e.what() << std::endl;
 	}
-}
-
-
-void CurrentClient::setClientsList(std::vector<std::pair<std::string, Client>> clientList)
-{
-	this->clientList = clientList;
-}
-
-const std::vector<std::pair<std::string, Client>>& CurrentClient::getClientList() const
-{
-	return clientList;
-}
-
-
-
-std::string CurrentClient::getSymmetricKey(const std::string& userName) const
-{
-	//search client list , find with user name, what the sym key
-	for (auto client : clientList) {
-		if (client.first == userName) {
-			Client targetClient = client.second;
-			std::string& symKey = targetClient.getSymKey();
-			return symKey;
-		}
-	}
-}
-
-bool CurrentClient::hasSymmetricKey(const std::string& userName) const
-{
-	if (getSymmetricKey(userName).empty()) {
-		return false;
-	}
-}
-
-void CurrentClient::updateTargetPublicKey(const std::string& targetClientId, const std::string& targetPublicKey)
-{
-	for (auto& client : clientList) {
-		Client& targetClient = client.second;
-		if (targetClient.getClientId() == targetClientId) {
-			targetClient.setPublicKey(targetPublicKey);
-			std::cout << "Public key received for " <<  client.first << std::endl;
-			break;
-		}
-	}
-}
-
-
-
-//Adds to clients list, clients that their user name does not appear in it
-void CurrentClient::updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList)
-{
-	for (auto client : newClientList) {
-		bool found = false;
-		for (auto existingClient : clientList) {
-			if (client.first == existingClient.first) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			clientList.push_back(client);
-		}
-	}
-}
-
-//finds just the clientId
-std::string CurrentClient::getTargetClientIdByName(const std::string& userName) const
-{
-	for (auto client : clientList) {
-		if (client.first == userName) {
-			return client.second.getClientId();
-		}
-	}
-	throw std::runtime_error("Error: client not found");
-}
-
-//finds the Client object
-Client CurrentClient::getTargetClientByUserName(std::string userName) const
-{
-	for (auto client : clientList) {
-		if (client.first == userName) {
-			return client.second;
-		}
-	}
-	throw std::runtime_error("Error: client not found");
 }
 
 void CurrentClient::setRSAKeys(std::pair<std::string,std::string> rsaKeys)

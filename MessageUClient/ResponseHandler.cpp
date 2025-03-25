@@ -9,13 +9,13 @@
 #include "ListResponse.h"
 #include "CurrentClient.h"
 #include "UImanager.h"
+#include "ClientsList.h"
 
 
-ResponseHandler::ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, EncryptionManager& encMngr) : conn(conn),currentClient(currentClient), uiManager(uiManager), encMngr(encMngr)
+
+ResponseHandler::ResponseHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, ClientsList& clientsList, EncryptionManager& encMngr):conn(conn), currentClient(currentClient), uiManager(uiManager), clientsList(clientsList), encMngr(encMngr)
 {
 }
-
-
 
 ResponseHandler::~ResponseHandler()
 {
@@ -36,8 +36,8 @@ std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
 	try {
 		std::string payload = "";
 		char buffer[MAX_BUFF] = { 0 };
-		int bytesReceived = 0;
-		int bytesLeftToReceive = payloadSize;
+		uint32_t bytesReceived = 0;
+		uint32_t bytesLeftToReceive = payloadSize;
 		while (bytesReceived < payloadSize) {
 			bytesReceived = recv(conn.getClientSocket(), buffer, min(MAX_BUFF, bytesLeftToReceive), 0);
 			if (bytesReceived > 0) {
@@ -57,32 +57,6 @@ std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
 	}
 }
 
-//old func
-//std::string ResponseHandler::receiveResponseHeader() {  //equivalent to BaseResponse
-//	try {
-//		std::string responseHeader = "";
-//		char buffer[RESPONSE_HEADER_SIZE] = { 0 };
-//		int bytesReceived = 0;
-//		while (true) {
-//			bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE, 0);
-//			if (bytesReceived > 0) {
-//				responseHeader.append(buffer, bytesReceived);
-//			}
-//			if (bytesReceived == RESPONSE_HEADER_SIZE) {
-//				break;
-//			}
-//			if (bytesReceived == 0) {
-//				throw std::runtime_error("Error: connection closed by server");
-//			}
-//			bytesReceived = 0;
-//		}		
-//		return responseHeader;
-//	}
-//	catch (const std::exception& e) {
-//		std::cout << e.what() << std::endl;
-//		return "";
-//	}
-//}
 
 
 std::string ResponseHandler::receiveResponseHeader() {
@@ -159,10 +133,8 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			break;
 		}*/
 		case RsponseCode::CLIENT_LIST: {
-			std::cout << "Users list:" << std::endl;
-			ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
-			listResponse.displayClientListNames();
-			currentClient.setClientsList(listResponse.getClientList());
+			handleListResponse(header, payload);
+			
 			break;
 		}
 		case RsponseCode::GENERAL_ERROR: {
@@ -206,5 +178,14 @@ void ResponseHandler::saveUserInfoToFile() {
 
 void ResponseHandler::handlePublicKeyRecieved(const BaseResponse& header, std::string& payload) {	
 	PublicKeyResponse response = PublicKeyResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
-	currentClient.updateTargetPublicKey(response.getTargetClientId(), response.getTargetPublicKey());
+	clientsList.updateTargetPublicKey(response.getTargetClientId(), response.getTargetPublicKey());
+}
+
+void ResponseHandler::handleListResponse(const BaseResponse& header, std::string& payload) {
+	std::cout << "Users list:" << std::endl;
+	//std::cout << payload << std::endl;
+	ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+	clientsList.updateClientsList(listResponse.getClientList());
+	clientsList.displayClientListNames();
+
 }

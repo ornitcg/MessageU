@@ -18,6 +18,9 @@ public:
 	Client(std::string& clientId , std::string& userName);
 	virtual ~Client();
 
+	
+	std::string toString() const;
+
 	void setUserName(std::string& userName);
 	void unsetUserName();
 	std::string& getUserName();

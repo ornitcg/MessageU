@@ -39,7 +39,7 @@ class Response_Handler:
                 response = self.create_binary_users_list_response()
             elif request_object.code == RequestCode.GET_PUBLIC_KEY.value[0]:
                 response = self.create_binary_public_key_response()
-            elif request_object.code == RequestCode.SEND_MESSAGE.value[0]:
+            elif request_object.code == RequestCode.MESSAGE.value[0]:
                 pass
             elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
                 pass

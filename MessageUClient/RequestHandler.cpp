@@ -11,11 +11,13 @@
 #include "UImanager.h"
 #include "UserNameException.h"
 #include  "MessageRequest.h"
+#include "ClientsList.h"
+#include "ListRequest.h"
 
 
 namespace fs = std::filesystem;
 
-RequestHandler::RequestHandler(const Connection& conn,  CurrentClient& currentClient, UImanager& uiManager, EncryptionManager& encMngr) : conn(conn), currentClient(currentClient), uiManager(uiManager) , encMngr(encMngr){
+RequestHandler::RequestHandler(const Connection& conn,  CurrentClient& currentClient, UImanager& uiManager, ClientsList& clientsList,  EncryptionManager& encMngr) : conn(conn), currentClient(currentClient), uiManager(uiManager) ,clientsList(clientsList), encMngr(encMngr){
 }
 
 
@@ -81,7 +83,7 @@ std::string RequestHandler::registerClientBinaryRequest()
 {
 	try {
 		if (std::filesystem::exists(ME_INFO)) {
-			throw std::runtime_error("Error: user info file already exists");
+			throw std::runtime_error("Error: You are already registered");
 		}
 
 		std::string userName = uiManager.getUserNameFromConsole(); // checks if length is valid	
@@ -100,7 +102,10 @@ std::string RequestHandler::registerClientBinaryRequest()
 std::string RequestHandler::clientsListBinaryRequest()
 {
 	try {
-		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_CLIENT_LIST), currentClient.getClientId());
+		if (currentClient.getClientId().empty()) {
+			throw std::runtime_error("Error: You have to register first!");
+		}
+		ListRequest request = ListRequest(currentClient.getClientId());
 		std::string binaryData = request.getBinaryHeader();
 		return binaryData;
 	}
@@ -116,7 +121,7 @@ std::string RequestHandler::publicKeyBinaryRequest()
 		request.setClientId(currentClient.getClientId());
 		std::string binaryData = request.getBinaryHeader();
 		std::string requestedUserName = uiManager.getUserNameFromConsole();
-		std::string payload = currentClient.getTargetClientIdByName(requestedUserName);
+		std::string payload = clientsList.getTargetClientIdByName(requestedUserName);
 		binaryData.append(payload);
 		return binaryData;
 	}
@@ -144,7 +149,7 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_TEXT_MESSAGE);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		std::string messageToTargetUser = uiManager.getCurrentUserTextMessageFromConsole();
-		Client targetClient = currentClient.getTargetClientByUserName(targetUserName);
+		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		uint32_t contentSize = static_cast<uint32_t>(messageToTargetUser.size());
 		MessageRequest request = MessageRequest(currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, messageToTargetUser);
 		std::string binaryData = request.getBinary();
@@ -162,7 +167,10 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::GET_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		Client targetClient = currentClient.getTargetClientByUserName(targetUserName);
+		if (!clientsList.hasPublicKey(targetUserName)) {
+			throw std::runtime_error("Request for public key , for this user, first");
+		}
+		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		uint32_t contentSize = 0;
 		MessageRequest request = MessageRequest(currentClient.getClientId(), targetClient.getClientId(), messageType, NO_CONTENT, EMPTY_CONTENT);
 		std::string binaryData = request.getBinary();

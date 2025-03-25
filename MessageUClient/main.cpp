@@ -8,23 +8,24 @@
 #include "EncryptionManager.h"
 #include <filesystem>	
 #include "utils.h"
+#include "ClientsList.h"
 
 int main() {
 	
-	try {
-		CurrentClient currentClient;
+	try {		
 		EncryptionManager encMngr = EncryptionManager();
-
+		CurrentClient* currentClient = nullptr;
 		if (std::filesystem::exists(ME_INFO))
-			currentClient = CurrentClient();  // takes details from file if exists
+			currentClient = new CurrentClient();  // takes details from file if exists
 		else {
-			currentClient = CurrentClient(encMngr.generateRSAKeys());  // generates new keys for new registration
+			currentClient = new CurrentClient(encMngr.generateRSAKeys());  // generates new keys for new registration
 		}
 
 		Connection conn = Connection();		
 		UImanager uiManager = UImanager();		
-		RequestHandler requestHandler = RequestHandler(conn, currentClient, uiManager, encMngr);
-		ResponseHandler responseHandler = ResponseHandler(conn, currentClient , uiManager, encMngr);
+		ClientsList clientsList = ClientsList();
+		RequestHandler requestHandler = RequestHandler(conn, *currentClient, uiManager, clientsList,  encMngr);
+		ResponseHandler responseHandler = ResponseHandler(conn, *currentClient , uiManager, clientsList, encMngr);
 		
 		while (true) {			
 			try {
@@ -56,6 +57,7 @@ int main() {
 				std::cout << e.what() << std::endl;							
 			}
 		}
+		delete currentClient;
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;		

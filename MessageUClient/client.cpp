@@ -53,6 +53,14 @@ std::string& Client::getPublicKey()
 }
 
 
+std::string Client::toString() const
+{
+	std::string str = "User name: " + userName;
+	str += "   Client ID: " + clientId;	
+	str += "   Public key: " + publicKey;
+	return str;
+}
+
 void Client::setUserName(std::string& userName)
 {
 	if (this->userName.empty())

@@ -1,5 +1,5 @@
 import sqlite3
-
+from models.message import Message
 
 class Message_Dao:
     def __init__(self, conn, cursor):
@@ -22,11 +22,11 @@ class Message_Dao:
             print("Error creating messages table ", e)
             return False
 
-    def add_message(self, to_client, from_client, message_type, content):
+    def add_message(self, message):
         try:
             self.cursor.execute(
                 "INSERT INTO messages (ToClient, FromClient, Type, Content) VALUES (?, ?, ?, ?)",
-                (to_client, from_client, message_type, content)
+                (message.get_to_client(), message.get_from_client(), message.get_message_type(), message.get_content())
             )
             self.conn.commit()
             return True
@@ -37,7 +37,12 @@ class Message_Dao:
     def get_pending_messages(self, client_id):
         try:
             self.cursor.execute("SELECT * FROM messages WHERE ToClient=?", (client_id,))
-            return self.cursor.fetchall()
+            msg_records =  self.cursor.fetchall()
+            msg_objects = []
+            for rec in msg_records:
+                message = Message(rec[1], rec[2], rec[3], rec[4])
+                msg_objects.append(message)
+
         except sqlite3.Error as e:
             print("Error getting messages ", e)
             return []

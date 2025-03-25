@@ -13,7 +13,7 @@ CODE_SIZE = 2
 PAYLOAD_SIZE = 4
 USER_NAME_SIZE = 255
 PUBLIC_KEY_SIZE = 160
-MESSAGE_TYPE = 1
+MESSAGE_TYPE_SIZE = 1
 CONTENT_SIZE = 4
 REQUEST_HEADER_SIZE = CLIENT_ID_SIZE + VERSION_SIZE + CODE_SIZE + PAYLOAD_SIZE
 RESPONSE_HEADER_SIZE = VERSION_SIZE + CODE_SIZE + PAYLOAD_SIZE
@@ -32,7 +32,14 @@ class RequestCode(Enum):
     REGISTER = 600, "Register a new client"
     GET_CLIENT_LIST = 601, "Get the list of clients"
     GET_PUBLIC_KEY = 602, "Get the public key of a client"
-    SEND_MESSAGE = 603, "Send a message to a client"
+    MESSAGE = 603, "Send a message to a client"
     GET_WAITING_MESSAGES = 604, "Get waiting messages for a client"
 
+
+class Message_Type(Enum):
+    NONE = 0
+    GET_SYM_KEY = 1
+    SEND_SYM_KEY = 2
+    SEND_TEXT_MESSAGE = 3
+    SEND_FILE = 4
 

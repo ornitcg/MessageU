@@ -12,6 +12,7 @@
 #include "CurrentClient.h"
 #include "Connection.h"
 #include "UImanager.h"
+#include "ClientsList.h"
 
 //create enum for menu options
 
@@ -21,6 +22,7 @@ private:
 	const Connection& conn;
 	CurrentClient& currentClient;
 	UImanager& uiManager;
+	ClientsList& clientsList;
 	EncryptionManager encMngr;
 	
 	std::string registerClientBinaryRequest();
@@ -38,7 +40,7 @@ private:
 
 
 public:
-	RequestHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, EncryptionManager& encMngr);
+	RequestHandler(const Connection& conn, CurrentClient& currentClient, UImanager& uiManager, ClientsList& clientsList, EncryptionManager& encMngr);
 	~RequestHandler();
 	
 	bool handleChoice(const int choice);

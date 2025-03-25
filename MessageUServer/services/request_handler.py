@@ -1,9 +1,8 @@
-import utils
-from models.base_response import *
-from utils.defines import *
+
 from models.register_request import *
-from models.base_request import Base_Request
 from models.public_key_request import *
+from models.message_request import *
+from models.clients_list_request import *
 import pprint
 
 
@@ -34,8 +33,8 @@ class Request_Handler:
                 return self.get_client_list(request_object)
             elif code == RequestCode.GET_PUBLIC_KEY.value[0]:
                 return self.get_target_public_key(request_object)
-            elif code == RequestCode.SEND_MESSAGE.value[0]:
-                pass
+            elif code == RequestCode.MESSAGE.value[0]:
+                return self.handle_send_message(request_object)  #saves message in DB
             elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
                 pass
             else:
@@ -99,11 +98,11 @@ class Request_Handler:
         if code == RequestCode.REGISTER.value[0]:
             return Register_Request(self.header, payload)
         elif code == RequestCode.GET_CLIENT_LIST.value[0]:
-            return Client_List_Request(self.header)
+            return Clients_List_Request(self.header)
         elif code == RequestCode.GET_PUBLIC_KEY.value[0]:
             return Public_Key_Request(self.header, payload)
-        # elif code == RequestCode.SEND_MESSAGE.value[0]:
-        #     return SendMessageRequest(client_id, version, code, payload_size, payload)
+        elif code == RequestCode.MESSAGE.value[0]:
+            return Message_Request(self.header, payload)
         # elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
         #     return GetWaitingMessagesRequest(client_id, version, code, payload_size, payload)
         else:
@@ -138,4 +137,14 @@ class Request_Handler:
                 raise Exception("ERROR: Client not found")
         except Exception as e:
             print(f"ERROR: Error getting public key: {e}")
+            raise e
+
+
+    def handle_send_message(self, message_request_object):
+        try:
+            message = message_request_object.get_message()
+            self.db_mngr.add_message(message)
+            return True
+        except Exception as e:
+            print(f"ERROR: Error sending message: {e}")
             raise e

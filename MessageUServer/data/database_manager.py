@@ -79,9 +79,10 @@ class Database_Manager:
     def update_client_last_seen(self, client_id):
         return self.client_dao.update_client_last_seen(client_id)
 
-    def add_message(self, to_client, from_client, message_type, content):
-        return self.message_dao.add_message(to_client, from_client, message_type, content)
+    def add_message(self, message):
+        return self.message_dao.add_message(message)
 
+    #returns list of message objects
     def get_pending_messages(self, client_id):
         return self.message_dao.get_pending_messages(client_id)
 

@@ -6,7 +6,7 @@
 #include "CurrentClient.h"
 
 ListResponse::ListResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string payload)
-	: RegisterResponse(version, code, payloadSize, payload)
+	: BaseResponse(version, code, payloadSize)
 {	
 	//print payloaseSize and payload size
 	
@@ -42,7 +42,7 @@ void ListResponse::parsePayload(std::string payload)
 		
 		name = removeZeroPadding(name);
 		//name = trimNonPrintableChars(name);
-		clientList.push_back(std::make_pair(name, newClient));
+		clientsList.push_back(std::make_pair(name, newClient));
 	}
 	
 }
@@ -50,30 +50,19 @@ void ListResponse::parsePayload(std::string payload)
 
 
 
-void ListResponse::displayClientListNames()
-{
-	if (clientList.size() == 0) {
-		std::cout << "No clients registered" << std::endl;
-	}
-	else {
-		for (auto& client : clientList) {
-			std::cout << client.first << std::endl;
-		}
-	}
-	
-}
+
 
 void ListResponse::sortClientList()
 {
-	std::sort(clientList.begin(), clientList.end(), [](const std::pair<std::string, Client>& a, const std::pair<std::string, Client>& b) {
+	std::sort(clientsList.begin(), clientsList.end(), [](const std::pair<std::string, Client>& a, const std::pair<std::string, Client>& b) {
 		return a.second < b.second;
 		});
 	
 }
 
-std::vector<std::pair<std::string, Client>> ListResponse::getClientList() 
+std::vector<std::pair<std::string, Client>>& ListResponse::getClientList() 
 {
-	return clientList;
+	return clientsList;
 }
 
 
