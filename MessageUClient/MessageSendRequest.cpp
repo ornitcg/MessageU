@@ -1,9 +1,9 @@
-#include "MessageRequest.h"
+#include "MessageSendRequest.h"
 #include "RequestInfo.h"
 #include "BaseRequest.h"
 #include <string>
 
-MessageRequest::MessageRequest(uint32_t payloadSize,  std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSize , std::string content) : BaseRequest(currenClientId, static_cast<uint16_t>(RequestCode::SEND_MESSAGE), payloadSize)
+MessageSendRequest::MessageSendRequest(uint32_t payloadSize,  std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSize , std::string content) : BaseRequest(currenClientId, static_cast<uint16_t>(RequestCode::SEND_MESSAGE), payloadSize)
 {
 	this->targetClientId = targetClientId;
 	this->messageType = messageType;
@@ -12,13 +12,13 @@ MessageRequest::MessageRequest(uint32_t payloadSize,  std::string& currenClientI
 }
 
 
-MessageRequest::~MessageRequest()
+MessageSendRequest::~MessageSendRequest()
 {
 }
 
 
 
-std::string MessageRequest::getBinary() 
+std::string MessageSendRequest::getBinary() 
 {	
 	std::string binaryData = getBinaryHeader();
 	binaryData.append(targetClientId);

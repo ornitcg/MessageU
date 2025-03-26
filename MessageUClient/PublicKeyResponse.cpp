@@ -2,9 +2,15 @@
 #include <string>
 #include "utils.h"
 
-PublicKeyResponse::PublicKeyResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string payload) : BaseResponse(version, code, payloadSize)
+PublicKeyResponse::PublicKeyResponse(const BaseResponse& header, std::string& payload)
+	: BaseResponse(header.getVersion(), header.getCode(), header.getPayloadSize())
 {
-	parsePayload(payload);		
+	try {
+		parsePayload(payload);
+	}
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
 }	
 
 
@@ -23,7 +29,7 @@ std::string PublicKeyResponse::getTargetClientId()
 }
 
 
-void PublicKeyResponse::parsePayload(std::string payload)
+void PublicKeyResponse::parsePayload(std::string& payload)
 {	
 	this -> targetClientId = payload.substr(0, CLIENT_ID_SIZE);
 	this -> targetPublicKey = payload.substr(CLIENT_ID_SIZE, PUBLIC_KEY_SIZE);

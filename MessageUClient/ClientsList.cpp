@@ -26,11 +26,21 @@ void ClientsList::updateClientList(const std::vector<std::pair<std::string, Clie
 }
 
 //finds just the clientId
-std::string ClientsList::getTargetClientIdByName(const std::string& userName) const
+std::string ClientsList::getTargetClientIdByUserName(const std::string& userName) const
 {
 	for (auto client : clientList) {
 		if (client.first == userName) {
 			return client.second.getClientId();
+		}
+	}
+	throw std::runtime_error("Error: client not found");
+}
+
+std::string ClientsList::getUserNameByTargetClientId(const std::string& targetClientId) const
+{
+	for (auto client : clientList) {
+		if (client.second.getClientId() == targetClientId) {
+			return client.first;
 		}
 	}
 	throw std::runtime_error("Error: client not found");

@@ -3,7 +3,7 @@
 
 
 
-class MessageRequest : public BaseRequest
+class MessageSendRequest : public BaseRequest
 {
 private:
 	std::string targetClientId = targetClientId;
@@ -13,8 +13,8 @@ private:
 
 
 public:
-	MessageRequest(uint32_t payloadSize ,std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSizem, std::string content);
-	~MessageRequest();
+	MessageSendRequest(uint32_t payloadSize ,std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSizem, std::string content);
+	~MessageSendRequest();
 	std::string getBinary();
 
 

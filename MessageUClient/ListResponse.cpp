@@ -5,14 +5,15 @@
 #include "Client.h"
 #include "CurrentClient.h"
 
-ListResponse::ListResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string payload)
-	: BaseResponse(version, code, payloadSize)
+ListResponse::ListResponse(const BaseResponse& header, std::string payload)
+	: BaseResponse(header.getVersion(), header.getCode(), header.getPayloadSize())
 {	
-	//print payloaseSize and payload size
-	
-	if (payloadSize > 0)
+	try {
 		parsePayload(payload);
-		
+	}
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}		
 }
 
 ListResponse::~ListResponse()

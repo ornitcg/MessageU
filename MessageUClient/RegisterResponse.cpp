@@ -6,8 +6,8 @@
 
 
 
-RegisterResponse::RegisterResponse(uint8_t version, uint16_t code, uint32_t payloadSize, std::string payload)
-	: BaseResponse(version, code, payloadSize)
+RegisterResponse::RegisterResponse(const BaseResponse& header, std::string payload)
+	: BaseResponse(header.getVersion(), header.getCode(), header.getPayloadSize())
 {
 	parsePayload(payload);
 }

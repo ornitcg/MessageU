@@ -10,6 +10,7 @@
 #include "CurrentClient.h"
 #include "UImanager.h"
 #include "ClientsList.h"
+#include "MessageSendResponse.h"
 
 
 
@@ -25,9 +26,11 @@ void ResponseHandler::receiveServerResponse(int choice) {
 	std::string responseHeaderString = receiveResponseHeader();
 	const BaseResponse responseHeader = parseResponseHeader(responseHeaderString);
 	uint32_t payloadSize = responseHeader.getPayloadSize();
-	std::cout << "in receiveServerResponse : Payload size: " << payloadSize << std::endl;
+	std::cout << "in receiveServerResponse : Payload size: " << payloadSize << std::endl; //TODO REMOVE
 	if (payloadSize > 0) {
 		std::string payload = receivePayload(responseHeader.getPayloadSize());
+		//print payload
+		std::cout << "in receiveServerResponse Payload: " << payload << std::endl; //TODO REMOVE
 		handleResponse(choice,responseHeader, payload);
 	}	
 }
@@ -87,7 +90,7 @@ std::string ResponseHandler::receiveResponseHeader() {
 
 
 // parses the response header and returns a BaseResponse object
-BaseResponse ResponseHandler::parseResponseHeader(std::string completeResponse)
+BaseResponse ResponseHandler::parseResponseHeader(std::string& completeResponse)
 {
 	try {
 		uint8_t version = 0;
@@ -129,13 +132,11 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			break;
 		}*/
 		case RsponseCode::MESSAGE_SENT: {
-			std::cout << "Text message received" << std::endl;
-			handleMessageSentAckResponse();
+			handleMessageSentAckResponse(header, payload);
 			break;
 		}
 		case RsponseCode::CLIENT_LIST: {
-			handleListResponse(header, payload);
-			
+			handleListResponse(header, payload);			
 			break;
 		}
 		case RsponseCode::GENERAL_ERROR: {
@@ -166,11 +167,12 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 
 void ResponseHandler::handleRegisterResponse(const BaseResponse& header, std::string& payload) {
 	std::cout << "Registration successful" << std::endl;
-	RegisterResponse response = RegisterResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+	RegisterResponse response = RegisterResponse(header, payload);
 	std::string clientId = response.getClientId();
 	this->currentClient.setClientID(clientId);	
 	saveUserInfoToFile();
 }
+
 
 void ResponseHandler::saveUserInfoToFile() {
 	currentClient.saveToFile(encMngr);
@@ -178,20 +180,24 @@ void ResponseHandler::saveUserInfoToFile() {
 
 
 void ResponseHandler::handlePublicKeyRecieved(const BaseResponse& header, std::string& payload) {	
-	PublicKeyResponse response = PublicKeyResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+	PublicKeyResponse response = PublicKeyResponse(header, payload);
 	clientsList.updateTargetPublicKey(response.getTargetClientId(), response.getTargetPublicKey());
 }
 
 void ResponseHandler::handleListResponse(const BaseResponse& header, std::string& payload) {
 	std::cout << "Users list:" << std::endl;
 	//std::cout << payload << std::endl;
-	ListResponse listResponse = ListResponse(header.getVersion(), header.getCode(), header.getPayloadSize(), payload);
+	ListResponse listResponse = ListResponse(header, payload);
 	clientsList.updateClientsList(listResponse.getClientList());
 	clientsList.displayClientListNames();
 
 }
 
 
-void ResponseHandler::handleMessageSentAckResponse() {
-	std::cout << "Message sent successfully" << std::endl;
+void ResponseHandler::handleMessageSentAckResponse(const BaseResponse& header, std::string& payload) {
+	MessageSendResponse response = MessageSendResponse(header, payload);
+	std::string userName = clientsList.getUserNameByTargetClientId(response.getTargetClientId());
+	std::cout << "Message sent successfully to client: " << userName << std::endl;
+	std::cout << "Message ID: " << response.getMessageID() << std::endl;
+
 }

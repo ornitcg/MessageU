@@ -10,7 +10,7 @@
 #include "CurrentClient.h"
 #include "UImanager.h"
 #include "UserNameException.h"
-#include  "MessageRequest.h"
+#include  "MessageSendRequest.h"
 #include "ClientsList.h"
 #include "ListRequest.h"
 
@@ -124,7 +124,7 @@ std::string RequestHandler::publicKeyBinaryRequest()
 		request.setClientId(currentClient.getClientId());
 		std::string binaryData = request.getBinaryHeader();
 		std::string requestedUserName = uiManager.getUserNameFromConsole();
-		std::string payload = clientsList.getTargetClientIdByName(requestedUserName);
+		std::string payload = clientsList.getTargetClientIdByUserName(requestedUserName);
 		binaryData.append(payload);
 		return binaryData;
 	}
@@ -176,7 +176,7 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		uint32_t contentSize = 0;
 		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + contentSize;
-		MessageRequest request = MessageRequest(payloadSize, currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, EMPTY_CONTENT);
+		MessageSendRequest request = MessageSendRequest(payloadSize, currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, EMPTY_CONTENT);
 		std::string binaryData = request.getBinary();
 		return binaryData;
 	}

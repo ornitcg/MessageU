@@ -18,7 +18,9 @@ public:
 
 	void updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList);
 
-	std::string getTargetClientIdByName(const std::string& userName) const;
+	std::string getTargetClientIdByUserName(const std::string& userName) const;
+
+	std::string getUserNameByTargetClientId(const std::string& targetClientId) const;
 
 	Client getTargetClientByUserName(std::string userName) const;
 
