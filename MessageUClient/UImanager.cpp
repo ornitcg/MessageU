@@ -17,14 +17,13 @@ UImanager::~UImanager()
 void UImanager::displayMenu() {
 	std::cout << "\n==== Menu: ====\n";
 	for (const auto& option : requestInfoVector) {
-
 		std::cout << static_cast<int>(option.first) << ") " << option.second.description << "\n";
 	}
 	std::cout << "? ";
 }
 
 
-
+//choice from menu
 int UImanager::getChoice()
 {
 	int choice;
@@ -51,17 +50,6 @@ std::string UImanager::getUserNameFromConsole()
 	return userName;
 }
 
-std::string UImanager::getClientIdFromConsole()
-{
-	std::cout << "Enter Client ID: " << std::endl;
-	std::string clientId;
-	std::cin.ignore(); // clean the buffer from any garbage
-	std::getline(std::cin, clientId);
-	if (clientId.size() > CLIENT_ID_SIZE) {
-		throw std::runtime_error("Error: client ID is too long");
-	}
-	return clientId;
-}
 
 
 std::string UImanager::getCurrentUserTextMessageFromConsole()
@@ -74,4 +62,34 @@ std::string UImanager::getCurrentUserTextMessageFromConsole()
 		throw std::runtime_error("Error: message is too long");
 	}
 	return message;
+}
+
+//TODO TEST THIS
+std::string UImanager::getTextMessageFromConsole() {
+	std::string message;
+	std::string line;
+	std::cout << "Enter your message:" << std::endl;
+	std::cin.ignore();
+	while (std::getline(std::cin, line)) {
+		if (line.empty()) {
+			break;
+		}
+
+		if (!message.empty()) {
+			message += "\n"; // Add newline between lines, not after the last line
+		}
+		message += line;
+	}
+	return message;
+}
+
+
+
+
+void UImanager::displaySingleMessage(std::string& userName,  const std::string& content) {
+	std::cout << "FROM: " << userName << std::endl;
+	std::cout << "CONTENT:"  << std::endl;
+	std::cout << content << std::endl;
+	std::cout << "----<EOM>----" << std::endl;
+	std::cout << std::endl;
 }

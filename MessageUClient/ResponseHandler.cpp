@@ -11,6 +11,7 @@
 #include "UImanager.h"
 #include "ClientsList.h"
 #include "MessageSendResponse.h"
+#include "Message.h"
 
 
 
@@ -34,32 +35,6 @@ void ResponseHandler::receiveServerResponse(int choice) {
 		handleResponse(choice,responseHeader, payload);
 	}	
 }
-
-std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
-	try {
-		std::string payload = "";
-		char buffer[MAX_BUFF] = { 0 };
-		uint32_t bytesReceived = 0;
-		uint32_t bytesLeftToReceive = payloadSize;
-		while (bytesReceived < payloadSize) {
-			bytesReceived = recv(conn.getClientSocket(), buffer, min(MAX_BUFF, bytesLeftToReceive), 0);
-			if (bytesReceived > 0) {
-				payload.append(buffer, bytesReceived);
-				bytesLeftToReceive -= bytesReceived;
-			}
-			if (payload.size() == payloadSize) {
-				break;
-			}
-			bytesReceived = 0;
-		}
-		return payload;
-	}
-	catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
-		return "";
-	}
-}
-
 
 
 std::string ResponseHandler::receiveResponseHeader() {
@@ -87,6 +62,34 @@ std::string ResponseHandler::receiveResponseHeader() {
 		return "";
 	}
 }
+
+
+//receives the payload of the response according to payload size received in the header
+std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
+	try {
+		std::string payload = "";
+		char buffer[MAX_BUFF] = { 0 };
+		uint32_t bytesReceived = 0;
+		uint32_t bytesLeftToReceive = payloadSize;
+		while (bytesReceived < payloadSize) {
+			bytesReceived = recv(conn.getClientSocket(), buffer, min(MAX_BUFF, bytesLeftToReceive), 0);
+			if (bytesReceived > 0) {
+				payload.append(buffer, bytesReceived);
+				bytesLeftToReceive -= bytesReceived;
+			}
+			if (payload.size() == payloadSize) {
+				break;
+			}
+			bytesReceived = 0;
+		}
+		return payload;
+	}
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+		return "";
+	}
+}
+
 
 
 // parses the response header and returns a BaseResponse object
@@ -127,10 +130,11 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			handlePublicKeyRecieved(header, payload);			
 			break;
 		}
-		/*case RsponseCode::WAITING_MESSAGES: {
+		case RsponseCode::WAITING_MESSAGES: {
 			std::cout << "Waiting messages received" << std::endl;
+			handleMessagesListResponse(header, payload);
 			break;
-		}*/
+		}
 		case RsponseCode::MESSAGE_SENT: {
 			handleMessageSentAckResponse(header, payload);
 			break;
@@ -188,8 +192,8 @@ void ResponseHandler::handleListResponse(const BaseResponse& header, std::string
 	std::cout << "Users list:" << std::endl;
 	//std::cout << payload << std::endl;
 	ListResponse listResponse = ListResponse(header, payload);
-	clientsList.updateClientsList(listResponse.getClientList());
-	clientsList.displayClientListNames();
+	clientsList.updateClientsList(listResponse.getClientsList());
+	clientsList.displayClientsListNames();
 
 }
 
@@ -200,4 +204,89 @@ void ResponseHandler::handleMessageSentAckResponse(const BaseResponse& header, s
 	std::cout << "Message sent successfully to client: " << userName << std::endl;
 	std::cout << "Message ID: " << response.getMessageID() << std::endl;
 
+}
+
+
+void ResponseHandler::handleMessagesListResponse(const BaseResponse& header, std::string& payload) {
+	std::cout << "Messages list received:" << std::endl;
+	if (payload.empty()) {
+		std::cout << "No messages" << std::endl;
+		return;
+	}
+	std::string data = payload;
+	size_t messageHeaderSize = CLIENT_ID_SIZE + MESSAGE_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE;
+	//parses the payloade into messages
+	while (!data.empty()) {		
+		uint32_t nextMessageContentSize = Message(data).getContentSize();  //temp object used just for parsing the size
+		std::string messageHeader = cutPartFromData(data, messageHeaderSize);		
+		std::string messageContent = cutPartFromData(data, nextMessageContentSize);
+		Message message = Message(messageHeader, messageContent);
+		
+		std::string userName;
+		try {
+			userName = clientsList.getUserNameByTargetClientId(message.getSourceClientId());
+		}
+		catch (const std::exception& e) {
+			userName = UNKNOWN_USER;
+		}
+		std::string contentToDisplay = handleMessageAccordingToType(message, userName);
+		displaySingleMessage(userName, contentToDisplay);
+	
+	}
+}
+
+
+std::string ResponseHandler::cutPartFromData(std::string& data, size_t partSize) {
+	std::string part = data.substr(0, partSize);
+	data = data.substr(partSize);
+	return part;
+}
+
+
+/* Handles the message according to the message type
+	returns decrypted content to display on screen */
+std::string ResponseHandler::handleMessageAccordingToType(Message& message, std::string& userName) {
+	//switch on msg type
+	uint8_t messageType = message.getMessageType();
+	std::string contentToDisplay = "";
+	switch (static_cast<MessageType>(messageType)) {
+	case MessageType::GET_SYM_KEY: {
+		contentToDisplay = GET_SYM_KEY_MSG;
+		break;
+	}
+	case MessageType::SEND_SYM_KEY: {
+		contentToDisplay = RECV_SYM_KEY_MSG;
+		handleReceivedSymmetricKey(message.getSourceClientId(), message.getRawContent());
+		break;
+	}
+	case MessageType::SEND_TEXT_MESSAGE: {
+		std::string userName = clientsList.getUserNameByTargetClientId(message.getSourceClientId());	
+		contentToDispley = handleTextMessage(userName, message.getRawContent());
+		break;
+	}
+	case MessageType::SEND_FILE: {
+		contentToDisplay = "File received";
+		break;
+	}
+	default:{
+		contentToDisplay = ERROR_TEXT_MSG;
+		break;
+	}
+	}
+	return contentToDisplay;
+}
+
+
+
+
+void ResponseHandler::handleReceivedSymmetricKey(std::string& targetClientId, std::string& encryptedSymKey) {
+	std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
+	clientsList.setSymmetricKeyForUser(targetClientId, decryptedSymKey);
+}
+
+
+std::string ResponseHandler::handleTextMessage(std::string& userName , std::string& rawContent) {
+	 std::string& symKey = clientsList.getSymmetricKeyByUserName(userName);
+	 std::string decryptedContent = encMngr.decryptWithSymmetricKey(symKey, rawContent);
+	 return decryptedContent;
 }

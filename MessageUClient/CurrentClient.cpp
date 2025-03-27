@@ -92,3 +92,8 @@ void CurrentClient::setPrivateKey(std::string& privateKey)
 	this-> privateKey = privateKey;
 }
 
+std::string& CurrentClient::getPrivateKey()
+{
+	return privateKey;
+}
+

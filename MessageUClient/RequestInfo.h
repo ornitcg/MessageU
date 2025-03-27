@@ -19,7 +19,7 @@ enum class RequestCode : uint16_t {
 
 // message types as they appear in the protocol
 enum class MessageType : uint8_t {
-	NONE = 0,
+	NONE = 0, // used as placeholder in vector. Not a real message type
 	GET_SYM_KEY = 1,
 	SEND_SYM_KEY = 2,
 	SEND_TEXT_MESSAGE = 3,

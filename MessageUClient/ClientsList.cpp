@@ -9,18 +9,18 @@ ClientsList::~ClientsList()
 }
 
 //Adds to clients list, clients that their user name does not appear in it
-void ClientsList::updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList)
+void ClientsList::updateClientsListWithNewClients(const std::vector<std::pair<std::string, Client>>& newClientsList)
 {
-	for (auto client : newClientList) {
+	for (auto client : newClientsList) {
 		bool found = false;
-		for (auto existingClient : clientList) {
+		for (auto existingClient : clientsList) {
 			if (client.first == existingClient.first) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			clientList.push_back(client);
+			clientsList.push_back(client);
 		}
 	}
 }
@@ -28,7 +28,7 @@ void ClientsList::updateClientList(const std::vector<std::pair<std::string, Clie
 //finds just the clientId
 std::string ClientsList::getTargetClientIdByUserName(const std::string& userName) const
 {
-	for (auto client : clientList) {
+	for (auto client : clientsList) {
 		if (client.first == userName) {
 			return client.second.getClientId();
 		}
@@ -38,7 +38,7 @@ std::string ClientsList::getTargetClientIdByUserName(const std::string& userName
 
 std::string ClientsList::getUserNameByTargetClientId(const std::string& targetClientId) const
 {
-	for (auto client : clientList) {
+	for (auto client : clientsList) {
 		if (client.second.getClientId() == targetClientId) {
 			return client.first;
 		}
@@ -50,7 +50,7 @@ std::string ClientsList::getUserNameByTargetClientId(const std::string& targetCl
 //finds the Client object
 Client ClientsList::getTargetClientByUserName(std::string userName) const
 {
-	for (auto client : clientList) {
+	for (auto client : clientsList) {
 		if (client.first == userName) {
 			return client.second;
 		}
@@ -61,7 +61,7 @@ Client ClientsList::getTargetClientByUserName(std::string userName) const
 
 void ClientsList::updateTargetPublicKey(const std::string& targetClientId, const std::string& targetPublicKey)
 {
-	for (auto& client : clientList) {
+	for (auto& client : clientsList) {
 		Client& targetClient = client.second;
 		if (targetClient.getClientId() == targetClientId) {
 			targetClient.setPublicKey(targetPublicKey);
@@ -74,7 +74,7 @@ void ClientsList::updateTargetPublicKey(const std::string& targetClientId, const
 
 bool ClientsList::hasSymmetricKey(const std::string& userName) const
 {
-	if (getSymmetricKey(userName).empty()) {
+	if (getSymmetricKeyByUserName(userName).empty()) {
 		return false;
 	}
 }
@@ -82,7 +82,7 @@ bool ClientsList::hasSymmetricKey(const std::string& userName) const
 
 bool ClientsList::hasPublicKey(const std::string& userName) const
 {
-	for (auto client : clientList) {
+	for (auto client : clientsList) {
 		if (client.first == userName) {
 			Client targetClient = client.second;
 			if (targetClient.getPublicKey().empty()) {
@@ -95,11 +95,29 @@ bool ClientsList::hasPublicKey(const std::string& userName) const
 	}
 }
 
+void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std::string& symmetricKey)
+{
+	try {
+		for (auto& client : clientsList) {
+			if (client.first == userName) {
+				client.second.setSymKey(symmetricKey);
+				break;
+			}
+		}
+		throw std::runtime_error("Error: client not found");
+	}
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
+	
+	
+}
 
-std::string ClientsList::getSymmetricKey(const std::string& userName) const
+
+std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
 {
 	//search client list , find with user name, what the sym key
-	for (auto client : clientList) {
+	for (auto client : clientsList) {
 		if (client.first == userName) {
 			Client targetClient = client.second;
 			std::string& symKey = targetClient.getSymKey();
@@ -109,35 +127,35 @@ std::string ClientsList::getSymmetricKey(const std::string& userName) const
 }
 
 //adds only the new users to the list
-void ClientsList::updateClientsList(std::vector<std::pair<std::string, Client>>& ReceivedClientList)
+void ClientsList::updateClientsList(std::vector<std::pair<std::string, Client>>& ReceivedClientsList)
 {
-	for (auto receivedClientRecord : ReceivedClientList) {
+	for (auto receivedClientRecord : ReceivedClientsList) {
 		bool found = false;
-		for (auto existingClientRecord : this->clientList) {
+		for (auto existingClientRecord : this->clientsList) {
 			if (receivedClientRecord.first == existingClientRecord.first) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			this->clientList.push_back(receivedClientRecord);
+			this->clientsList.push_back(receivedClientRecord);
 		}
 	}
 }
 
-const std::vector<std::pair<std::string, Client>>& ClientsList::getClientList() const
+const std::vector<std::pair<std::string, Client>>& ClientsList::getClientsList() const
 {
-	return clientList;
+	return clientsList;
 }
 
 //displays only names
-void ClientsList::displayClientListNames()
+void ClientsList::displayClientsListNames()
 {
-	if (clientList.size() == 0) {
+	if (clientsList.size() == 0) {
 		std::cout << "No clients registered" << std::endl;
 	}
 	else {
-		for (auto& client : clientList) {
+		for (auto& client : clientsList) {
 			std::cout << client.first << std::endl;
 			//std::cout << client.second.toString() << std::endl; //TODO DEBUG REMOVE
 		}

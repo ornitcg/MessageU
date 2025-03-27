@@ -25,7 +25,7 @@ Client::~Client()
 
 
 
-void Client::setClientID(std::string& clientId)
+void Client::setClientID(const std::string& clientId)
 {
 	if (this->clientId.empty())
 		this->clientId = clientId;
@@ -61,7 +61,7 @@ std::string Client::toString() const
 	return str;
 }
 
-void Client::setUserName(std::string& userName)
+void Client::setUserName(const std::string& userName)
 {
 	if (this->userName.empty())
 		this->userName = userName;
@@ -81,10 +81,10 @@ std::string& Client::getUserName()
 
 
 
-void Client::setSymKey(std::string& key)
+void Client::setSymKey(const std::string& symmetricKey)
 {
 	if (this->symKey.empty())
-		this->symKey = key;
+		this->symKey = symmetricKey;
 	else throw std::runtime_error("Error: symmetric key already set");
 }
 

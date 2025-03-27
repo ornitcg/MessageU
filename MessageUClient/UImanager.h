@@ -27,7 +27,8 @@ public:
 	void displayMenu();
 	int getChoice();
 	std::string getUserNameFromConsole();
-	std::string getClientIdFromConsole();
 	std::string getCurrentUserTextMessageFromConsole();
+	std::string getTextMessageFromConsole();
+	void displaySingleMessage(std::string& userName, const std::string& content);
 };
 

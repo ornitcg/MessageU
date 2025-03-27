@@ -23,7 +23,11 @@
 #define SYM_KEY_SIZE 16 // 16 bytes = 128 bits
 #define MESSAGE_TYPE_FIELD_SIZE 1
 #define CONTENT_SIZE_FIELD_SIZE 4
-#define MESAGE_ID_SIZE 4
+#define MESSAGE_ID_SIZE 4
+#define GET_SYM_KEY_MSG "Request for symmetric key"
+#define RECV_SYM_KEY_MSG "Symmetric key received"
+#define ERROR_TEXT_MSG "Can't decrypt message"
+#define UNKNOWN_USER "Unknown user"
 
 #define REGISTER_REQUEST_PAYLOAD_SIZE MAX_NAME_SIZE + PUBLIC_KEY_SIZE + 1 
 

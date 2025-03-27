@@ -42,7 +42,6 @@ void ListResponse::parsePayload(std::string payload)
 		Client newClient = Client(id, name);
 		
 		name = removeZeroPadding(name);
-		//name = trimNonPrintableChars(name);
 		clientsList.push_back(std::make_pair(name, newClient));
 	}
 	
@@ -52,16 +51,7 @@ void ListResponse::parsePayload(std::string payload)
 
 
 
-
-void ListResponse::sortClientList()
-{
-	std::sort(clientsList.begin(), clientsList.end(), [](const std::pair<std::string, Client>& a, const std::pair<std::string, Client>& b) {
-		return a.second < b.second;
-		});
-	
-}
-
-std::vector<std::pair<std::string, Client>>& ListResponse::getClientList() 
+std::vector<std::pair<std::string, Client>>& ListResponse::getClientsList() 
 {
 	return clientsList;
 }

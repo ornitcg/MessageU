@@ -9,14 +9,14 @@
 class ClientsList
 {
 private:
-	std::vector<std::pair<std::string, Client>> clientList  ;  //<userName, client>
+	std::vector<std::pair<std::string, Client>> clientsList  ;  //<userName, client>
 
 
 public:
 	ClientsList();
 	~ClientsList();
 
-	void updateClientList(const std::vector<std::pair<std::string, Client>>& newClientList);
+	void updateClientsListWithNewClients(const std::vector<std::pair<std::string, Client>>& newClientsList);
 
 	std::string getTargetClientIdByUserName(const std::string& userName) const;
 
@@ -30,13 +30,15 @@ public:
 
 	bool hasPublicKey(const std::string& userName) const;
 
+	void setSymmetricKeyForUser(const std::string& userName, const std::string& symmetricKey);
+
 	std::string getSymmetricKey(const std::string& userName) const;
 
-	void updateClientsList(std::vector<std::pair<std::string, Client>>& clientList);
+	void updateClientsList(std::vector<std::pair<std::string, Client>>& clientsList);
 
-	const std::vector<std::pair<std::string, Client>>& getClientList() const;
+	const std::vector<std::pair<std::string, Client>>& getClientsList() const;
 
-	void displayClientListNames();
+	void displayClientsListNames();
 
 
 };

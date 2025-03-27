@@ -7,7 +7,6 @@ class CurrentClient : public Client
 {
 private:
 	std::string privateKey = "";
-	//std::vector<std::pair<std::string, Client>> clientList;  //<userName, client>
 
 
 public:
@@ -24,6 +23,7 @@ public:
 
 	void setPrivateKey(std::string& privateKey);
 	
+	std::string& getPrivateKey();
 
 
 

@@ -91,6 +91,7 @@ class Request_Handler:
     def get_request_object(self, inb):
         offset = REQUEST_HEADER_SIZE
         payload = (inb[offset:offset + self.header.get_payload_size()])
+        print(self.header.get_payload_size())
         return self.generate_request_by_code(payload)
 
     def generate_request_by_code(self, payload):

@@ -12,7 +12,6 @@ private:
 public:
 	ListResponse(const BaseResponse& header , std::string payload);
 	~ListResponse();
-	void sortClientList();
-	std::vector<std::pair<std::string, Client>>& getClientList();
+	std::vector<std::pair<std::string, Client>>& getClientsList();
 };
 

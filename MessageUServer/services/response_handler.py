@@ -88,11 +88,10 @@ class Response_Handler:
         #do according to message object message type
         messageRequest = self.client_handler.get_parsed_request()
         messageType = messageRequest.get_message_type()
-        if messageType == Message_Type.GET_SYM_KEY.value:
-            msg_id = self.client_handler.get_message_id()
-            target_client_id = self.client_handler.get_request_object().get_target_client_id()
-            response = Message_Response(msg_id, target_client_id)
-            binary_response = response.get_binary_response()
-            return binary_response
-        else:
-            raise Exception("Message type not supported")
+        if messageType not in Message_Type:
+            raise Exception("ERROR: Invalid message type")
+        msg_id = self.client_handler.get_message_id()
+        target_client_id = self.client_handler.get_request_object().get_target_client_id()
+        response = Message_Response(msg_id, target_client_id)
+        binary_response = response.get_binary_response()
+        return binary_response

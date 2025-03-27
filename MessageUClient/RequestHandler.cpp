@@ -40,11 +40,11 @@ bool RequestHandler::handleChoice(const int choice)
 			binaryData = RequestHandler::publicKeyBinaryRequest();
 			break;
 		case MenuOption::GET_WAITING_MESSAGES:
-			//binaryData = RequestHandler::WaitingMessagesBinaryRequest();
+			binaryData = RequestHandler::WaitingMessagesBinaryRequest();
 			std::cout << "Request for waiting messages\n";
 			break;
 		case MenuOption::SEND_TEXT_MESSAGE:
-			//binaryData = RequestHandler::sendTextMessageBinaryRequest();
+			binaryData = RequestHandler::sendTextMessageBinaryRequest();
 			std::cout << "Send a text message\n";
 			break;
 		case MenuOption::GET_SYMMETRIC_KEY:
@@ -52,7 +52,7 @@ bool RequestHandler::handleChoice(const int choice)
 			std::cout << "Send a request for symmetric key\n"; //151 -603 TODO
 			break;
 		case MenuOption::SEND_SYMMETRIC_KEY: 
-			//binaryData = RequestHandler::sendSymmetricKeyBinaryRequest();
+			binaryData = RequestHandler::sendSymmetricKeyBinaryRequest();
 			std::cout << "Send your symmetric key\n"; //152 - 603 TODO
 			break;
 		case MenuOption::SEND_FILE:
@@ -78,7 +78,7 @@ bool RequestHandler::handleChoice(const int choice)
 	}
 }
 
-
+//returns binary data of a register request, ready to be sent
 std::string RequestHandler::registerClientBinaryRequest()
 {
 	try {
@@ -102,6 +102,8 @@ std::string RequestHandler::registerClientBinaryRequest()
 	}
 }
 
+
+//returns binary data of a clients-list request, ready to be sent
 std::string RequestHandler::clientsListBinaryRequest()
 {
 	try {
@@ -117,6 +119,8 @@ std::string RequestHandler::clientsListBinaryRequest()
 	}
 }
 
+
+//returns binary data of a public key request, ready to be sent
 std::string RequestHandler::publicKeyBinaryRequest()
 {
 	try {
@@ -134,37 +138,45 @@ std::string RequestHandler::publicKeyBinaryRequest()
 
 }
 
-//std::string RequestHandler::WaitingMessagesBinaryRequest() //604
-//{
-//	try {
-//		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::GET_WAITING_MESSAGES), currentClient.getClientId());
-//		std::string binaryData = request.getBinaryHeader();
-//		return binaryData;
-//	}
-//	catch (const std::exception& e) {
-//		throw e;	
-//	}	
-//}
 
-//std::string RequestHandler::sendTextMessageBinaryRequest()
-//{
-//	try {
-//		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_TEXT_MESSAGE);
-//		std::string targetUserName = uiManager.getUserNameFromConsole();
-//		std::string messageToTargetUser = uiManager.getCurrentUserTextMessageFromConsole();
-//		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
-//		uint32_t contentSize = static_cast<uint32_t>(messageToTargetUser.size());
-//		MessageRequest request = MessageRequest(currentClient.getClientId(), targetClient.getClientId(), messageType, contentSize, messageToTargetUser);
-//		std::string binaryData = request.getBinary();
-//		return binaryData;
-//	}
-//	catch (const std::exception& e) {
-//		throw e;
-//	}
-//}
+
+//returns binary data of a waiting-messages request, ready to be sent
+std::string RequestHandler::WaitingMessagesBinaryRequest() //604
+{
+	try {
+		BaseRequest request = BaseRequest(currentClient.getClientId(), static_cast<uint16_t>(RequestCode::GET_WAITING_MESSAGES), NO_PAYLOAD);
+		std::string binaryData = request.getBinaryHeader();
+		return binaryData;
+	}
+	catch (const std::exception& e) {
+		throw e;	
+	}	
+}
 
 
 
+std::string RequestHandler::sendTextMessageBinaryRequest()
+{
+	try {
+		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_TEXT_MESSAGE);
+		std::string targetUserName = uiManager.getUserNameFromConsole();
+		if (!clientsList.hasSymmetricKey(targetUserName)) {
+			throw std::runtime_error("Request for symmetric key, for this user, first");
+		}
+		std::string textMessage = uiManager.getTextMessageFromConsole(); 
+		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
+		std::string symKey = targetClient.getSymKey();		
+		std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);		
+		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + encryptedMessage.size();
+		MessageSendRequest request = MessageSendRequest(payloadSize, currentClient.getClientId(), targetClient.getClientId(), messageType, encryptedMessage.size(), encryptedMessage);
+	}
+	catch (const std::exception& e) {
+		throw e;
+	}
+}
+
+
+//returns binary data of a get-symmetric-key request, ready to be sent
 std::string RequestHandler::symmetricKeyBinaryRequest()
 {
 	try {
@@ -185,35 +197,42 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 	}
 }
 
-//std::string RequestHandler::sendSymmetricKeyBinaryRequest()
-//{
-//	try{
-//		std::string targetUserName = uiManager.getUserNameFromConsole();
-//		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
-//		Client targetClient = currentClient.getTargetClientByUserName(targetUserName);
-//		
-//		std::string symKey = currentClient.getSymmetricKey(targetUserName);
-//		uint32_t contentSize = SYM_KEY_SIZE;
-//		MessageRequest request = MessageRequest( currentClient.getClientId(), targetClientId, messageType, 0, "");
-//	
-//		std::string binaryData = request.getBinaryHeader();
-//		std::string payload = currentClient.getSymmetricKey();
-//		binaryData.append(payload);
-//		BaseRequest request = BaseRequest(static_cast<uint16_t>(RequestCode::SEND_MESSAGE), currentClient.getClientId());
-//
-//		return binaryData;
-//	}
-//	catch (const std::exception& e) {
-//		throw e;
-//	}
-//
-//}
-//
+
+//returns binary data of a send-symmetric-key request, ready to be sent
+std::string RequestHandler::sendSymmetricKeyBinaryRequest()
+{
+	try {
+		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
+		std::string targetUserName = uiManager.getUserNameFromConsole();
+		if (!clientsList.hasPublicKey(targetUserName)) {
+			throw std::runtime_error("Request for public key , for this user, first");
+		}
+		std::string symKey = "";
+		if (!clientsList.hasSymmetricKey(targetUserName)) {
+			symKey = encMngr.generateSymmetricKey();
+			clientsList.setSymmetricKeyForUser(targetUserName, symKey);
+		}
+		else {
+			symKey = clientsList.getSymmetricKey(targetUserName);
+		}
+		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
+		std::string currentClientId = currentClient.getClientId();
+		std::string content = encMngr.encryptedWithTargetPublicKey(targetClient.getPublicKey(), symKey);
+		uint32_t contentSize = content.size();
+		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + contentSize;
+		MessageSendRequest request = MessageSendRequest(payloadSize, currentClientId, targetClient.getClientId(), messageType, contentSize, content);
+		return request.getBinary();
+	}
+	catch (const std::exception& e) {
+		throw e;
+	}
+	
+}
 
 
 
 
-
+//performs the actual send
 void RequestHandler::sendBinaryData(std::string& binaryData) {
 	int sendRes = send(conn.getClientSocket(), binaryData.c_str(), static_cast<int>(binaryData.size()), 0);
 

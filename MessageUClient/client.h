@@ -21,17 +21,17 @@ public:
 	
 	std::string toString() const;
 
-	void setUserName(std::string& userName);
+	void setUserName(const std::string& userName);
 	void unsetUserName();
 	std::string& getUserName();
 
-	void setClientID(std::string& clientId);
+	void setClientID(const std::string& clientId);
 	std::string& getClientId();
 
 	void setPublicKey(const std::string& publicKey);
 	std::string& getPublicKey();
 
-	void setSymKey(std::string& key);
+	void setSymKey(const std::string& key);
 	std::string& getSymKey();
 
 	bool operator<(const Client& other) const {

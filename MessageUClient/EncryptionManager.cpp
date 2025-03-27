@@ -68,4 +68,28 @@ std::string EncryptionManager::decryptedWithMyPrivateKey(const std::string& priv
 
 }
 
+std::string EncryptionManager::generateSymmetricKey()
+{
+	AESWrapper aes = AESWrapper();
+	unsigned char keyBuffer[AESWrapper::DEFAULT_KEYLENGTH];
+	AESWrapper::GenerateKey(keyBuffer, AESWrapper::DEFAULT_KEYLENGTH);
+	std::string keyString(reinterpret_cast<char*>(keyBuffer), AESWrapper::DEFAULT_KEYLENGTH );
+	return keyString;
+}
+
+
+
+std::string EncryptionManager::encryptWithSymmetricKey(std::string& symKey, std::string& plainContent)
+{
+	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), symKey.size());
+	std::string encryptedContent = aesWrapper.encrypt(plainContent.c_str(), plainContent.size());
+	return encryptedContent;
+}
+
+std::string EncryptionManager::decryptWithSymmetricKey(std::string& symKey, std::string& encryptedContent)
+{
+	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), symKey.size());
+	std::string decryptedContent = aesWrapper.decrypt(encryptedContent.c_str(), encryptedContent.size());
+	return decryptedContent;
+}
 

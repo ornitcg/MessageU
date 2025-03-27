@@ -26,6 +26,16 @@ private:
 	void handleListResponse(const BaseResponse& header, std::string& payload);
 	void handleMessageSentAckResponse(const BaseResponse& header, std::string& payload);
 
+	void handleMessagesListResponse(const BaseResponse& header, std::string& payload);
+
+	std::string cutPartFromData(std::string& data, size_t messageHeaderSize);
+
+	std::string handleMessageAccordingToType(Message& message, std::string& userName);
+
+	void handleReceivedSymmetricKey(std::string& targetClientId, std::string& encryptedSymKey);
+
+	std::string handleTextMessage(std::string& userName, std::string& rawContent);
+
 
 	
 
