@@ -28,14 +28,13 @@ class SelectorServer:
         self.server_socket.setblocking(False)  # non-blocking mode
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(MAX_CONNECTIONS)
-        print(f"DEBUG Server is listening on port {self.port}")
+        print(f"[LOG] Server is listening on port {self.port}")
         self.selector.register(self.server_socket, selectors.EVENT_READ , data=None)
         self.event_loop()
 
 
     def event_loop(self):
         try:
-            print("Server is running")
             while True:
                 events = self.selector.select(timeout=None)
                 for key, mask in events:
@@ -65,7 +64,7 @@ class SelectorServer:
     def accept_connection(self, sock):
         # Accept the connection
         client_socket, addr = sock.accept()
-        print(f"LOG: Accepted connection from {addr}")
+        print(f"[LOG] Accepted connection from {addr}")
         client_socket.setblocking(False)
         client_handler = Client_Handler(client_socket, addr, self.db_mngr, self.selector)
         client_handler.update_last_seen()

@@ -76,6 +76,7 @@ class Request_Handler:
 
     def parse_header(self, inb):
         client_id = inb[:CLIENT_ID_SIZE]
+        self.client_handler.set_client_id(client_id)
         offset = CLIENT_ID_SIZE
         version = int.from_bytes(inb[offset:offset + VERSION_SIZE], byteorder='little')
         offset += VERSION_SIZE

@@ -2,8 +2,8 @@ import struct
 
 class Message:
     def __init__(self, target_id, sender_id, message_type, content, msg_id=None):
-        self.target_id = target_id
         self.msg_id = msg_id
+        self.target_id = target_id
         self.message_type = message_type
         self.content = content
         self.message_size = len(content)
@@ -19,7 +19,8 @@ class Message:
         binary_message += struct.pack('<I', self.msg_id)
         binary_message += struct.pack('<B', self.message_type)
         binary_message += struct.pack('<I', self.message_size)
-        binary_message += self.content.encode()
+        binary_message += self.content
+        return binary_message
 
     #getters
     def get_to_client(self):

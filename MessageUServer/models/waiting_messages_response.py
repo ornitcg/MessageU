@@ -2,7 +2,7 @@ from models.base_response import Base_Response
 from utils.defines import *
 
 
-class Waiting_Messages110_Response(Base_Response):
+class Waiting_Messages_Response(Base_Response):
     def __init__(self, list_payload):
         super().__init__(code = Response_Code.WAITING_MESSAGES.value[0])
         self.binary_messages_list = self.get_binary_payload(list_payload)
@@ -11,7 +11,8 @@ class Waiting_Messages110_Response(Base_Response):
     def get_binary_payload(self, list_payload):
         binary_messages_payload = b""
         for message in list_payload:
-            binary_messages_payload += message.get_binary_response()
+            binary_messages_payload += message.get_binary_message()
+        return binary_messages_payload
 
     def get_binary_response(self):
         binary_header = super().get_binary_response()

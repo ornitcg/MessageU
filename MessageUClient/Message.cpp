@@ -22,7 +22,7 @@ Message::~Message()
 
 
 void Message::parseContentSize(std::string& data) {
-	memcpy(&(this->contentSize), data.data(), CONTENT_SIZE_FIELD_SIZE);
+	memcpy(&(this->contentSize), data.data() + CLIENT_ID_SIZE + MESSAGE_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE , CONTENT_SIZE_FIELD_SIZE);
 	this->contentSize = toLittleEndian32(this->contentSize);
 }
 

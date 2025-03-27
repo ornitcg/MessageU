@@ -40,8 +40,9 @@ class Message_Dao:
             msg_records =  self.cursor.fetchall()
             msg_objects = []
             for rec in msg_records:
-                message = Message(rec[1], rec[2], rec[3], rec[4])
+                message = Message(rec[1], rec[2], rec[3], rec[4], rec[0])
                 msg_objects.append(message)
+            return msg_objects
 
         except sqlite3.Error as e:
             print("[ERROR] Error getting messages ", e)

@@ -27,11 +27,9 @@ void ResponseHandler::receiveServerResponse(int choice) {
 	std::string responseHeaderString = receiveResponseHeader();
 	const BaseResponse responseHeader = parseResponseHeader(responseHeaderString);
 	uint32_t payloadSize = responseHeader.getPayloadSize();
-	std::cout << "in receiveServerResponse : Payload size: " << payloadSize << std::endl; //TODO REMOVE
 	if (payloadSize > 0) {
 		std::string payload = receivePayload(responseHeader.getPayloadSize());
 		//print payload
-		std::cout << "in receiveServerResponse Payload: " << payload << std::endl; //TODO REMOVE
 		handleResponse(choice,responseHeader, payload);
 	}	
 }
@@ -131,7 +129,6 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			break;
 		}
 		case RsponseCode::WAITING_MESSAGES: {
-			std::cout << "Waiting messages received" << std::endl;
 			handleMessagesListResponse(header, payload);
 			break;
 		}
