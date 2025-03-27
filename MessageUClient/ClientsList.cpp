@@ -114,7 +114,7 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 }
 
 
-std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
+std::string& ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
 {
 	//search client list , find with user name, what the sym key
 	for (auto client : clientsList) {

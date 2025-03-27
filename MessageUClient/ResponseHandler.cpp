@@ -226,11 +226,11 @@ void ResponseHandler::handleMessagesListResponse(const BaseResponse& header, std
 		try {
 			userName = clientsList.getUserNameByTargetClientId(message.getSourceClientId());
 		}
-		catch (const std::exception& e) {
+		catch (...) {
 			userName = UNKNOWN_USER;
 		}
 		std::string contentToDisplay = handleMessageAccordingToType(message, userName);
-		displaySingleMessage(userName, contentToDisplay);
+		uiManager.displaySingleMessage(userName, contentToDisplay);
 	
 	}
 }

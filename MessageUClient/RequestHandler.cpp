@@ -213,7 +213,7 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 			clientsList.setSymmetricKeyForUser(targetUserName, symKey);
 		}
 		else {
-			symKey = clientsList.getSymmetricKey(targetUserName);
+			symKey = clientsList.getSymmetricKeyByUserName(targetUserName);
 		}
 		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		std::string currentClientId = currentClient.getClientId();

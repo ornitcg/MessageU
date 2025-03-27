@@ -7,6 +7,7 @@
 #include "EncryptionManager.h"
 #include "ClientsList.h"
 
+#include "Message.h"
 
 
 

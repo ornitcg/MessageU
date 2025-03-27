@@ -24,7 +24,7 @@ void MessageSendResponse::parsePayload(std::string payload)
 {	
 	targetClientId.resize(CLIENT_ID_SIZE);
 	memcpy(&targetClientId[0], payload.data(), CLIENT_ID_SIZE);
-	memcpy(&messageID, payload.data()+ CLIENT_ID_SIZE, MESAGE_ID_SIZE);
+	memcpy(&messageID, payload.data()+ CLIENT_ID_SIZE, MESSAGE_ID_SIZE);
 	messageID = toLittleEndian32(messageID);
 
 	//print target client id size
