@@ -261,7 +261,7 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 	}
 	case MessageType::SEND_TEXT_MESSAGE: {
 		std::string userName = clientsList.getUserNameByTargetClientId(message.getSourceClientId());	
-		contentToDispley = handleTextMessage(userName, message.getRawContent());
+		contentToDisplay = handleTextMessage(userName, message.getRawContent());
 		break;
 	}
 	case MessageType::SEND_FILE: {
