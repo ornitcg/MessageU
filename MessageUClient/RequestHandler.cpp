@@ -240,8 +240,6 @@ void RequestHandler::sendBinaryData(std::string& binaryData) {
 	if (sendRes == SOCKET_ERROR) {
 		throw std::runtime_error("Error: send failed");
 	}
-	std::cout << "DEBUG in RequestHandler sendBinaryData sendRes: " << sendRes << std::endl; //DEBUG	
-
 }
 
 

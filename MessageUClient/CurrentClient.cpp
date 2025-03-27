@@ -97,3 +97,13 @@ std::string& CurrentClient::getPrivateKey()
 	return privateKey;
 }
 
+void CurrentClient::setCurrentChoice(int choice)
+{
+	this -> currentChoice = choice;
+}
+
+void CurrentClient::forgetChoice()
+{
+	this -> currentChoice = 0;
+}
+

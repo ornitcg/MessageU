@@ -30,12 +30,14 @@ int main() {
 		while (true) {			
 			try {
 				uiManager.displayMenu();
+				currentClient -> forgetChoice();
 				int choice = uiManager.getChoice();	// only valid choice accepted				
 				if (static_cast<MenuOption>(choice) == MenuOption::EXIT)
 					break;
+				currentClient -> setCurrentChoice(choice);
 				bool handled = requestHandler.handleChoice(choice);	
 				if (handled) 
-				responseHandler.receiveServerResponse(choice);
+					responseHandler.receiveServerResponse(choice);
 				
 				//reconnection to make sure the connection is still alive			
 				conn.disconnect();

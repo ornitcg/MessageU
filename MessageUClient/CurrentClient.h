@@ -1,5 +1,6 @@
 #pragma once
 #include "Client.h"
+#include <string>
 
 
 
@@ -7,7 +8,7 @@ class CurrentClient : public Client
 {
 private:
 	std::string privateKey = "";
-
+	int currentChoice = 0 ;
 
 public:
 
@@ -25,6 +26,8 @@ public:
 	
 	std::string& getPrivateKey();
 
+	void setCurrentChoice(int choice);
+	void forgetChoice();
 
 
 };
