@@ -3,6 +3,7 @@ from models.register_request import *
 from models.public_key_request import *
 from models.message_request import *
 from models.clients_list_request import *
+from models.waiting_messages_request import *
 import pprint
 
 
@@ -36,11 +37,11 @@ class Request_Handler:
             elif code == RequestCode.MESSAGE.value[0]:
                 return self.handle_send_message(request_object)  #saves message in DB
             elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
-                pass
+                return True #TODO
             else:
                 pass
         except Exception as e:
-            print(f"ERROR: Error handling request: {e}")
+            print(f"[ERROR] Error handling request: {e}")
             raise e
 
 
@@ -50,7 +51,7 @@ class Request_Handler:
             client_handler.update_client_with_request_payload(request)
             is_user_name_registered = self.db_mngr.is_exists_client_username(client_handler.user_name)
             if is_user_name_registered:
-                raise Exception("ERROR: User name already registered")
+                raise Exception("[ERROR] User name already registered")
             else:
                 client_handler.generate_client_id()
                 binary_client_id = self.client_handler.get_binary_client_id()
@@ -59,15 +60,13 @@ class Request_Handler:
                 self.db_mngr.add_client(binary_client_id, user_name, public_key)
                 return True
         except Exception as e:
-            print(f"ERROR: Error registering client: {e}")
+            print(f"[ERROR] Error registering client: {e}")
             raise e
 
 
     def is_extract_complete_request(self, inb):
-        print(f"DEBUG Extracting whole request") # TODO DEBUG
         if len(inb) < REQUEST_HEADER_SIZE:
             return None
-        print(f"DEBUG Request size: {len(inb)}") # TODO DEBUG
         self.parse_header(inb)
         print(self.header)
         request_size = REQUEST_HEADER_SIZE + self.header.get_payload_size()
@@ -85,7 +84,6 @@ class Request_Handler:
         offset += CODE_SIZE
         payload_size = int.from_bytes(inb[offset:offset + PAYLOAD_SIZE], byteorder='little')
         offset += PAYLOAD_SIZE
-        print(f"DEBUG: Header: {client_id}, {version}, {code}, {payload_size}") # TODO DEBUG
         self.header = Base_Request(client_id, version, code, payload_size)
 
     def get_request_object(self, inb):
@@ -104,8 +102,8 @@ class Request_Handler:
             return Public_Key_Request(self.header, payload)
         elif code == RequestCode.MESSAGE.value[0]:
             return Message_Request(self.header, payload)
-        # elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
-        #     return GetWaitingMessagesRequest(client_id, version, code, payload_size, payload)
+        elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
+            return self.header
         else:
             return None
 
@@ -113,31 +111,27 @@ class Request_Handler:
         client_id = request_object.get_client_id()
         try:
             client_list = self.db_mngr.get_all_clients(exclude_id = client_id)
-
             self.set_client_list(client_list)
-            print(f"DEBUG: Client list:") # TODO DEBUG
-            pprint.pprint(client_list)
             return True
         except Exception as e:
-            print(f"ERROR: Error getting client list: {e}")
+            print(f"[ERROR] Error getting client list: {e}")
             raise e
 
 
     def get_target_public_key(self, request_object):
         target_client_id = request_object.get_target_client_id()
-        print(f"DEBUG: Getting public key for client {target_client_id}") # TODO DEBUG
         try:
             target_public_key = self.db_mngr.get_public_key_by_id(target_client_id)
-            print(f"Type: {type(target_public_key)}, Content: {target_public_key}")
-            print(f"Type after indexing: {type(target_public_key[0])}, Length: {len(target_public_key[0]) if hasattr(target_public_key[0], '__len__') else 'Not a sequence'}")
+            # print(f"Type: {type(target_public_key)}, Content: {target_public_key}") #TODO DEBUG
+            # print(f"Type after indexing: {type(target_public_key[0])}, Length: {len(target_public_key[0]) if hasattr(target_public_key[0], '__len__') else 'Not a sequence'}")
             if target_public_key:
                 self.client_handler.set_target_public_key(target_public_key[0])
                 self.client_handler.set_target_client_id(target_client_id)
                 return True
             else:
-                raise Exception("ERROR: Client not found")
+                raise Exception("[ERROR] Client not found")
         except Exception as e:
-            print(f"ERROR: Error getting public key: {e}")
+            print(f"[ERROR] Error getting public key: {e}")
             raise e
 
 
@@ -148,7 +142,7 @@ class Request_Handler:
             self.client_handler.set_message_id(msg_id)
             return True
         except Exception as e:
-            print(f"ERROR: Error sending message: {e}")
+            print(f"[ERROR] Error sending message: {e}")
             raise e
 
 

@@ -44,7 +44,7 @@ class Message_Dao:
                 msg_objects.append(message)
 
         except sqlite3.Error as e:
-            print("Error getting messages ", e)
+            print("[ERROR] Error getting messages ", e)
             return []
 
     def delete_message(self, message_id):
@@ -53,5 +53,5 @@ class Message_Dao:
             self.conn.commit()
             return True
         except sqlite3.Error as e:
-            print("Error deleting message ", e)
+            print("[ERROR] Error deleting message ", e)
             return False

@@ -246,10 +246,9 @@ std::string ResponseHandler::cutPartFromData(std::string& data, size_t partSize)
 /* Handles the message according to the message type
 	returns decrypted content to display on screen */
 std::string ResponseHandler::handleMessageAccordingToType(Message& message, std::string& userName) {
-	//switch on msg type
-	uint8_t messageType = message.getMessageType();
+	MessageType messageType = static_cast<MessageType>(message.getMessageType());
 	std::string contentToDisplay = "";
-	switch (static_cast<MessageType>(messageType)) {
+	switch (messageType) {
 	case MessageType::GET_SYM_KEY: {
 		contentToDisplay = GET_SYM_KEY_MSG;
 		break;

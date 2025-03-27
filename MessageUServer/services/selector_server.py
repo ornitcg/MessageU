@@ -20,7 +20,7 @@ class SelectorServer:
 
 
         if not self.db_conn:
-            raise Exception("ERROR: Failed to initialize the database")
+            raise Exception("[ERROR] Failed to initialize the database")
 
     def connect(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,20 +46,19 @@ class SelectorServer:
                         try:
                             request_processed = client_handler.handle_event(key, mask)
                             if request_processed and client_handler.get_is_request_success():
-                                print("DEBUG Request processed successfully") # TODO DEBUG
                                 client_handler.response_handler.handle_response(client_handler.get_parsed_request(),
                                                                                 client_handler.get_is_request_success)
 
 
                         except Exception as e:
-                            print(f"ERROR: Error handling client in event loop {client_handler.address}: {e}")
+                            print(f"[ERROR] Error handling client in event loop {client_handler.address}: {e}")
                             client_handler.response_handler.send_error_response()
-                            print("DEBUG error response sent from event loop")
+                            print("[LOG] error response sent from event loop")
 
         except KeyboardInterrupt:
-            print("ERROR: KeyboardInterrupt Server is shutting down")
+            print("[ERROR] KeyboardInterrupt Server is shutting down")
         except Exception as e:
-            print(f"ERROR: Error in event loop: {e}")
+            print(f"[ERROR] Error in event loop: {e}")
         finally:
             self.close()
 
@@ -72,22 +71,11 @@ class SelectorServer:
         client_handler.update_last_seen()
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         self.selector.register(client_socket, events, data=client_handler)
-        print(f"DEBUG Client from {addr} registered with selector")  ## TODO DEBUG
+        print(f"[LOG] Client from {addr} registered with selector")  ## TODO DEBUG
         return client_handler
 
-    # def cleanup_client_connection(self, sock, client_handler=None):
-    #     """Safely clean up a client connection"""
-    #     try:
-    #         addr = getattr(client_handler, 'address', 'unknown')
-    #         print(f"Cleaning up connection for {addr}")
-    #         self.selector.unregister(sock)
-    #         sock.close()
-    #     except Exception as e:
-    #         print(f"Error during cleanup: {e}")
-    #
-
     def close(self):
-        print("LOG: Closing server")
+        print("[LOG] Closing server")
         self.db_mngr.disconnect()
         self.selector.close()
         if self.server_socket:

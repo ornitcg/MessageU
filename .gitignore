@@ -126,3 +126,6 @@ logs/
 *.bak
 .DS_Store
 Thumbs.db
+
+
+me.info

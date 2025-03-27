@@ -2,7 +2,8 @@ from  models.base_response import *
 from models.register_response import *
 from models.public_key_response import *
 from models.message_response import *
-
+from models.waiting_messages_response import *
+from utils.defines import *
 
 
 
@@ -20,12 +21,10 @@ class Response_Handler:
         binary_client_id = self.client_handler.get_binary_client_id()
         response = Register_Response(binary_client_id)
         binary_response = response.get_binary_response()
-        print (f"in create_binary_register_response :Response: {response}")
         return binary_response
 
 
     def handle_response(self, request_object, is_request_successful):
-        print(f"DEBUG in Handling response for request: ")
         print(request_object)
         if not is_request_successful:
             self.send_error_response()
@@ -40,16 +39,15 @@ class Response_Handler:
             elif request_object.code == RequestCode.MESSAGE.value[0]:
                 response = self.create_binary_message_response()
             elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
-                pass
+                response = self.create_binary_waiting_messages_response()
             else:
                 pass
-            print(f"Response: {response}")
             self.send_response(response)
 
         except Exception as e:
-            print(f"Error handling response: {e}")
+            print(f"[ERROR] Error handling response: {e}")
             self.send_error_response()
-            print("error response sent from handle response")
+            print("[LOG] Error response sent from handle response")
 
     def send_response(self, response):
         self.client_handler.add_to_send_buf(response)
@@ -68,17 +66,19 @@ class Response_Handler:
         binary_response = response.get_binary_response()
         return binary_response
 
+    def create_binary_waiting_messages_response(self):
+        waiting_messages = self.db_mngr.get_pending_messages(self.client_handler.get_client_id())
+        response = Waiting_Messages_Response(waiting_messages)
+        return response.get_binary_response()
+
 
 
     def create_binary_public_key_response(self):
         target_public_key = self.client_handler.get_target_public_key()
         target_client_id = self.client_handler.get_target_client_id()
-        print(f"DEBUG: Public key response target_public_key: {target_public_key}")
-        print(f"DEBUG: Public key response target_client_id: {target_client_id}")
-
         if target_public_key is None:
-            print("DEBUG: Public key not found")
-            raise Exception("Public key not found")
+            print("[LOG] Public key not found")
+            raise Exception("[ERROR] Public key not found")
         response = Public_Key_Response(target_client_id, target_public_key)
         binary_response = response.get_binary_response()
         return binary_response
@@ -89,7 +89,7 @@ class Response_Handler:
         messageRequest = self.client_handler.get_parsed_request()
         messageType = messageRequest.get_message_type()
         if messageType not in Message_Type:
-            raise Exception("ERROR: Invalid message type")
+            raise Exception("[ERROR] Invalid message type")
         msg_id = self.client_handler.get_message_id()
         target_client_id = self.client_handler.get_request_object().get_target_client_id()
         response = Message_Response(msg_id, target_client_id)

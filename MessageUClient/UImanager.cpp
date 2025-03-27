@@ -15,7 +15,7 @@ UImanager::~UImanager()
 }
 
 void UImanager::displayMenu() {
-	std::cout << "\n==== Menu: ====\n";
+	std::cout << "\nMessageU client at your service:\n";
 	for (const auto& option : requestInfoVector) {
 		std::cout << static_cast<int>(option.first) << ") " << option.second.description << "\n";
 	}

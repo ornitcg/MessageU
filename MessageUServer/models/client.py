@@ -15,7 +15,7 @@ class Client:
         if not self.client_id:
             self.client_id = id
         else:
-            raise Exception("ERROR: Client ID already set")
+            raise Exception("[ERROR] Client ID already set")
 
 
     def get_user_name(self):

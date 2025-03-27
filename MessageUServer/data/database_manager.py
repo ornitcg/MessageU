@@ -20,7 +20,7 @@ class Database_Manager:
             self.message_dao = Message_Dao(self.conn, self.cursor)
             return True
         except sqlite3.Error as e:
-            print("ERROR: Error connecting to DB ", e)
+            print("[ERROR] Error connecting to DB ", e)
             return False
 
     def initialize_db(self):
@@ -29,7 +29,7 @@ class Database_Manager:
             self.create_tables()
             return True
         except sqlite3.Error as e:
-            print("ERROR: Error initializing the database ", e)
+            print("[ERROR] Error initializing the database ", e)
             return False
 
     def table_exists(self, table_name):
@@ -39,7 +39,7 @@ class Database_Manager:
                 return True
             return False
         except sqlite3.Error as e:
-            print("Error checking table ", e)
+            print("[ERROR] checking table ", e)
             return False
 
     def create_tables(self):
@@ -66,7 +66,6 @@ class Database_Manager:
         return self.client_dao.get_client_by_id(client_id)
 
     def get_public_key_by_id(self, client_id):
-        print(f"DEBUG: in db manager Getting public key for client {client_id}")
         return self.client_dao.get_public_key_by_id(client_id)
 
     def get_client_by_username(self, username):

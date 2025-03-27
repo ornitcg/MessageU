@@ -17,7 +17,7 @@ class Client_Dao:
             self.conn.commit()
             return True
         except sqlite3.Error as e:
-            print("ERROR: Error creating clients table ", e)
+            print("[ERROR] Error creating clients table ", e)
             return False
 
     def is_exists_client_username(self, username):
@@ -27,7 +27,7 @@ class Client_Dao:
                 return True
             return False
         except sqlite3.Error as e:
-            print("ERROR: Error searching client ", e)
+            print("[ERROR] Error searching client ", e)
             raise e
 
     def add_client(self, client_id, username, public_key):
@@ -39,7 +39,7 @@ class Client_Dao:
             self.conn.commit()
             return True
         except sqlite3.IntegrityError as e:
-            print("ERROR: Error adding client ", e)
+            print("[ERROR] Error adding client ", e)
             return False
 
     def get_client_by_id(self, client_id):
@@ -47,16 +47,15 @@ class Client_Dao:
             self.cursor.execute("SELECT * FROM clients WHERE ID=?", (client_id,))
             return self.cursor.fetchone()
         except sqlite3.Error as e:
-            print("ERROR: Error getting client ", e)
+            print("[ERROR] Error getting client ", e)
             return None
 
     def get_public_key_by_id(self, client_id):
         try:
-            print(f"DEBUG: in client dao Getting public key for client {client_id}")
             self.cursor.execute("SELECT PublicKey FROM clients WHERE ID=?", (client_id,))
             return self.cursor.fetchone()
         except sqlite3.Error as e:
-            print("ERROR: Error getting client ", e)
+            print("[ERROR] Error getting client ", e)
             return None
 
     def get_client_by_username(self, username):
@@ -64,7 +63,7 @@ class Client_Dao:
             self.cursor.execute("SELECT * FROM clients WHERE UserName=?", (username,))
             return self.cursor.fetchone()
         except sqlite3.Error as e:
-            print("ERROR: Error getting client ", e)
+            print("[ERROR] Error getting client ", e)
             return None
 
     def get_all_clients(self, exclude_id=None):
@@ -75,7 +74,7 @@ class Client_Dao:
                 self.cursor.execute("SELECT ID, UserName FROM clients")
             return self.cursor.fetchall()
         except sqlite3.Error as e:
-            print("ERROR: Error getting clients ", e)
+            print("[ERROR] Error getting clients ", e)
             return []
 
     def update_client_last_seen(self, client_id):
@@ -84,5 +83,5 @@ class Client_Dao:
             self.conn.commit()
             return True
         except sqlite3.Error as e:
-            print("ERROR: Error updating last seen ", e)
+            print("[ERROR] Error updating last seen ", e)
             return False

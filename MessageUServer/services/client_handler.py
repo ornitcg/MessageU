@@ -62,18 +62,17 @@ class Client_Handler:
                         self.selector.modify(key.fileobj, selectors.EVENT_READ, data=self)
             return is_request_processed
         except Exception as e:
-            print(f"Error handling client in handle event {self.address}: {e}")
+            print(f"[ERROR] Error handling client in handle event {self.address}: {e}")
             self.response_handler.send_error_response()
             return False  # Signal that this client has been handled
 
 
     def handle_read_event(self):
         try:
-            print("DEBUG in handle_read_event") # TODO DEBUG
             recv_data = self.client_socket.recv(MAX_BUFFER_SIZE)
-            print(f"DEBUG Received data from client {self.address}: {recv_data}")  # TODO DEBUG
+            print(f"[LOG] Received data from client {self.address}: {recv_data}")  # TODO
             if not recv_data:
-                print(f"Client {self.address} disconnected")
+                print(f"[LOG] Client {self.address} disconnected")
                 raise ConnectionError("Client disconnected")
 
             if self.client_id: #case client already registered
@@ -87,10 +86,10 @@ class Client_Handler:
                 self.is_request_successful = self.request_handler.handle_request(self.request_object)
             return True
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
-            print(f"ERROR: Connection error with client {self.address}")
+            print(f"[LOG] Response sent, client {self.address} disconnected")
             self.disconnect_client()
         except Exception as e:
-            print (f"ERROR: Error in handling client {self.address}: {e} " )
+            print (f"[ERROR] Error in handling client {self.address}: {e} " )
             raise e
 
 
@@ -98,13 +97,13 @@ class Client_Handler:
         try:
             sent = self.client_socket.send(self.get_final_send_data())
             if sent == 0:
-                print(f"ERROR: Failed to send data to client {self.address}")
+                print(f"[ERROR] Failed to send data to client {self.address}")
 
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
-            print(f"ERROR: Connection error with client {self.address}")
+            print(f"[ERROR] Connection error with client {self.address}")
             raise e
         except Exception as e:
-            print(f"ERROR: Error in handling client {self.address}: {e} ")
+            print(f"[ERROR] Error in handling client {self.address}: {e} ")
             raise e
 
 
@@ -133,7 +132,7 @@ class Client_Handler:
         if not self.client_id:
             self.client_id = id
         else:
-            raise Exception("ERROR: Client ID already set")
+            raise Exception("[ERROR] Client ID already set")
 
     def get_user_name(self):
         return self.user_name
@@ -151,10 +150,9 @@ class Client_Handler:
         try:
             self.client_socket.close()
             self.selector.unregister(self.client_socket)
-            print("DEBUG Disconnected client")
             return
         except Exception as cleanup_error:
-            print(f"ERROR: Error during client cleanup: {cleanup_error}")
+            print(f"[ERROR] Error during client cleanup: {cleanup_error}")
 
 
 
