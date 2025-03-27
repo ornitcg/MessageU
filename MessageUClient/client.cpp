@@ -63,10 +63,10 @@ std::string Client::toString() const
 
 void Client::setUserName(const std::string& userName)
 {
-	if (this->userName.empty())
+	/*if (this->userName.empty())*/
 		this->userName = userName;
-	else 
-		throw std::runtime_error("Error: user name already set");
+	/*else 
+		throw std::runtime_error("Error: user name already set");*/
 }
 
 void Client::unsetUserName()

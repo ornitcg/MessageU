@@ -26,9 +26,5 @@ public:
 	
 	std::string& getPrivateKey();
 
-	void setCurrentChoice(int choice);
-	void forgetChoice();
-
-
 };
 

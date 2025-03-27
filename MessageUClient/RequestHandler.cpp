@@ -41,19 +41,15 @@ bool RequestHandler::handleChoice(const int choice)
 			break;
 		case MenuOption::GET_WAITING_MESSAGES:
 			binaryData = RequestHandler::WaitingMessagesBinaryRequest();
-			std::cout << "Request for waiting messages\n";
 			break;
 		case MenuOption::SEND_TEXT_MESSAGE:
 			binaryData = RequestHandler::sendTextMessageBinaryRequest();
-			std::cout << "Send a text message\n";
 			break;
 		case MenuOption::GET_SYMMETRIC_KEY:
 			binaryData = RequestHandler::symmetricKeyBinaryRequest();
-			std::cout << "Send a request for symmetric key\n"; //151 -603 TODO
 			break;
 		case MenuOption::SEND_SYMMETRIC_KEY: 
 			binaryData = RequestHandler::sendSymmetricKeyBinaryRequest();
-			std::cout << "Send your symmetric key\n"; //152 - 603 TODO
 			break;
 		case MenuOption::SEND_FILE:
 			std::cout << "Send a file\n";

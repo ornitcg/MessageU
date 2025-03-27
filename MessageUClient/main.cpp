@@ -30,11 +30,9 @@ int main() {
 		while (true) {			
 			try {
 				uiManager.displayMenu();
-				currentClient -> forgetChoice();
 				int choice = uiManager.getChoice();	// only valid choice accepted				
 				if (static_cast<MenuOption>(choice) == MenuOption::EXIT)
 					break;
-				currentClient -> setCurrentChoice(choice);
 				bool handled = requestHandler.handleChoice(choice);	
 				if (handled) 
 					responseHandler.receiveServerResponse(choice);
@@ -51,7 +49,7 @@ int main() {
 				conn.disconnect();
 				break;
 			}
-			/*catch (const ConnectionError& e) { //TODO
+			/*catch (const ConnectionError& e) { //TODO REMOVE
 				throw e;
 			}*/
 

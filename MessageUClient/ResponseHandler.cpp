@@ -27,13 +27,11 @@ void ResponseHandler::receiveServerResponse(int choice) {
 	std::string responseHeaderString = receiveResponseHeader();
 	const BaseResponse responseHeader = parseResponseHeader(responseHeaderString);
 	uint32_t payloadSize = responseHeader.getPayloadSize();
-	std::cout << "in receiveServerResponse : Payload size: " << payloadSize << std::endl; //TODO REMOVE
+	std::string payload;
 	if (payloadSize > 0) {
-		std::string payload = receivePayload(responseHeader.getPayloadSize());
-		//print payload
-		std::cout << "in receiveServerResponse Payload: " << payload << std::endl; //TODO REMOVE
-		handleResponse(choice,responseHeader, payload);
+		payload = receivePayload(responseHeader.getPayloadSize());			
 	}	
+	handleResponse(choice, responseHeader, payload);
 }
 
 
@@ -46,7 +44,6 @@ std::string ResponseHandler::receiveResponseHeader() {
 		// Keep receiving until we have the complete header
 		while (totalReceived < RESPONSE_HEADER_SIZE) {
 			int bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE - totalReceived, 0);
-			std::cout << "in receiveResponseHeader Bytes received: " << bytesReceived << std::endl;
 
 			if (bytesReceived <= 0) {
 				throw std::runtime_error("Error: connection closed by server");
@@ -54,7 +51,6 @@ std::string ResponseHandler::receiveResponseHeader() {
 			responseHeader.append(buffer, bytesReceived);
 			totalReceived += bytesReceived;
 		}
-
 		return responseHeader;
 	}
 	catch (const std::exception& e) {

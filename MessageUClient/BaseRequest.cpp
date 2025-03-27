@@ -12,25 +12,16 @@ BaseRequest::BaseRequest(std::string& clientId, uint16_t requestCode, uint32_t p
 	this->payloadSize = payloadSize;
 }
 
-//BaseRequest::BaseRequest(uint16_t requestCode, std::string& clientId) :BaseRequest(requestCode, 0)
-//{
-//	setClientId(clientId);
-//}
-
-
 
 BaseRequest::~BaseRequest()
 {
 }
 
 
-
 void BaseRequest::setClientId(std::string& clientId)
 {
 	this->clientId = clientId;
 }
-
-
 
 
 std::string BaseRequest::getBinaryHeader() 
