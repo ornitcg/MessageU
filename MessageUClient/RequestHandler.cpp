@@ -167,8 +167,9 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		std::string symKey = targetClient.getSymKey();		
 		std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);		
-		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + encryptedMessage.size();
-		MessageSendRequest request = MessageSendRequest(payloadSize, currentClient.getClientId(), targetClient.getClientId(), messageType, encryptedMessage.size(), encryptedMessage);
+		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + static_cast<uint32_t>(encryptedMessage.size());
+		MessageSendRequest request = MessageSendRequest(payloadSize, currentClient.getClientId(), targetClient.getClientId(), messageType, static_cast<uint32_t>(encryptedMessage.size()), encryptedMessage);
+		return request.getBinary();
 	}
 	catch (const std::exception& e) {
 		throw e;
@@ -218,7 +219,7 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		Client targetClient = clientsList.getTargetClientByUserName(targetUserName);
 		std::string currentClientId = currentClient.getClientId();
 		std::string content = encMngr.encryptedWithTargetPublicKey(targetClient.getPublicKey(), symKey);
-		uint32_t contentSize = content.size();
+		uint32_t contentSize = static_cast<uint32_t>(content.size());
 		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + contentSize;
 		MessageSendRequest request = MessageSendRequest(payloadSize, currentClientId, targetClient.getClientId(), messageType, contentSize, content);
 		return request.getBinary();
