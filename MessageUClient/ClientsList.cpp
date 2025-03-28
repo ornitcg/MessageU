@@ -109,10 +109,10 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 		for (auto& client : clientsList) {
 			if (client.first == userName) {
 				client.second.setSymKey(symmetricKey);
-				break;
-			}
-			throw std::runtime_error("in setSymmetricKeyForUser Error: client not found");
-		}		
+				return;
+			}			
+		}	
+		throw std::runtime_error("in setSymmetricKeyForUser Error: client not found");
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
