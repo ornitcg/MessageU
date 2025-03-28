@@ -46,7 +46,7 @@ void CurrentClient::loadFromFile()
 					if (line.empty())
 						break;
 					key += line;
-				}
+				}				
 				setPrivateKey(key);
 			}
 		}

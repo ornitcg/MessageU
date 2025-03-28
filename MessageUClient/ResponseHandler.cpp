@@ -242,11 +242,11 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 	std::string contentToDisplay = "";
 	try {
 		switch (messageType) {
-		case MessageType::GET_SYM_KEY: {
+		case MessageType::GET_SYM_KEY: {  //I requested for symmetric key from user
 			contentToDisplay = GET_SYM_KEY_MSG;
 			break;
 		}
-		case MessageType::SEND_SYM_KEY: {
+		case MessageType::SEND_SYM_KEY: {  //some user sent me symmetric key
 			contentToDisplay = RECV_SYM_KEY_MSG;
 			handleReceivedSymmetricKey(message.getSenderClientId(), message.getRawContent());
 			break;

@@ -54,10 +54,11 @@ std::string EncryptionManager::encryptedWithTargetPublicKey(const std::string& P
 		throw e;
 	}
 }
-	
+
 std::string EncryptionManager::decryptedWithMyPrivateKey(const std::string& privateKey, const std::string& encryptedSomething) {
 	try {
-		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper(privateKey);
+		std::string decodedKey = decodeFromBase64(privateKey);
+		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper(decodedKey);
 		std::string decrypted = rsaPrivate.decrypt(encryptedSomething);
 		return decrypted;
 	}
