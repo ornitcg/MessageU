@@ -74,11 +74,13 @@ void ClientsList::updateTargetPublicKey(const std::string& targetClientId, const
 
 bool ClientsList::hasSymmetricKey(const std::string& userName) const
 {
-	
-		if (!getSymmetricKeyByUserName(userName).empty()) {
-			return true;
-		}
+	std::string symKey = getSymmetricKeyByUserName(userName);
+	if (symKey.empty()) {
 		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 
@@ -120,13 +122,12 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 }
 
 
-std::string& ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
+std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
 {
 	try { //search client list , find with user name, what the sym key
 		for (auto client : clientsList) {
-			if (client.first == userName) {
-				Client targetClient = client.second;
-				std::string& symKey = targetClient.getSymKey();
+			if (client.first == userName) {				
+				std::string symKey = client.second.getSymKey();
 				return symKey;
 			}
 		}

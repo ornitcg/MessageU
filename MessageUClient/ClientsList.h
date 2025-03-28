@@ -32,7 +32,7 @@ public:
 
 	void setSymmetricKeyForUser(const std::string& userName, const std::string& symmetricKey);
 
-	std::string& getSymmetricKeyByUserName(const std::string& userName) const;
+	std::string getSymmetricKeyByUserName(const std::string& userName) const;
 
 	void updateClientsList(std::vector<std::pair<std::string, Client>>& clientsList);
 
