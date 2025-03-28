@@ -53,7 +53,7 @@ uint8_t Message::getMessageType() {
 	return messageType;
 }
 
-std::string& Message::getSourceClientId() {
+std::string& Message::getSenderClientId() {
 	return sourceClientId;
 }
 

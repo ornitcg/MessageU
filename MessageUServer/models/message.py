@@ -1,13 +1,13 @@
 import struct
 
 class Message:
-    def __init__(self, target_id, sender_id, message_type, content, msg_id=None):
+    def __init__(self, to_client, from_client, message_type, content, msg_id=None):
         self.msg_id = msg_id
-        self.target_id = target_id
+        self.to_client = to_client
         self.message_type = message_type
         self.content = content
         self.message_size = len(content)
-        self.sender_id = sender_id
+        self.from_client = from_client
 
 
     def __str__(self):
@@ -15,7 +15,7 @@ class Message:
 
     def get_binary_message(self):
         binary_message = b""
-        binary_message += self.sender_id
+        binary_message += self.from_client
         binary_message += struct.pack('<I', self.msg_id)
         binary_message += struct.pack('<B', self.message_type)
         binary_message += struct.pack('<I', self.message_size)

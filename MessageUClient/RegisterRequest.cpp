@@ -17,7 +17,7 @@ RegisterRequest::~RegisterRequest()
 
 
 void RegisterRequest::initializeUserNameWithPadding(const std::string& userName) {
-	int userNameSize = userName.size();
+	size_t userNameSize = userName.size();
 	memset(nameBuffer, '0', MAX_NAME_SIZE + 1);
 	if (userNameSize > MAX_NAME_SIZE) {
 		throw std::runtime_error("Error: user name is too long");

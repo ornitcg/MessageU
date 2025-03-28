@@ -33,29 +33,29 @@ std::string ClientsList::getTargetClientIdByUserName(const std::string& userName
 			return client.second.getClientId();
 		}
 	}
-	throw std::runtime_error("Error: client not found");
+	throw std::runtime_error("in getTargetClientIdByUserName Error: client not found");
 }
 
-std::string ClientsList::getUserNameByTargetClientId(const std::string& targetClientId) const
+std::string ClientsList::getUserNameByClientId(const std::string& targetClientId) const
 {
 	for (auto client : clientsList) {
 		if (client.second.getClientId() == targetClientId) {
 			return client.first;
 		}
 	}
-	throw std::runtime_error("Error: client not found");
+	throw std::runtime_error("in getUserNameByClientId Error: client not found");
 }
 
 
 //finds the Client object
-Client ClientsList::getTargetClientByUserName(std::string userName) const
+Client ClientsList::getTargetClientObjectByUserName(std::string userName) const
 {
 	for (auto client : clientsList) {
 		if (client.first == userName) {
 			return client.second;
 		}
 	}
-	throw std::runtime_error("Error: client not found");
+	throw std::runtime_error("in getTargetClientObjectByUserName Error: client not found");
 }
 
 
@@ -74,24 +74,32 @@ void ClientsList::updateTargetPublicKey(const std::string& targetClientId, const
 
 bool ClientsList::hasSymmetricKey(const std::string& userName) const
 {
-	if (getSymmetricKeyByUserName(userName).empty()) {
+	
+		if (!getSymmetricKeyByUserName(userName).empty()) {
+			return true;
+		}
 		return false;
-	}
 }
 
 
 bool ClientsList::hasPublicKey(const std::string& userName) const
 {
-	for (auto client : clientsList) {
-		if (client.first == userName) {
-			Client targetClient = client.second;
-			if (targetClient.getPublicKey().empty()) {
-				return false;
-			}
-			else {
-				return true;
+	try {
+		for (auto client : clientsList) {
+			if (client.first == userName) {
+				Client targetClient = client.second;
+				if (targetClient.getPublicKey().empty()) {
+					return false;
+				}
+				else {
+					return true;
+				}
 			}
 		}
+		throw std::runtime_error("in hasPublicKey Error: client not found");
+	}
+	catch (const std::exception& e) {
+		throw e;
 	}
 }
 
@@ -103,26 +111,29 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 				client.second.setSymKey(symmetricKey);
 				break;
 			}
-		}
-		throw std::runtime_error("Error: client not found");
+			throw std::runtime_error("in setSymmetricKeyForUser Error: client not found");
+		}		
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
-	}
-	
-	
+	}	
 }
 
 
 std::string& ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
 {
-	//search client list , find with user name, what the sym key
-	for (auto client : clientsList) {
-		if (client.first == userName) {
-			Client targetClient = client.second;
-			std::string& symKey = targetClient.getSymKey();
-			return symKey;
+	try { //search client list , find with user name, what the sym key
+		for (auto client : clientsList) {
+			if (client.first == userName) {
+				Client targetClient = client.second;
+				std::string& symKey = targetClient.getSymKey();
+				return symKey;
+			}
 		}
+		throw std::runtime_error("in getSymmetricKeyByUserName Error: client not found");
+	}
+	catch (const std::exception& e) {
+		throw e;
 	}
 }
 

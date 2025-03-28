@@ -84,12 +84,16 @@ std::string UImanager::getTextMessageFromConsole() {
 }
 
 
-
-
 void UImanager::displaySingleMessage(std::string& userName,  const std::string& content) {
 	std::cout << "FROM: " << userName << std::endl;
 	std::cout << "CONTENT:"  << std::endl;
 	std::cout << content << std::endl;
 	std::cout << "----<EOM>----" << std::endl;
+	std::cout << std::endl;
+}
+
+void UImanager::displaySingleMessage(const std::string& content)
+{
+	std::cout << content << std::endl;	
 	std::cout << std::endl;
 }

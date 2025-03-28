@@ -21,7 +21,7 @@ public:
 	uint32_t getContentSize();
 	uint32_t getMessageId();
 	uint8_t getMessageType();
-	std::string& getSourceClientId();
+	std::string& getSenderClientId();
 	std::string& getRawContent();
 };
 

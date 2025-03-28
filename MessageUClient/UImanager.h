@@ -30,5 +30,6 @@ public:
 	std::string getCurrentUserTextMessageFromConsole();
 	std::string getTextMessageFromConsole();
 	void displaySingleMessage(std::string& userName, const std::string& content);
+	void displaySingleMessage(const std::string& content);
 };
 

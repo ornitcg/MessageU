@@ -20,9 +20,9 @@ public:
 
 	std::string getTargetClientIdByUserName(const std::string& userName) const;
 
-	std::string getUserNameByTargetClientId(const std::string& targetClientId) const;
+	std::string getUserNameByClientId(const std::string& targetClientId) const;
 
-	Client getTargetClientByUserName(std::string userName) const;
+	Client getTargetClientObjectByUserName(std::string userName) const;
 
 	void updateTargetPublicKey(const std::string& targetClientId, const std::string& targetPublicKey);
 

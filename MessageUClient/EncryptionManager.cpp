@@ -62,7 +62,6 @@ std::string EncryptionManager::decryptedWithMyPrivateKey(const std::string& priv
 		return decrypted;
 	}
 	catch (const std::exception& e) {
-		std::cout << "Error decoding : " << e.what() << std::endl;
 		throw e;
 	}
 
@@ -81,15 +80,15 @@ std::string EncryptionManager::generateSymmetricKey()
 
 std::string EncryptionManager::encryptWithSymmetricKey(std::string& symKey, std::string& plainContent)
 {
-	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), symKey.size());
-	std::string encryptedContent = aesWrapper.encrypt(plainContent.c_str(), plainContent.size());
+	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), static_cast<unsigned int>(symKey.size()));
+	std::string encryptedContent = aesWrapper.encrypt(plainContent.c_str(), static_cast<unsigned int>(plainContent.size()));
 	return encryptedContent;
 }
 
 std::string EncryptionManager::decryptWithSymmetricKey(std::string& symKey, std::string& encryptedContent)
 {
-	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), symKey.size());
-	std::string decryptedContent = aesWrapper.decrypt(encryptedContent.c_str(), encryptedContent.size());
+	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), static_cast<unsigned int>(symKey.size()));
+	std::string decryptedContent = aesWrapper.decrypt(encryptedContent.c_str(), static_cast<unsigned int>(encryptedContent.size()));
 	return decryptedContent;
 }
 
