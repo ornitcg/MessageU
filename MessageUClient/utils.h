@@ -19,6 +19,7 @@
 #define RESPONSE_PAYLOAD_SIZE 4
 #define NO_PAYLOAD 0
 #define NO_CONTENT 0
+#define NO_ID -1
 #define EMPTY_CONTENT ""
 #define SYM_KEY_SIZE 16 // 16 bytes = 128 bits
 #define MESSAGE_TYPE_FIELD_SIZE 1

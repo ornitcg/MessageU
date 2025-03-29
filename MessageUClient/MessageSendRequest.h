@@ -1,19 +1,17 @@
 #pragma once
 #include "BaseRequest.h"
-
+#include "Message.h"
 
 
 class MessageSendRequest : public BaseRequest
 {
 private:
-	std::string targetClientId = targetClientId;
-	uint8_t messageType = messageType;
-	uint32_t contentSize = contentSize;
-	std::string content = content;
+	Message message;
 
 
 public:
-	MessageSendRequest(uint32_t payloadSize ,std::string& currenClientId, std::string& targetClientId, uint8_t messageType, uint32_t contentSizem, std::string content);
+	MessageSendRequest(std::string clientID, uint16_t code, uint32_t payloadSize, Message message);
+	MessageSendRequest();
 	~MessageSendRequest();
 	std::string getBinary();
 

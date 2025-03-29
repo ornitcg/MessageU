@@ -5,7 +5,8 @@
 #include "utils.h"
 
 
-RegisterRequest::RegisterRequest(std::string& clientId, std::string& userName, std::string& pubKey, uint32_t payloadSize) : BaseRequest(clientId, static_cast<uint16_t>(RequestCode::REGISTER), payloadSize)
+RegisterRequest::RegisterRequest(std::string& clientId, std::string& userName, std::string& pubKey, uint32_t payloadSize) 
+	: BaseRequest(clientId, static_cast<uint16_t>(RequestCode::REGISTER), payloadSize)
 {
 	initializeUserNameWithPadding(userName);
 	initializePublicKey(pubKey);	

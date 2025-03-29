@@ -248,12 +248,12 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 		}
 		case MessageType::SEND_SYM_KEY: {  //some user sent me symmetric key
 			contentToDisplay = RECV_SYM_KEY_MSG;
-			handleReceivedSymmetricKey(message.getSenderClientId(), message.getRawContent());
+			handleReceivedSymmetricKey(message.getSenderClientId(), message.getContent());
 			break;
 		}
 		case MessageType::SEND_TEXT_MESSAGE: {
 			std::string userName = clientsList.getUserNameByClientId(message.getSenderClientId());
-			contentToDisplay = handleTextMessage(userName, message.getRawContent());
+			contentToDisplay = handleTextMessage(userName, message.getContent());
 			break;
 		}
 		case MessageType::SEND_FILE: {

@@ -16,6 +16,7 @@ public:
 	std::string getBinaryHeader() ;
 	//BaseRequest(uint16_t requestCode, std::string& clientId);
 	BaseRequest(std::string& clientId, uint16_t requestCode, uint32_t payloadSize);
+	BaseRequest();
 	virtual ~BaseRequest();
 	void setClientId(std::string& clientId);
 };
