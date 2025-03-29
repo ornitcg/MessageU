@@ -82,7 +82,6 @@ std::string Message::getBinary()
 {
 	std::string binaryData = "";
 	binaryData.append(targetClientId);
-	binaryData.append(toLittleEndian32string(messageId));
 	binaryData.append(toLittleEndian16string(messageType));
 	binaryData.append(toLittleEndian32string(contentSize));
 	binaryData.append(content);

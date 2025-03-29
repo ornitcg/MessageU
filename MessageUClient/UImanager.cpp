@@ -71,8 +71,6 @@ std::string UImanager::getTextMessageFromConsole() {
 	std::cout << "Enter your message:" << std::endl;
 
 	std::cin.clear(); // Clear any error flags
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
 	while (std::getline(std::cin, line)) {
 		if (line.empty()) {
 			break;
@@ -83,6 +81,7 @@ std::string UImanager::getTextMessageFromConsole() {
 		}
 		message += line;
 	}
+	message.append('\0');
 	return message;
 }
 
