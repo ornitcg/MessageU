@@ -163,12 +163,14 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 		}*/
 		std::string textMessage = uiManager.getTextMessageFromConsole(); 
 		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
-		//std::string symKey = targetClient.getSymKey();		
-		//std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);		
-		//uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + static_cast<uint32_t>(encryptedMessage.size());
-		uint32_t msgSize = static_cast<uint32_t>(textMessage.size());
+		std::string symKey = targetClient.getSymKey();		
+
+		std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);		
+		uint32_t msgSize = static_cast<uint32_t>(encryptedMessage.size());
+		// print text message
+		std::cout << "Encrypted message: " << encryptedMessage << std::endl;
 		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + msgSize;
-		Message message = Message(targetClient.getClientId(), messageType, msgSize, textMessage);
+		Message message = Message(targetClient.getClientId(), messageType, msgSize, encryptedMessage);
 		MessageSendRequest request = MessageSendRequest(currentClient.getClientId(), requestCode, payloadSize, message);
 		return request.getBinary();
 	}

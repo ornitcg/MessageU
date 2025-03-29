@@ -8,7 +8,7 @@ class MessageSendResponse : public BaseResponse
 {
 private:
 	std::string targetClientId;
-	uint32_t messageID;
+	uint32_t messageID = 0;
 	
 
 

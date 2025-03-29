@@ -45,7 +45,7 @@ void Message::parseContentSize(std::string& data) {
 //received message
 void Message::parseHeader(std::string& header)
 {
-	this->targetClientId = header.substr(0, CLIENT_ID_SIZE);
+	this->sourceClientId = header.substr(0, CLIENT_ID_SIZE);
 	int offset = CLIENT_ID_SIZE;	
 	memcpy(&(this->messageId), header.data() + offset, MESSAGE_ID_SIZE);
 	this->messageId = toLittleEndian32(this->messageId);

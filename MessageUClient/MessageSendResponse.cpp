@@ -5,6 +5,7 @@
 MessageSendResponse::MessageSendResponse(const BaseResponse& header, std::string payload)
 	: BaseResponse(header.getVersion(),header.getCode(),header.getPayloadSize())
 {
+	messageID = 0;
 	try {
 		if (payload.size() > 0)
 			parsePayload(payload);

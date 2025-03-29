@@ -81,7 +81,6 @@ std::string UImanager::getTextMessageFromConsole() {
 		}
 		message += line;
 	}
-	message.append('\0');
 	return message;
 }
 

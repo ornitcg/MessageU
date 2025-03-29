@@ -214,16 +214,23 @@ void ResponseHandler::handleMessagesListResponse(const BaseResponse& header, std
 		std::string messageContent = cutPartFromData(data, messageContentSize);
 		Message message = Message(messageHeader, messageContent);
 		
-		std::string userName;
-		try {
-			userName = clientsList.getUserNameByClientId(message.getSenderClientId()); //
-		}
-		catch (...) {
-			userName = UNKNOWN_USER;
-		}
+		std::string usenName = findUserNameToDisplay(message.getSenderClientId());
+		
 		std::string contentToDisplay = handleMessageAccordingToType(message, userName);
 		uiManager.displaySingleMessage(userName, contentToDisplay);
 	
+	}
+}
+
+
+
+std::string ResponseHandler::findUserNameToDisplay(std::string& clientId) {
+	std::string userName;
+	try {
+		userName = clientsList.getUserNameByClientId(clientId);
+	}
+	catch (...) {
+		userName = UNKNOWN_USER;
 	}
 }
 
