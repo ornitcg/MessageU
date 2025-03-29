@@ -212,13 +212,10 @@ void ResponseHandler::handleMessagesListResponse(const BaseResponse& header, std
 		uint32_t messageContentSize = Message(data).getContentSize();  //temp object used just for parsing the size
 		std::string messageHeader = cutPartFromData(data, RECV_MESSAGE_HEADER_SIZE);
 		std::string messageContent = cutPartFromData(data, messageContentSize);
-		Message message = Message(messageHeader, messageContent);
-		
-		std::string usenName = findUserNameToDisplay(message.getSenderClientId());
-		
+		Message message = Message(messageHeader, messageContent);		
+		std::string userName = findUserNameToDisplay(message.getSenderClientId());		
 		std::string contentToDisplay = handleMessageAccordingToType(message, userName);
-		uiManager.displaySingleMessage(userName, contentToDisplay);
-	
+		uiManager.displaySingleMessage(userName, contentToDisplay);	
 	}
 }
 
@@ -232,6 +229,7 @@ std::string ResponseHandler::findUserNameToDisplay(std::string& clientId) {
 	catch (...) {
 		userName = UNKNOWN_USER;
 	}
+	return userName;
 }
 
 

@@ -29,6 +29,8 @@ private:
 
 	void handleMessagesListResponse(const BaseResponse& header, std::string& payload);
 
+	std::string findUserNameToDisplay(std::string& clientId);
+
 	std::string cutPartFromData(std::string& data, size_t messageHeaderSize);
 
 	std::string handleMessageAccordingToType(Message& message, std::string& userName);
