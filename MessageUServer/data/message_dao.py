@@ -24,6 +24,7 @@ class Message_Dao:
 
     def add_message(self, message):
         try:
+            print (message.get_content())
             self.cursor.execute(
                 "INSERT INTO messages (ToClient, FromClient, Type, Content) VALUES (?, ?, ?, ?)",
                 (message.get_to_client(), message.get_from_client(), message.get_message_type(), message.get_content())
@@ -41,6 +42,7 @@ class Message_Dao:
             msg_objects = []
             for rec in msg_records:
                 message = Message(rec[1], rec[2], rec[3], rec[4], rec[0])
+                print(rec[4])
                 msg_objects.append(message)
             return msg_objects
 

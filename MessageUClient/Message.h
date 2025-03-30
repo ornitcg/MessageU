@@ -17,7 +17,7 @@ public:
 	Message();
 	Message(std::string& header);
 	Message(std::string& header, std::string& content);
-	Message(std::string& sourceClientId,  uint8_t& messageType, uint32_t& contentSize, std::string& content);
+	Message(std::string& sourceClientId,  uint8_t& messageType,  std::string& content);
 
 	~Message();
 

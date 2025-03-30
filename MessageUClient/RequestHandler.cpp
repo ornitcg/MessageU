@@ -164,13 +164,13 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 		std::string textMessage = uiManager.getTextMessageFromConsole(); 
 		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
 		std::string symKey = targetClient.getSymKey();		
+		//std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);
 
-		std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);		
-		uint32_t msgSize = static_cast<uint32_t>(encryptedMessage.size());
+		std::string encryptedMessage = textMessage;
 		// print text message
 		std::cout << "Encrypted message: " << encryptedMessage << std::endl;
-		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + msgSize;
-		Message message = Message(targetClient.getClientId(), messageType, msgSize, encryptedMessage);
+		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + static_cast<uint32_t>(encryptedMessage.size());
+		Message message = Message(targetClient.getClientId(), messageType,  encryptedMessage);
 		MessageSendRequest request = MessageSendRequest(currentClient.getClientId(), requestCode, payloadSize, message);
 		return request.getBinary();
 	}
@@ -191,10 +191,9 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 			throw std::runtime_error("Request for public key , for this user, first");
 		}
 		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
-		uint32_t contentSize = 0;
 		std::string content = EMPTY_CONTENT;
-		uint32_t payloadSize = SEND_MESSAGE_HEADER_SIZE + contentSize;
-		Message message = Message(targetClient.getClientId(), messageType, contentSize, content);
+		Message message = Message(targetClient.getClientId(), messageType,  content);
+		uint32_t payloadSize = SEND_MESSAGE_HEADER_SIZE + static_cast<uint32_t>(content.size());
 		MessageSendRequest request = MessageSendRequest(currentClient.getClientId(), requestCode, payloadSize, message);
 		std::string binaryData = request.getBinary();
 		return binaryData;
@@ -214,21 +213,11 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
 		std::string targetPublicKey = targetClient.getPublicKey();
-		//std::string plainContent = getSymKeyforTargetClient(targetUserName);	
-		std::string plainContent = "12345678910";
-
+		std::string plainContent = getSymKeyforTargetClient(targetUserName);	
 		std::string currentClientId = currentClient.getClientId();
-
-		//std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
-
-		std::string content = plainContent;
-		std::cout << "Encrypted symmetric key (hex): "; //REMOVE
-		printAsHex(content);//REMOVE
-
-		uint32_t contentSize = static_cast<uint32_t>(content.size());
-		Message message = Message(targetClient.getClientId(), messageType, contentSize, content);
-
-		uint32_t payloadSize = SEND_MESSAGE_HEADER_SIZE + contentSize;
+		std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
+		Message message = Message(targetClient.getClientId(), messageType,  content);
+		uint32_t payloadSize = SEND_MESSAGE_HEADER_SIZE + static_cast<uint32_t>(content.size());
 		MessageSendRequest request = MessageSendRequest(currentClient.getClientId(), requestCode, payloadSize, message);
 		return request.getBinary();
 	}

@@ -25,14 +25,14 @@ Message::Message(std::string& header, std::string& content)
 
 
 //for send
-Message::Message(std::string& targetClientId, uint8_t& messageType, uint32_t& contentSize, std::string& content)
+Message::Message(std::string& targetClientId, uint8_t& messageType, std::string& content)
 {
 	this->targetClientId = targetClientId;
-	std::cout << "EtargetClientId (hex): "; //REMOVE
+	std::cout << "targetClientId (hex): "; //REMOVE
 	printAsHex(targetClientId);//REMOVE
 	this->messageType = messageType;
 	
-	this->contentSize = contentSize;
+	this->contentSize = static_cast<uint32_t>(content.size());
 	
 	this->content = content;
 	std::cout << "content (hex): "; //REMOVE
@@ -91,11 +91,9 @@ std::string& Message::getContent()
 std::string Message::getBinary()
 {
 	std::string binaryData = "";
-	binaryData.append(targetClientId);
-	binaryData.append(toLittleEndian16string(messageType));
-	binaryData.append(toLittleEndian32string(contentSize));
+	binaryData.append(targetClientId);	
+	binaryData.append(1, messageType);	
+	binaryData.append(toLittleEndian32string(contentSize));	
 	binaryData.append(content);
-	std::cout << "binaryData (hex): "; //REMOVE
-	printAsHex(binaryData);//REMOVE
 	return binaryData;
 }
