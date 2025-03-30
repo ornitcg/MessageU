@@ -238,13 +238,14 @@ std::string RequestHandler::getSymKeyforTargetClient(std::string targetUserName)
 	std::string symKey = "";
 	if (!clientsList.hasSymmetricKey(targetUserName)) {
 		symKey = encMngr.generateSymmetricKey();
-		std::cout << "Generated symmetric key (hex): " << std::endl;//REMOVE
-		printAsHex(symKey);//REMOVE
+		
 		clientsList.setSymmetricKeyForUser(targetUserName, symKey);
 	}
 	else {
 		symKey = clientsList.getSymmetricKeyByUserName(targetUserName);
 	}
+	std::cout << "original symmetric key (hex): " << std::endl;//REMOVE
+	printAsHex(symKey);//REMOVE
 	return symKey;
 }
 
