@@ -1,6 +1,7 @@
 #include "Message.h"
 #include "utils.h"
 #include "MessageSendRequest.h"
+#include <iostream>
 
 /*Data structure of a message, with  functionality of parsing*/
 
@@ -27,9 +28,15 @@ Message::Message(std::string& header, std::string& content)
 Message::Message(std::string& targetClientId, uint8_t& messageType, uint32_t& contentSize, std::string& content)
 {
 	this->targetClientId = targetClientId;
+	std::cout << "EtargetClientId (hex): "; //REMOVE
+	printAsHex(targetClientId);//REMOVE
 	this->messageType = messageType;
+	
 	this->contentSize = contentSize;
+	
 	this->content = content;
+	std::cout << "content (hex): "; //REMOVE
+	printAsHex(content);//REMOVE
 }
 
 Message::~Message()
@@ -85,5 +92,7 @@ std::string Message::getBinary()
 	binaryData.append(toLittleEndian16string(messageType));
 	binaryData.append(toLittleEndian32string(contentSize));
 	binaryData.append(content);
+	std::cout << "binaryData (hex): "; //REMOVE
+	printAsHex(binaryData);//REMOVE
 	return binaryData;
 }

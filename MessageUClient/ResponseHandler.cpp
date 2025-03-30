@@ -222,6 +222,9 @@ void ResponseHandler::handleMessagesListResponse(const BaseResponse& header, std
 
 	std::string data = payload;
 	//parses the payloade into messages
+	//print data hex
+	std::cout << "Received messages (hex): " << std::endl;
+	printAsHex(data);
 	while (!data.empty()) {		
 		uint32_t messageContentSize = Message(data).getContentSize();  //temp object used just for parsing the size
 		std::string messageHeader = cutPartFromData(data, RECV_MESSAGE_HEADER_SIZE);
@@ -250,6 +253,8 @@ std::string ResponseHandler::findUserNameToDisplay(std::string& clientId) {
 std::string ResponseHandler::cutPartFromData(std::string& data, size_t partSize) {
 	std::string part = data.substr(0, partSize);
 	data = data.substr(partSize);
+	std::cout << "Part (hex): " << std::endl;
+	printAsHex(part);
 	return part;
 }
 
