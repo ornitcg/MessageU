@@ -288,7 +288,11 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 
 
 void ResponseHandler::handleReceivedSymmetricKey(std::string& targetClientId, std::string& encryptedSymKey) {
+	std::cout << "Received encrypted symmetric key (hex): "; //REAMOVE
+	printAsHex(encryptedSymKey); //REMOVE
 	std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
+	std::cout << "Decrypted symmetric key (hex): ";//REAMOVE
+	printAsHex(decryptedSymKey);//REAMOVE
 	std::string targetUserName = clientsList.getUserNameByClientId(targetClientId);
 	clientsList.setSymmetricKeyForUser(targetUserName, decryptedSymKey);
 }

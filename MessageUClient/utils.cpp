@@ -57,14 +57,14 @@ std::string toLittleEndian16string(uint16_t value) {
 }
 
 
-//void printAsHex(const std::string& binaryData) {
-//	for (unsigned char byte : binaryData) {
-//		// Convert each byte to a two-digit hex number
-//		std::cout << std::hex << std::setw(2) << std::setfill('0')
-//			<< static_cast<int>(byte) << " ";
-//	}
-//	std::cout << std::dec << std::endl; // Reset to decimal output
-//}
+void printAsHex(const std::string& binaryData) {
+	for (unsigned char byte : binaryData) {
+		// Convert each byte to a two-digit hex number
+		std::cout << std::hex << std::setw(2) << std::setfill('0')
+			<< static_cast<int>(byte) << " ";
+	}
+	std::cout << std::dec << std::endl; // Reset to decimal output
+}
 
 
 uint16_t toLittleEndian16(uint16_t value) {

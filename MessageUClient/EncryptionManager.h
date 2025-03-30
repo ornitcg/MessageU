@@ -19,7 +19,7 @@ public:
 	void testKeys(std::string privateKey, std::string publicKey);	
 
 
-	std::string encryptedWithTargetPublicKey(const std::string& PubKey, const std::string& somethingtoEncrypt);
+	std::string encryptWithTargetPublicKey(const std::string& PubKey, const std::string& somethingtoEncrypt);
 
 	std::string decryptedWithMyPrivateKey(const std::string& PrivateKey, const std::string& encryptedSomething);
 

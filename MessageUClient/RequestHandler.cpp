@@ -212,21 +212,15 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		uint16_t requestCode = static_cast<uint16_t>(RequestCode::SEND_MESSAGE);
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		if (!clientsList.hasPublicKey(targetUserName)) {
-			throw std::runtime_error("Error: Request for public key, of this user, first");
-		}
-		std::string symKey = "";
-		if (!clientsList.hasSymmetricKey(targetUserName)) {
-			symKey = encMngr.generateSymmetricKey();
-			clientsList.setSymmetricKeyForUser(targetUserName, symKey);
-		}
-		else {
-			symKey = clientsList.getSymmetricKeyByUserName(targetUserName);
-		}
 		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
-
+		std::string targetPublicKey = targetClient.getPublicKey();
+		std::string plainContent = getSymKeyforTargetClient(targetUserName);			
 		std::string currentClientId = currentClient.getClientId();
-		std::string content = encMngr.encryptedWithTargetPublicKey(targetClient.getPublicKey(), symKey);
+		
+		std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
+		std::cout << "Encrypted symmetric key (hex): "; //REMOVE
+		printAsHex(content);//REMOVE
+
 		uint32_t contentSize = static_cast<uint32_t>(content.size());
 		Message message = Message(targetClient.getClientId(), messageType, contentSize, content);
 
@@ -238,6 +232,20 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		throw e;
 	}
 	
+}
+
+std::string RequestHandler::getSymKeyforTargetClient(std::string targetUserName) {
+	std::string symKey = "";
+	if (!clientsList.hasSymmetricKey(targetUserName)) {
+		symKey = encMngr.generateSymmetricKey();
+		std::cout << "Generated symmetric key (hex): " << std::endl;//REMOVE
+		printAsHex(symKey);//REMOVE
+		clientsList.setSymmetricKeyForUser(targetUserName, symKey);
+	}
+	else {
+		symKey = clientsList.getSymmetricKeyByUserName(targetUserName);
+	}
+	return symKey;
 }
 
 

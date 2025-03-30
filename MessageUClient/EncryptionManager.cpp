@@ -40,7 +40,7 @@ std::pair<std::string,std::string> EncryptionManager::generateRSAKeys() {
 void EncryptionManager::testKeys(std::string privateKey, std::string publicKey) {
 	std::string msg = "hello world";
 	std::cout << "original: " << msg <<  std::endl;
-	std::string encrypted = encryptedWithTargetPublicKey(publicKey, msg);
+	std::string encrypted = encryptWithTargetPublicKey(publicKey, msg);
 	std::cout << "encrypted with public: " << encrypted << std::endl;
 	std::string decrypted = decryptedWithMyPrivateKey(privateKey, encrypted);
 	std::cout << "decrypted: " << decrypted << std::endl;
@@ -51,7 +51,7 @@ void EncryptionManager::testKeys(std::string privateKey, std::string publicKey) 
 
 
 
-std::string EncryptionManager::encryptedWithTargetPublicKey(const std::string& PubKey, const std::string& somethingToEncrypt)
+std::string EncryptionManager::encryptWithTargetPublicKey(const std::string& PubKey, const std::string& somethingToEncrypt)
 {
 	try {
 		RSAPublicWrapper rsaPublic = RSAPublicWrapper(PubKey);

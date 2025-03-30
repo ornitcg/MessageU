@@ -49,6 +49,9 @@ void Client::setPublicKey(const std::string& publicKey)
 
 std::string& Client::getPublicKey()
 {
+	if (publicKey.empty()) {
+		throw std::runtime_error("Error: Request for public key, of this user, first");
+	}
 	return publicKey;
 }
 
