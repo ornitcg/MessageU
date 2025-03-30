@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "EncryptionManager.h"
+#include "Base64Wrapper.h"
 
 CurrentClient::CurrentClient() : Client() 
 {	
@@ -40,20 +41,12 @@ void CurrentClient::loadFromFile()
 				std::getline(file, line);
 				setClientID(line);
 				// get private key from multiline
-				std::string key;
-				bool firstLine = true;
-				while (true)
-				{
-					std::getline(file, line);
-					if (line.empty())
-						break;
-					if (!firstLine) {
-						key += "\n";
-					}
-					key += line;
-					firstLine = false;
-				}
-				setPrivateKey(key);
+				
+				std::string encodedPrivateKey(std::istreambuf_iterator<char>(file), {});
+				encodedPrivateKey.pop_back();
+
+				std::string decodedKey = Base64Wrapper::decode(encodedPrivateKey);
+				setPrivateKey(decodedKey);
 			}
 		}
 		else {// there is no ME_INFO file so generate keys
@@ -80,7 +73,7 @@ void CurrentClient::saveToFile(EncryptionManager& encMngr)
 		file << getUserName() << std::endl;
 		file << getClientId() << std::endl;
 		file << encodedPrivateKey << std::endl;
-		file.close();
+		file.close();		
 	}
 	catch (const std::exception& e) {
 		std::cout << "Error saving user info to file: " << e.what() << std::endl;
