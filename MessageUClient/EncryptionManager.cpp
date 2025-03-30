@@ -47,13 +47,7 @@ void EncryptionManager::testKeys(std::string privateKey, std::string publicKey) 
 }
 
 
-std::string EncryptionManager::encodeToBase64(std::string& key) {
-	return Base64Wrapper::encode(key);
-}
 
-std::string EncryptionManager::decodeFromBase64(std::string encodedKey) {
-	return Base64Wrapper::decode(encodedKey);
-}
 
 
 
@@ -72,8 +66,7 @@ std::string EncryptionManager::encryptedWithTargetPublicKey(const std::string& P
 
 std::string EncryptionManager::decryptedWithMyPrivateKey(const std::string& privateKey, const std::string& encryptedSomething) {
 	try {
-		std::string decodedKey = decodeFromBase64(privateKey);
-		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper(decodedKey);
+		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper(privateKey);
 		std::string decrypted = rsaPrivate.decrypt(encryptedSomething);
 		return decrypted;
 	}

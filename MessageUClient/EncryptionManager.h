@@ -16,12 +16,8 @@ public:
 
 	std::pair<std::string, std::string> generateRSAKeys();
 
-	void testKeys(std::string privateKey, std::string publicKey);
+	void testKeys(std::string privateKey, std::string publicKey);	
 
-	
-	std::string encodeToBase64(std::string& key);
-
-	std::string decodeFromBase64(std::string encodedKey);
 
 	std::string encryptedWithTargetPublicKey(const std::string& PubKey, const std::string& somethingtoEncrypt);
 

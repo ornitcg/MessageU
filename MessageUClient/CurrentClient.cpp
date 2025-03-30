@@ -68,7 +68,7 @@ void CurrentClient::saveToFile(EncryptionManager& encMngr)
 		if (!file) {
 			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));
 		}
-		std::string encodedPrivateKey = encMngr.encodeToBase64(privateKey);
+		std::string encodedPrivateKey = Base64Wrapper::encode(getPrivateKey());
 
 		file << getUserName() << std::endl;
 		file << getClientId() << std::endl;

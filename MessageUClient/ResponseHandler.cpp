@@ -127,6 +127,16 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			break;
 		}
 		case RsponseCode::WAITING_MESSAGES: {
+			////******************REMOVE THIS TEST***
+			//std::string pubKey = currentClient.getPublicKey();
+			//std::string prvKey = currentClient.getPrivateKey();
+			//std::string msg = "Hello response Handler";
+			//std::cout << "original: " << msg << std::endl;
+			//std::string encrypted = encMngr.encryptedWithTargetPublicKey(pubKey, msg);
+			//std::cout << "encrypted with public: " << encrypted << std::endl;
+			//std::string decrypted = encMngr.decryptedWithMyPrivateKey(prvKey, encrypted);
+			//std::cout << "decrypted: " << decrypted << std::endl;
+			//*********************
 			handleMessagesListResponse(header, payload);
 			break;
 		}
