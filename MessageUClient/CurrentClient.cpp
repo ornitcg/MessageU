@@ -23,6 +23,7 @@ CurrentClient::~CurrentClient()
 	
 }
 
+
 void CurrentClient::loadFromFile()
 {
 	// if ME_INFO exists take private key from file
@@ -40,18 +41,23 @@ void CurrentClient::loadFromFile()
 				setClientID(line);
 				// get private key from multiline
 				std::string key;
+				bool firstLine = true;
 				while (true)
 				{
 					std::getline(file, line);
 					if (line.empty())
 						break;
+					if (!firstLine) {
+						key += "\n";
+					}
 					key += line;
-				}				
+					firstLine = false;
+				}
 				setPrivateKey(key);
 			}
 		}
 		else {// there is no ME_INFO file so generate keys
-			throw std::runtime_error("Error: user info file does not exist");
+			throw std::runtime_error("ME.INFO not found");
 		}
 	}
 	catch (const std::exception& e) {

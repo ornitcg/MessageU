@@ -148,8 +148,7 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 		}
 		default:
 			break;
-		}
-		
+		}		
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;

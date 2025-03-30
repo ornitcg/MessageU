@@ -15,6 +15,9 @@ public:
 	~EncryptionManager();
 
 	std::pair<std::string, std::string> generateRSAKeys();
+
+	void testKeys(std::string privateKey, std::string publicKey);
+
 	
 	std::string encodeToBase64(std::string& key);
 

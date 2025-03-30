@@ -44,7 +44,7 @@ void Client::setPublicKey(const std::string& publicKey)
 {
 	if (this->publicKey.empty())
 		this->publicKey = publicKey;
-	else throw std::runtime_error("Error: public key already set");
+	else std::cout << "Public key already set for this user" << std::endl;
 }
 
 std::string& Client::getPublicKey()

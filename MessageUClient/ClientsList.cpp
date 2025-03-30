@@ -164,7 +164,7 @@ const std::vector<std::pair<std::string, Client>>& ClientsList::getClientsList()
 void ClientsList::displayClientsListNames()
 {
 	if (clientsList.size() == 0) {
-		std::cout << "No clients registered" << std::endl;
+		std::cout << "No other clients registered" << std::endl;
 	}
 	else {
 		for (auto& client : clientsList) {

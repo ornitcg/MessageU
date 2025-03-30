@@ -21,6 +21,12 @@ std::pair<std::string,std::string> EncryptionManager::generateRSAKeys() {
 		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper();
 		std::string privateKey = rsaPrivate.getPrivateKey();
 		std::string publicKey = rsaPrivate.getPublicKey();
+
+		//testKeys(privateKey, publicKey);
+		// print test passed or failed
+
+		
+
 		return std::make_pair(privateKey, publicKey);
 	}
 	catch (const std::exception& e) {
@@ -30,6 +36,15 @@ std::pair<std::string,std::string> EncryptionManager::generateRSAKeys() {
 	
 }
 
+
+void EncryptionManager::testKeys(std::string privateKey, std::string publicKey) {
+	std::string msg = "hello world";
+	std::cout << "original: " << msg <<  std::endl;
+	std::string encrypted = encryptedWithTargetPublicKey(publicKey, msg);
+	std::cout << "encrypted with public: " << encrypted << std::endl;
+	std::string decrypted = decryptedWithMyPrivateKey(privateKey, encrypted);
+	std::cout << "decrypted: " << decrypted << std::endl;
+}
 
 
 std::string EncryptionManager::encodeToBase64(std::string& key) {
