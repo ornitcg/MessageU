@@ -63,25 +63,30 @@ std::string ResponseHandler::receiveResponseHeader() {
 //receives the payload of the response according to payload size received in the header
 std::string ResponseHandler::receivePayload(uint32_t payloadSize) {
 	try {
-		std::string payload = "";
-		char buffer[MAX_BUFF] = { 0 };
-		uint32_t bytesReceived = 0;
-		uint32_t bytesLeftToReceive = payloadSize;
-		while (bytesReceived < payloadSize) {
-			bytesReceived = recv(conn.getClientSocket(), buffer, min(MAX_BUFF, bytesLeftToReceive), 0);
-			if (bytesReceived > 0) {
-				payload.append(buffer, bytesReceived);
-				bytesLeftToReceive -= bytesReceived;
+		std::string payload;
+		payload.reserve(payloadSize);
+
+		char buffer[MAX_BUFF];
+		uint32_t totalBytesReceived = 0;
+		while (totalBytesReceived < payloadSize) {
+			uint32_t bytesLeftToReceive = payloadSize - totalBytesReceived;
+			int bytesReceived = recv(conn.getClientSocket(), buffer, min(MAX_BUFF, bytesLeftToReceive), 0);
+			if (bytesReceived <= 0) {
+				throw std::runtime_error("Connection error while receiving payload");				
 			}
-			if (payload.size() == payloadSize) {
-				break;
-			}
-			bytesReceived = 0;
+			payload.append(buffer, bytesReceived);
+			totalBytesReceived += bytesReceived;
 		}
+
+		if (payload.size() != payloadSize) {
+			std::cout << "Warning: Received payload size (" << payload.size()
+				<< ") differs from expected size (" << payloadSize << ")" << std::endl;
+		}
+
 		return payload;
 	}
 	catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
+		std::cout << "Error in receivePayload: " << e.what() << std::endl;
 		return "";
 	}
 }
@@ -290,11 +295,11 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 void ResponseHandler::handleReceivedSymmetricKey(std::string& targetClientId, std::string& encryptedSymKey) {
 	std::cout << "Received encrypted symmetric key (hex): "; //REAMOVE
 	printAsHex(encryptedSymKey); //REMOVE
-	//std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
+	std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
 	std::cout << "Decrypted symmetric key (hex): ";//REAMOVE
-	//printAsHex(decryptedSymKey);//REMOVE
+	printAsHex(decryptedSymKey);//REMOVE
 	std::string targetUserName = clientsList.getUserNameByClientId(targetClientId);
-	clientsList.setSymmetricKeyForUser(targetUserName, encryptedSymKey);
+	clientsList.setSymmetricKeyForUser(targetUserName, decryptedSymKey);
 }
 
 
