@@ -131,17 +131,7 @@ void ResponseHandler::handleResponse(int choice, const BaseResponse& header, std
 			handlePublicKeyRecieved(header, payload);			
 			break;
 		}
-		case RsponseCode::WAITING_MESSAGES: {
-			////******************REMOVE THIS TEST***
-			//std::string pubKey = currentClient.getPublicKey();
-			//std::string prvKey = currentClient.getPrivateKey();
-			//std::string msg = "Hello response Handler";
-			//std::cout << "original: " << msg << std::endl;
-			//std::string encrypted = encMngr.encryptedWithTargetPublicKey(pubKey, msg);
-			//std::cout << "encrypted with public: " << encrypted << std::endl;
-			//std::string decrypted = encMngr.decryptedWithMyPrivateKey(prvKey, encrypted);
-			//std::cout << "decrypted: " << decrypted << std::endl;
-			//*********************
+		case RsponseCode::WAITING_MESSAGES: {			
 			handleMessagesListResponse(header, payload);
 			break;
 		}
@@ -300,8 +290,11 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 void ResponseHandler::handleReceivedSymmetricKey(std::string& targetClientId, std::string& encryptedSymKey) {
 	std::cout << "Received encrypted symmetric key (hex): "; //REAMOVE
 	printAsHex(encryptedSymKey); //REMOVE
-	std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
+	//std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
+	std::string decryptedSymKey = encryptedSymKey;
+
 	std::cout << "Decrypted symmetric key (hex): ";//REAMOVE
+
 	printAsHex(decryptedSymKey);//REMOVE
 	std::string targetUserName = clientsList.getUserNameByClientId(targetClientId);
 	clientsList.setSymmetricKeyForUser(targetUserName, decryptedSymKey);
