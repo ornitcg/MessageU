@@ -45,3 +45,4 @@ void printAsHex(const std::string& binaryData);
 bool isLittleEndian();
 std::string trimNonPrintableChars(const std::string& str);
 std::string removeZeroPadding(const std::string& str);
+std::string readFileData(std::string& filePath);

@@ -20,16 +20,7 @@ std::pair<std::string,std::string> EncryptionManager::generateRSAKeys() {
 	try {
 		RSAPrivateWrapper rsaPrivate = RSAPrivateWrapper();
 		std::string privateKey = rsaPrivate.getPrivateKey();
-		std::string publicKey = rsaPrivate.getPublicKey();
-
-		//testKeys(privateKey, publicKey); //REMOVE
-		// print test passed or failed  //REMOVE
-		
-		std::cout << "my public Key as Hex: \n" << std::endl;
-		printAsHex(publicKey);
-		std::cout << "\nmy public Key as Hex: \n" << std::endl;
-		printAsHex(privateKey);
-		
+		std::string publicKey = rsaPrivate.getPublicKey();			
 
 		return std::make_pair(privateKey, publicKey);
 	}

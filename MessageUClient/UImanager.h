@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 // menu options for the user interface
 enum class MenuOption : int {
@@ -27,9 +28,11 @@ public:
 	void displayMenu();
 	int getChoice();
 	std::string getUserNameFromConsole();
+	std::string getFilePathFromConsole();
 	std::string getCurrentUserTextMessageFromConsole();
 	std::string getTextMessageFromConsole();
 	void displaySingleMessage(std::string& userName, const std::string& content);
 	void displaySingleMessage(const std::string& content);
+	void displayClientsListNames(std::vector<std::string>& namesList);
 };
 

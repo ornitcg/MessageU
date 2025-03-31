@@ -72,16 +72,16 @@ void ClientsList::updateTargetPublicKey(const std::string& targetClientId, const
 }
 
 
-bool ClientsList::hasSymmetricKey(const std::string& userName) const
-{
-	std::string symKey = getSymmetricKeyByUserName(userName);
-	if (symKey.empty()) {
-		return false;
-	}
-	else {
-		return true;
-	}
-}
+//bool ClientsList::hasSymmetricKey(const std::string& userName) const
+//{
+//	std::string symKey = getSymmetricKeyByUserName(userName);
+//	if (symKey.empty()) {
+//		return false;
+//	}
+//	else {
+//		return true;
+//	}
+//}
 
 
 bool ClientsList::hasPublicKey(const std::string& userName) const
@@ -114,7 +114,7 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 				return;
 			}			
 		}	
-		throw std::runtime_error("in setSymmetricKeyForUser Error: client not found");
+		throw std::runtime_error("Error: Client not found");
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -124,14 +124,17 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 
 std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
 {
-	try { //search client list , find with user name, what the sym key
+	try { //search client list , find symkey with user name
 		for (auto client : clientsList) {
 			if (client.first == userName) {				
 				std::string symKey = client.second.getSymKey();
+				if (symKey.empty()) {
+					throw std::runtime_error("Error: Request for symmetric key for this user first");
+				}
 				return symKey;
 			}
 		}
-		throw std::runtime_error("in getSymmetricKeyByUserName Error: client not found");
+		throw std::runtime_error("Error: client not found");
 	}
 	catch (const std::exception& e) {
 		throw e;
@@ -161,16 +164,13 @@ const std::vector<std::pair<std::string, Client>>& ClientsList::getClientsList()
 }
 
 //displays only names
-void ClientsList::displayClientsListNames()
-{
-	if (clientsList.size() == 0) {
-		std::cout << "No other clients registered" << std::endl;
-	}
-	else {
+std::vector<std::string> ClientsList::getClientsListNames()
+{	
+	std::vector<std::string> namesList;
+	if (!clientsList.size() == 0) {
 		for (auto& client : clientsList) {
-			std::cout << client.first << std::endl;
-			//std::cout << client.second.toString() << std::endl; //TODO DEBUG REMOVE
+			namesList.push_back(client.first);
 		}
 	}
-
+	return namesList;
 }

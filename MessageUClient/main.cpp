@@ -49,9 +49,7 @@ int main() {
 				conn.disconnect();
 				break;
 			}
-			/*catch (const ConnectionError& e) { //TODO REMOVE
-				throw e;
-			}*/
+			
 
 			catch (const std::exception& e) {
 				std::cout << e.what() << std::endl;							

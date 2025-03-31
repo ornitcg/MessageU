@@ -3,6 +3,9 @@
 #include "utils.h"
 #include "UImanager.h"
 #include "RequestInfo.h"
+#include <vector>
+#include <algorithm>
+#include <filesystem>
 
 
 
@@ -48,6 +51,14 @@ std::string UImanager::getUserNameFromConsole()
 		throw std::runtime_error("Error: user name is too long");
 	}
 	return userName;
+}
+
+std::string UImanager::getFilePathFromConsole() {
+	std::cout << "Enter full file Path: " << std::endl;
+	std::string filePath;
+	std::cin.ignore(); // clean the buffer from any garbage
+	std::getline(std::cin, filePath);	
+	return filePath;
 }
 
 
@@ -97,4 +108,20 @@ void UImanager::displaySingleMessage(const std::string& content)
 {
 	std::cout << content << std::endl;	
 	std::cout << std::endl;
+}
+
+void UImanager::displayClientsListNames(std::vector<std::string>& namesList)
+{
+	if (namesList.size() == 0) {
+		std::cout << "No other clients are registered\n" << std::endl;
+	}
+	else {
+		std::sort(namesList.begin(), namesList.end());
+		std::cout << "----------" << std::endl;
+		std::cout << "Clients list:" << std::endl;
+		std::cout << "----------" << std::endl;
+		for (const auto& name : namesList) {
+			std::cout << name << std::endl;
+		}
+	}
 }

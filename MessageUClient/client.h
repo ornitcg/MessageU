@@ -6,10 +6,10 @@
 class Client
 {
 protected:
-	std::string clientId = "";
-	std::string userName = "";
-	std::string publicKey = "";
-	std::string symKey = "";
+	std::string clientId;
+	std::string userName;
+	std::string publicKey;
+	std::string symKey;
 
 		
 

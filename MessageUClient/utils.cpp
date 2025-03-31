@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include "utils.h"
@@ -56,7 +57,7 @@ std::string toLittleEndian16string(uint16_t value) {
 	return result;
 }
 
-
+//not in use , but helped me a lot in debugging the encryption I dont want to delete it
 void printAsHex(const std::string& binaryData) {
 	for (unsigned char byte : binaryData) {
 		// Convert each byte to a two-digit hex number
@@ -106,4 +107,17 @@ std::string removeZeroPadding(const std::string& str)
 		noPaddingStr = str.substr(0, nullPos);
 	}
 	return noPaddingStr;
+}
+
+std::string readFileData(std::string& filePath) {
+	std::ifstream file(filePath, std::ios::binary);
+	if (!file) {
+		throw std::runtime_error("Error: File not found");
+	}
+	if (!file.is_open()) {
+		throw std::runtime_error("Error: Cannot open file");
+	}	
+	std::string fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+	return fileContent;
 }

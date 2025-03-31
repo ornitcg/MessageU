@@ -32,6 +32,8 @@ private:
 	std::string sendTextMessageBinaryRequest();
 	std::string symmetricKeyBinaryRequest();
 	std::string sendSymmetricKeyBinaryRequest();
+	std::string sendSendAFileBinaryRequest();
+	std::string packBinaryForSend(std::string& senderclientId, std::string& targetClientId, uint8_t& messageType, std::string& content);
 	std::string getSymKeyforTargetClient(std::string clientId);
 	void sendBinaryData(std::string& binaryData);
 

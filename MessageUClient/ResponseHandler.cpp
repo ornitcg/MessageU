@@ -185,13 +185,11 @@ void ResponseHandler::handlePublicKeyRecieved(const BaseResponse& header, std::s
 
 
 
-void ResponseHandler::handleListResponse(const BaseResponse& header, std::string& payload) {
-	std::cout << "Users list:" << std::endl;
-	//std::cout << payload << std::endl;
+void ResponseHandler::handleListResponse(const BaseResponse& header, std::string& payload) {	
 	ListResponse listResponse = ListResponse(header, payload);
 	clientsList.updateClientsList(listResponse.getClientsList());
-	clientsList.displayClientsListNames();
-
+	std::vector<std::string> namesList = clientsList.getClientsListNames();
+	uiManager.displayClientsListNames(namesList);
 }
 
 
@@ -213,8 +211,7 @@ void ResponseHandler::handleMessagesListResponse(const BaseResponse& header, std
 	std::string data = payload;
 	//parses the payloade into messages
 	//print data hex
-	std::cout << "Received messages (hex): " << std::endl;
-	printAsHex(data);
+	std::cout << "Received messages: " << std::endl;
 	while (!data.empty()) {		
 		uint32_t messageContentSize = Message(data).getContentSize();  //temp object used just for parsing the size
 		std::string messageHeader = cutPartFromData(data, RECV_MESSAGE_HEADER_SIZE);
@@ -243,8 +240,6 @@ std::string ResponseHandler::findUserNameToDisplay(std::string& clientId) {
 std::string ResponseHandler::cutPartFromData(std::string& data, size_t partSize) {
 	std::string part = data.substr(0, partSize);
 	data = data.substr(partSize);
-	std::cout << "Part (hex): " << std::endl;
-	printAsHex(part);
 	return part;
 }
 
@@ -252,7 +247,7 @@ std::string ResponseHandler::cutPartFromData(std::string& data, size_t partSize)
 /* Handles the message according to the message type ,returns decrypted content to display on screen */
 std::string ResponseHandler::handleMessageAccordingToType(Message& message, std::string& userName) {
 	MessageType messageType = static_cast<MessageType>(message.getMessageType());
-	std::string contentToDisplay = "";
+	std::string contentToDisplay;
 	try {
 		switch (messageType) {
 		case MessageType::GET_SYM_KEY: {  //I requested for symmetric key from user
@@ -289,8 +284,6 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 
 void ResponseHandler::handleReceivedSymmetricKey(std::string& targetClientId, std::string& encryptedSymKey) {
 	std::string decryptedSymKey = encMngr.decryptedWithMyPrivateKey(currentClient.getPrivateKey(), encryptedSymKey);
-	std::cout << "Symmetric key received: \n" << std::endl; //REMOVE
-	printAsHex(decryptedSymKey);
 	std::string targetUserName = clientsList.getUserNameByClientId(targetClientId);
 	clientsList.setSymmetricKeyForUser(targetUserName, decryptedSymKey);
 }

@@ -26,7 +26,7 @@ public:
 
 	void updateTargetPublicKey(const std::string& targetClientId, const std::string& targetPublicKey);
 
-	bool hasSymmetricKey(const std::string& userName) const;
+	//bool hasSymmetricKey(const std::string& userName) const;
 
 	bool hasPublicKey(const std::string& userName) const;
 
@@ -38,8 +38,7 @@ public:
 
 	const std::vector<std::pair<std::string, Client>>& getClientsList() const;
 
-	void displayClientsListNames();
-
+	std::vector<std::string> getClientsListNames();
 
 };
 
