@@ -58,8 +58,17 @@ std::string UImanager::getFilePathFromConsole() {
 	std::string filePath;
 	std::cin.ignore(); // clean the buffer from any garbage
 	std::getline(std::cin, filePath);	
-	//print path
-	std::cout << "File path: " << filePath << std::endl;
+
+
+	if (!filePath.empty()) {
+		if (filePath.front() == '"' || filePath.front() == '\'') {
+			filePath.erase(0, 1);
+		}
+		if (!filePath.empty() && (filePath.back() == '"' || filePath.back() == '\'')) {
+			filePath.pop_back();
+		}
+	}
+
 	return filePath;
 }
 

@@ -89,3 +89,7 @@ class Database_Manager:
     def delete_message(self, message_id):
         return self.message_dao.delete_message(message_id)
 
+
+    def delete_messages(self, id_list):
+        for message_id in id_list:
+            self.delete_message(message_id)

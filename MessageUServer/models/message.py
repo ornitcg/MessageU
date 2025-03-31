@@ -31,3 +31,6 @@ class Message:
         return self.message_type
     def get_content(self):
         return self.content
+
+    def get_msg_id(self):
+        return self.msg_id

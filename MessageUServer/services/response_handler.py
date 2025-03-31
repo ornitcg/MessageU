@@ -26,6 +26,8 @@ class Response_Handler:
 
     def handle_response(self, request_object, is_request_successful):
         print(request_object)
+        msgs_request = False  #flag for message request (used for deleting message from DB)
+        msg_id_list = [] #list of message ids to delete
         if not is_request_successful:
             self.send_error_response()
             return
@@ -39,11 +41,14 @@ class Response_Handler:
             elif request_object.code == RequestCode.MESSAGE.value[0]:
                 response = self.create_binary_message_response()
             elif request_object.code == RequestCode.GET_WAITING_MESSAGES.value[0]:
-                response = self.create_binary_waiting_messages_response()
+                response , msg_id_list = self.create_binary_waiting_messages_response()
+                msgs_request = True
             else:
                 pass
-            self.send_response(response)
 
+            self.send_response(response)
+            if msgs_request == True:
+                self.db_mngr.delete_messages(msg_id_list)
         except Exception as e:
             print(f"[ERROR] Error handling response: {e}")
             self.send_error_response()
@@ -68,8 +73,12 @@ class Response_Handler:
 
     def create_binary_waiting_messages_response(self):
         waiting_messages = self.db_mngr.get_pending_messages(self.client_handler.get_client_id())
+        if waiting_messages is None:
+            print("[LOG] No waiting messages")
+            raise Exception("[ERROR] No waiting messages")
+        msg_id_list = [message.get_msg_id() for message in waiting_messages]
         response = Waiting_Messages_Response(waiting_messages)
-        return response.get_binary_response()
+        return response.get_binary_response(), msg_id_list
 
 
 
