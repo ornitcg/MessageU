@@ -53,7 +53,6 @@ bool RequestHandler::handleChoice(const int choice)
 			binaryData = RequestHandler::sendSymmetricKeyBinaryRequest();
 			break;
 		case MenuOption::SEND_FILE:
-			std::cout << "Send a file\n";
 			binaryData = RequestHandler::sendSendAFileBinaryRequest();
 			break;
 

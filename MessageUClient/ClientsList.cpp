@@ -33,7 +33,7 @@ std::string ClientsList::getTargetClientIdByUserName(const std::string& userName
 			return client.second.getClientId();
 		}
 	}
-	throw std::runtime_error("in getTargetClientIdByUserName Error: client not found");
+	throw std::runtime_error("Error: client not found");
 }
 
 std::string ClientsList::getUserNameByClientId(const std::string& targetClientId) const
@@ -43,7 +43,7 @@ std::string ClientsList::getUserNameByClientId(const std::string& targetClientId
 			return client.first;
 		}
 	}
-	throw std::runtime_error("in getUserNameByClientId Error: client not found");
+	throw std::runtime_error("Error: client not found");
 }
 
 
@@ -55,7 +55,7 @@ Client& ClientsList::getClientObjectByUserName(std::string userName)
 			return client.second;
 		}
 	}
-	throw std::runtime_error("in getTargetClientObjectByUserName Error: client not found");
+	throw std::runtime_error("Error: client not found");
 }
 
 
@@ -98,7 +98,7 @@ bool ClientsList::hasPublicKey(const std::string& userName) const
 				}
 			}
 		}
-		throw std::runtime_error("in hasPublicKey Error: client not found");
+		throw std::runtime_error("Error: client not found");
 	}
 	catch (const std::exception& e) {
 		throw e;

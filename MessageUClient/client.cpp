@@ -50,7 +50,7 @@ void Client::setPublicKey(const std::string& publicKey)
 std::string& Client::getPublicKey()
 {
 	if (publicKey.empty()) {
-		throw std::runtime_error("Error: Request for public key, of this user, first");
+		throw std::runtime_error("Error: Request for user's public key first");
 	}
 	return publicKey;
 }
@@ -103,7 +103,7 @@ void Client::setSymKey(const std::string& symmetricKey)
 std::string& Client::getSymKey()
 {
 	if (symKey.empty()) {
-		throw std::runtime_error("Error: Request for symKey , of this user, first");
+		throw std::runtime_error("Error: Request for user's symmetric key first");
 	}
 	return symKey;
 }
