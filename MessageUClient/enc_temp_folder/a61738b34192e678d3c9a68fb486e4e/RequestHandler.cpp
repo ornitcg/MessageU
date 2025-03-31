@@ -174,8 +174,8 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 
 		std::string encryptedMessage = encMngr.encryptWithSymmetricKey(symKey, textMessage);
 
-		std::cout << "\n encrypted Text message to send (hex): \n" << encryptedMessage << std::endl; //TODO remove
-		printAsHex(encryptedMessage);
+		std::cout << "\n encrypted Text message to send (hex): \n" << textMessage << std::endl; //TODO remove
+		printAsHex(textMessage);
 		uint32_t payloadSize = CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE + static_cast<uint32_t>(encryptedMessage.size());
 		Message message = Message(targetClient.getClientId(), messageType,  encryptedMessage);
 		MessageSendRequest request = MessageSendRequest(currentClient.getClientId(), requestCode, payloadSize, message);
