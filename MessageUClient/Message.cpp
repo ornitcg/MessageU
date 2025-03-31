@@ -27,16 +27,10 @@ Message::Message(std::string& header, std::string& content)
 //for send
 Message::Message(std::string& targetClientId, uint8_t& messageType, std::string& content)
 {
-	this->targetClientId = targetClientId;
-	std::cout << "targetClientId (hex): "; //REMOVE
-	printAsHex(targetClientId);//REMOVE
-	this->messageType = messageType;
-	
-	this->contentSize = static_cast<uint32_t>(content.size());
-	
-	this->content = content;
-	std::cout << "content (hex): "; //REMOVE
-	printAsHex(content);//REMOVE
+	this->targetClientId = targetClientId;	
+	this->messageType = messageType;	
+	this->contentSize = static_cast<uint32_t>(content.size());	
+	this->content = content;	
 }
 
 Message::~Message()

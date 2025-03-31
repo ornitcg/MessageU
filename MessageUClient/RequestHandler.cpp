@@ -213,6 +213,7 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
 		std::string targetPublicKey = targetClient.getPublicKey();
+		printAsHex(targetPublicKey);
 		std::string plainContent = getSymKeyforTargetClient(targetUserName);	
 		std::string currentClientId = currentClient.getClientId();
 		std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
@@ -236,9 +237,7 @@ std::string RequestHandler::getSymKeyforTargetClient(std::string targetUserName)
 	}
 	else {
 		symKey = clientsList.getSymmetricKeyByUserName(targetUserName);
-	}
-	std::cout << "original symmetric key (hex): " << std::endl;//REMOVE
-	printAsHex(symKey);//REMOVE
+	}	
 	return symKey;
 }
 
