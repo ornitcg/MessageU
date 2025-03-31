@@ -39,6 +39,8 @@ private:
 
 	std::string handleTextMessage(std::string& userName, std::string& rawContent);
 
+	std::string handleFileMessage(std::string& userName, std::string& rawContent);
+
 
 	
 

@@ -48,9 +48,9 @@ std::string ClientsList::getUserNameByClientId(const std::string& targetClientId
 
 
 //finds the Client object
-Client ClientsList::getTargetClientObjectByUserName(std::string userName) const
+Client& ClientsList::getClientObjectByUserName(std::string userName) 
 {
-	for (auto client : clientsList) {
+	for (auto& client : clientsList) {
 		if (client.first == userName) {
 			return client.second;
 		}

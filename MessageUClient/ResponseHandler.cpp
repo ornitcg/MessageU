@@ -252,6 +252,7 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 		switch (messageType) {
 		case MessageType::GET_SYM_KEY: {  //I requested for symmetric key from user
 			contentToDisplay = GET_SYM_KEY_MSG;
+			clientsList.getClientObjectByUserName(userName).setSymKeyRequested(true);
 			break;
 		}
 		case MessageType::SEND_SYM_KEY: {  //some user sent me symmetric key
@@ -265,7 +266,7 @@ std::string ResponseHandler::handleMessageAccordingToType(Message& message, std:
 			break;
 		}
 		case MessageType::SEND_FILE: {
-			contentToDisplay = "File received";
+			contentToDisplay = handleFileMessage(userName, message.getContent());
 			break;
 		}
 		default: {
@@ -296,6 +297,19 @@ std::string ResponseHandler::handleTextMessage(std::string& userName , std::stri
 		return decryptedContent;
 	}
 	catch(const std::exception& e){
+		throw e;
+	}
+}
+
+std::string ResponseHandler::handleFileMessage(std::string& userName, std::string& rawContent) {
+	try {
+		Client senderClient = clientsList.getClientObjectByUserName(userName);
+		std::string decryptedContent = encMngr.decryptWithSymmetricKey(senderClient.getSymKey(), rawContent);		
+		std::string filepath;
+		filepath = writeFileData(decryptedContent);
+		return "File Saved to: " + filepath;
+	}
+	catch (const std::exception& e) {
 		throw e;
 	}
 }

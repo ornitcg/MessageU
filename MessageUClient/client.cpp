@@ -91,12 +91,29 @@ void Client::setSymKey(const std::string& symmetricKey)
 	else throw std::runtime_error("Error: symmetric key already set");
 }
 
+//std::string& Client::getSymKey()
+//{
+//	return symKey;
+//}
+
+
+
+
+
 std::string& Client::getSymKey()
 {
+	if (symKey.empty()) {
+		throw std::runtime_error("Error: Request for symKey , of this user, first");
+	}
 	return symKey;
 }
 
+bool Client::wasSymKeyRequested()
+{
+	return symKeyRequested;
+}
 
-
-
-
+void Client::setSymKeyRequested(bool value)
+{
+	symKeyRequested = value;
+}

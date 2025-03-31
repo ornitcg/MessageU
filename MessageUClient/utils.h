@@ -33,6 +33,7 @@
 #define UNKNOWN_USER "Unknown user"
 #define MESSAGE_DISPLAY_ERROR "Can't decrypt message!"
 #define REGISTER_REQUEST_PAYLOAD_SIZE MAX_NAME_SIZE + PUBLIC_KEY_SIZE + 1 
+#define DESTINATION_FILE_DIR_NAME "MessageUfiles"
 
 
 
@@ -46,3 +47,9 @@ bool isLittleEndian();
 std::string trimNonPrintableChars(const std::string& str);
 std::string removeZeroPadding(const std::string& str);
 std::string readFileData(std::string& filePath);
+
+std::string generateRandomFileName();
+
+std::string writeFileData(const std::string& content);
+
+std::string getTempDirectory();

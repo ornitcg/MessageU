@@ -10,6 +10,7 @@ protected:
 	std::string userName;
 	std::string publicKey;
 	std::string symKey;
+	bool symKeyRequested = false;
 
 		
 
@@ -33,6 +34,9 @@ public:
 
 	void setSymKey(const std::string& key);
 	std::string& getSymKey();
+
+	bool wasSymKeyRequested();
+	void setSymKeyRequested(bool value);
 
 	bool operator<(const Client& other) const {
 		return userName < other.userName;

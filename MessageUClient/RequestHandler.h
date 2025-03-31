@@ -34,7 +34,7 @@ private:
 	std::string sendSymmetricKeyBinaryRequest();
 	std::string sendSendAFileBinaryRequest();
 	std::string packBinaryForSend(std::string& senderclientId, std::string& targetClientId, uint8_t& messageType, std::string& content);
-	std::string getSymKeyforTargetClient(std::string clientId);
+	std::string ensureSymKeyforTargetClient(Client& targetClient);
 	void sendBinaryData(std::string& binaryData);
 
 public:

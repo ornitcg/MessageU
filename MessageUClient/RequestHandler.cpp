@@ -161,7 +161,7 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		std::string symKey = clientsList.getSymmetricKeyByUserName(targetUserName); //throws error if no sym key found		
 		std::string textMessage = uiManager.getTextMessageFromConsole(); 		
-		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
+		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
 		std::string content = encMngr.encryptWithSymmetricKey(symKey, textMessage);
 		return packBinaryForSend(currentClient.getClientId(), targetClient.getClientId(), messageType, content);		
 	}
@@ -178,9 +178,10 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 		uint8_t messageType = static_cast<uint8_t>(MessageType::GET_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		if (!clientsList.hasPublicKey(targetUserName)) {
-			throw std::runtime_error("Request for public key , for this user, first");
+			throw std::runtime_error("Error: Request for user's public key first");
 		}
-		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
+		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
+		targetClient.setSymKeyRequested(true);
 		std::string content = EMPTY_CONTENT;
 		return packBinaryForSend(currentClient.getClientId(), targetClient.getClientId(), messageType, content);
 	}
@@ -196,9 +197,12 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
+		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
+		if (!targetClient.wasSymKeyRequested()) {
+			throw std::runtime_error("Error: Symmetric key will be sent only by request");
+		}
 		std::string targetPublicKey = targetClient.getPublicKey();
-		std::string plainContent = getSymKeyforTargetClient(targetUserName);		
+		std::string plainContent = ensureSymKeyforTargetClient(targetClient);		
 		std::string currentClientId = currentClient.getClientId();
 		std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
 		return packBinaryForSend(currentClient.getClientId(), targetClient.getClientId(), messageType, content);		
@@ -213,11 +217,8 @@ std::string RequestHandler::sendSendAFileBinaryRequest() {
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_FILE);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		Client targetClient = clientsList.getTargetClientObjectByUserName(targetUserName);
-		std::string symkey = getSymKeyforTargetClient(targetUserName);
-		/*if (!clientsList.hasSymmetricKey(targetUserName)) {
-			throw std::runtime_error("Error: Request for symmetric key, from this user, first");
-		}*/	
+		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
+		std::string symkey = targetClient.getSymKey();		
 		std::string filePath = uiManager.getFilePathFromConsole(); 
 		std::string binaryfileData = readFileData(filePath);
 		std::string content = encMngr.encryptWithSymmetricKey(symkey, binaryfileData);
@@ -237,22 +238,22 @@ std::string RequestHandler::packBinaryForSend(std::string& senderclientId, std::
 
 
 
-std::string RequestHandler::getSymKeyforTargetClient(std::string targetUserName) {
+std::string RequestHandler::ensureSymKeyforTargetClient(Client& targetClient) { 
 	std::string symKey;
-	if (clientsList.getSymmetricKeyByUserName(targetUserName).empty()) {
-		symKey = encMngr.generateSymmetricKey();		
-		clientsList.setSymmetricKeyForUser(targetUserName, symKey);
+	try {
+		symKey = targetClient.getSymKey();
 	}
-	else {
-		symKey = clientsList.getSymmetricKeyByUserName(targetUserName);
-	}	
-	return symKey;
+	catch (...) {
+		symKey = encMngr.generateSymmetricKey();
+		targetClient.setSymKey(symKey);
+	}		
+	return targetClient.getSymKey();
 }
 
 
 
 
-//performs the actual send 
+/* performs the actual send */
 void RequestHandler::sendBinaryData(std::string& binaryData) {
 	uint32_t bytesToSend = static_cast<uint32_t>(binaryData.size());
 	uint32_t bytesSent = 0;
