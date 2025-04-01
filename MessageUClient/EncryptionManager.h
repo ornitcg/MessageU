@@ -25,9 +25,9 @@ public:
 
 	std::string generateSymmetricKey();
 
-	std::string encryptWithSymmetricKey(std::string& symKey, std::string& textMessage);
+	std::string encryptWithSymmetricKey(const std::string& symKey, std::string& textMessage);
 
-	std::string decryptWithSymmetricKey(std::string& symKey, std::string& encryptedContent);
+	std::string decryptWithSymmetricKey(const std::string& symKey, std::string& encryptedContent);
 	
 };
 

@@ -32,7 +32,6 @@ bool RequestHandler::handleChoice(const int choice)
 	if (currentClient.getClientId().empty() && menuOption != MenuOption::REGISTER) {
 		throw std::runtime_error("Please register to continue");
 	}
-
 	try {
 		switch (menuOption) {
 		case MenuOption::REGISTER:
@@ -159,10 +158,13 @@ std::string RequestHandler::sendTextMessageBinaryRequest()
 		uint16_t requestCode = static_cast<uint16_t>(RequestCode::SEND_MESSAGE);
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_TEXT_MESSAGE);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		std::string symKey = clientsList.getSymmetricKeyByUserName(targetUserName); //throws error if no sym key found		
-		std::string textMessage = uiManager.getTextMessageFromConsole(); 		
 		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
-		std::string content = encMngr.encryptWithSymmetricKey(symKey, textMessage);
+		const std::string symkey = targetClient.getSymKey();
+		if (targetClient.getSymKey().empty()) {
+			throw std::runtime_error(MISSING_SYM_KEY_MSG);
+		}
+		std::string textMessage = uiManager.getTextMessageFromConsole(); 		
+		std::string content = encMngr.encryptWithSymmetricKey(symkey, textMessage);
 		return packBinaryForSend(currentClient.getClientId(), targetClient.getClientId(), messageType, content);		
 	}
 	catch (const std::exception& e) {
@@ -221,7 +223,10 @@ std::string RequestHandler::sendSendAFileBinaryRequest() {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_FILE);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
-		std::string symkey = targetClient.getSymKey();		
+		const std::string symkey = targetClient.getSymKey();
+		if (targetClient.getSymKey().empty()) {
+			throw std::runtime_error(MISSING_SYM_KEY_MSG);
+		}
 		std::string filePath = uiManager.getFilePathFromConsole(); 
 		std::string binaryfileData = readFileData(filePath);
 		std::string content = encMngr.encryptWithSymmetricKey(symkey, binaryfileData);

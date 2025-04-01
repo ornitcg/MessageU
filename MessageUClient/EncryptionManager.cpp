@@ -82,14 +82,14 @@ std::string EncryptionManager::generateSymmetricKey()
 
 
 
-std::string EncryptionManager::encryptWithSymmetricKey(std::string& symKey, std::string& plainContent)
+std::string EncryptionManager::encryptWithSymmetricKey(const std::string& symKey, std::string& plainContent)
 {
 	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), static_cast<unsigned int>(symKey.size()));
 	std::string encryptedContent = aesWrapper.encrypt(plainContent.c_str(), static_cast<unsigned int>(plainContent.size()));
 	return encryptedContent;
 }
 
-std::string EncryptionManager::decryptWithSymmetricKey(std::string& symKey, std::string& encryptedContent)
+std::string EncryptionManager::decryptWithSymmetricKey(const std::string& symKey, std::string& encryptedContent)
 {
 	AESWrapper aesWrapper = AESWrapper(reinterpret_cast<const unsigned char*>(symKey.c_str()), static_cast<unsigned int>(symKey.size()));
 	std::string decryptedContent = aesWrapper.decrypt(encryptedContent.c_str(), static_cast<unsigned int>(encryptedContent.size()));

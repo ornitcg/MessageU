@@ -292,8 +292,13 @@ void ResponseHandler::handleReceivedSymmetricKey(std::string& targetClientId, st
 
 std::string ResponseHandler::handleTextMessage(std::string& userName , std::string& rawContent) {
 	try {
-		std::string symKey = clientsList.getSymmetricKeyByUserName(userName);
-		std::string decryptedContent = encMngr.decryptWithSymmetricKey(symKey, rawContent);
+		Client targetClient = clientsList.getClientObjectByUserName(userName);
+		const std::string symkey = targetClient.getSymKey();
+		if (targetClient.getSymKey().empty()) {
+			throw std::runtime_error(MISSING_SYM_KEY_MSG);
+		}
+		//std::string symKey = clientsList.getSymmetricKeyByUserName(userName); //REMOVE
+		std::string decryptedContent = encMngr.decryptWithSymmetricKey(symkey, rawContent);
 		return decryptedContent;
 	}
 	catch(const std::exception& e){

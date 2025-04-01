@@ -33,7 +33,7 @@ public:
 	std::string& getPublicKey();
 
 	void setSymKey(const std::string& key);
-	std::string& getSymKey();
+	const std::string& getSymKey() const;
 
 	bool wasSymKeyRequested();
 	void setSymKeyRequested(bool value);

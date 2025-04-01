@@ -73,18 +73,6 @@ void ClientsList::updateTargetPublicKey(const std::string& targetClientId, const
 }
 
 
-//bool ClientsList::hasSymmetricKey(const std::string& userName) const
-//{
-//	std::string symKey = getSymmetricKeyByUserName(userName);
-//	if (symKey.empty()) {
-//		return false;
-//	}
-//	else {
-//		return true;
-//	}
-//}
-
-
 bool ClientsList::hasPublicKey(const std::string& userName) const
 {
 	try {
@@ -122,25 +110,25 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 	}	
 }
 
-
-std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
-{
-	try { //search client list , find symkey with user name
-		for (auto client : clientsList) {
-			if (client.first == userName) {				
-				std::string symKey = client.second.getSymKey();
-				if (symKey.empty()) {
-					throw std::runtime_error(MISSING_SYM_KEY_MSG);
-				}
-				return symKey;
-			}
-		}
-		throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
-	}
-	catch (const std::exception& e) {
-		throw e;
-	}
-}
+//REMOVE
+//std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) const
+//{
+//	try { //search client list , find symkey with user name
+//		for (auto client : clientsList) {
+//			if (client.first == userName) {				
+//				std::string symKey = client.second.getSymKey();
+//				if (symKey.empty()) {
+//					throw std::runtime_error(MISSING_SYM_KEY_MSG);
+//				}
+//				return symKey;
+//			}
+//		}
+//		throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
+//	}
+//	catch (const std::exception& e) {
+//		throw e;
+//	}
+//}
 
 //adds only the new users to the list
 void ClientsList::updateClientsList(std::vector<std::pair<std::string, Client>>& ReceivedClientsList)
