@@ -2,6 +2,7 @@
 #include <WinSock2.h>
 #include <iostream>
 #include "utils.h"	
+#include "defines.h"
 
 
 BaseRequest::BaseRequest(std::string& clientId, uint16_t requestCode, uint32_t payloadSize)

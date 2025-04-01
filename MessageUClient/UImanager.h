@@ -33,9 +33,6 @@ enum class MenuOption : int {
 class UImanager
 {
 
-
-
-
 public:
 	UImanager();
 	~UImanager();
