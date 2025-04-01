@@ -74,7 +74,7 @@ std::string UImanager::getFilePathFromConsole() {
 
 
 
-std::string UImanager::getCurrentUserTextMessageFromConsole()
+std::string UImanager::getTextMessageFromConsole()
 {
 	std::cout << "Enter message: (pressing ENTER twice will send the message)" << std::endl;
 	std::string message;
@@ -92,25 +92,6 @@ std::string UImanager::getCurrentUserTextMessageFromConsole()
 	return message;
 }
 
-//TODO TEST THIS
-std::string UImanager::getTextMessageFromConsole() {
-	std::string message;
-	std::string line;
-	std::cout << "Enter your message:" << std::endl;
-
-	std::cin.clear(); // Clear any error flags
-	while (std::getline(std::cin, line)) {
-		if (line.empty()) {
-			break;
-		}
-
-		if (!message.empty()) {
-			message += "\n"; // Add newline between lines, not after the last line
-		}
-		message += line;
-	}
-	return message;
-}
 
 
 void UImanager::displaySingleMessage(std::string& userName,  const std::string& content) {

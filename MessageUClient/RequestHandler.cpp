@@ -199,14 +199,11 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
-		if (!targetClient.getSymKey().empty()) {
-			throw std::runtime_error("Symmetric key already set up for this user");
-		}
+		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);		
 		if (!targetClient.wasSymKeyRequested()) {
 			throw std::runtime_error("Symmetric key can only be sent upon request");
 		}
-		std::string targetPublicKey = targetClient.getPublicKey();
+		std::string targetPublicKey = targetClient.getPublicKey(); //throws if missing pubkey
 		std::string plainContent = prepareSymKeyforTargetClient(targetClient);		
 		std::string currentClientId = currentClient.getClientId();
 		std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
