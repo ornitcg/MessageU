@@ -11,4 +11,4 @@ if __name__ == "__main__":
         mUserver = SelectorServer(host ,port)
         mUserver.connect()
     except Exception as e:
-        print("[ERROR] Connection error in main : " , e) # TODO
+        print("[ERROR] Connection error in main : " , e)

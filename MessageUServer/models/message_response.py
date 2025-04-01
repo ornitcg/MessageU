@@ -15,7 +15,4 @@ class Message_Response(Base_Response):
         binary_msg_id = struct.pack('<I', self.msg_id)
         binary_target_client_id = self.target_client_id
         binary_response = binary_header +  binary_target_client_id + binary_msg_id
-        print("binary_response: ", binary_response)
-        #print size
-        print("binary_response size: ", len(binary_response))
         return binary_response

@@ -54,7 +54,7 @@ std::string UImanager::getUserNameFromConsole()
 }
 
 std::string UImanager::getFilePathFromConsole() {
-	std::cout << "Enter full file Path: " << std::endl;
+	std::cout << "Enter full file Path: (avoid hebrew letters)" << std::endl;
 	std::string filePath;
 	std::cin.ignore(); // clean the buffer from any garbage
 	std::getline(std::cin, filePath);	

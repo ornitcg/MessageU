@@ -37,7 +37,7 @@ class Request_Handler:
             elif code == RequestCode.MESSAGE.value[0]:
                 return self.handle_send_message(request_object)  #saves message in DB
             elif code == RequestCode.GET_WAITING_MESSAGES.value[0]:
-                return True #TODO
+                return True
             else:
                 pass
         except Exception as e:
@@ -68,7 +68,6 @@ class Request_Handler:
         if len(inb) < REQUEST_HEADER_SIZE:
             return None
         self.parse_header(inb)
-        print(self.header)
         request_size = REQUEST_HEADER_SIZE + self.header.get_payload_size()
         if len(inb) < request_size:
             return None
@@ -92,7 +91,6 @@ class Request_Handler:
     def get_request_object(self, inb):
         offset = REQUEST_HEADER_SIZE
         payload = (inb[offset:])
-        print(self.header.get_payload_size())
         return self.generate_request_by_code(payload)
 
     def generate_request_by_code(self, payload):
@@ -125,8 +123,6 @@ class Request_Handler:
         target_client_id = request_object.get_target_client_id()
         try:
             target_public_key = self.db_mngr.get_public_key_by_id(target_client_id)
-            # print(f"Type: {type(target_public_key)}, Content: {target_public_key}") #TODO DEBUG
-            # print(f"Type after indexing: {type(target_public_key[0])}, Length: {len(target_public_key[0]) if hasattr(target_public_key[0], '__len__') else 'Not a sequence'}")
             if target_public_key:
                 self.client_handler.set_target_public_key(target_public_key[0])
                 self.client_handler.set_target_client_id(target_client_id)

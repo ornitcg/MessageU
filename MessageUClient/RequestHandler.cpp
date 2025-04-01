@@ -226,6 +226,7 @@ std::string RequestHandler::sendSendAFileBinaryRequest() {
 		}
 		std::string filePath = uiManager.getFilePathFromConsole(); 
 		std::string binaryfileData = readFileData(filePath);
+		std::cout << "File is on its way. Large files may take a long time. please wait!" << std::endl;
 		std::string content = encMngr.encryptWithSymmetricKey(symkey, binaryfileData);
 		return packBinaryForSend(currentClient.getClientId(), targetClient.getClientId(), messageType, content );
 	}

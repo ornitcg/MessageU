@@ -70,7 +70,6 @@ class Client_Handler:
     def handle_read_event(self):
         try:
             recv_data = self.client_socket.recv(MAX_BUFFER_SIZE)
-            print(f"[LOG] Received data from client {self.address}: {recv_data}")  # TODO
             if not recv_data:
                 print(f"[LOG] Client {self.address} disconnected")
                 raise ConnectionError("Client disconnected")
@@ -78,6 +77,8 @@ class Client_Handler:
             if self.client_id: #case client already registered
                 self.db_mngr.update_client_last_seen(self.client_id)
             self.add_to_receive_buf(recv_data)
+            # print(f"[LOG] Received data from client {self.address} , size:  {len(recv_data)}, totalSize: {len(self.inb)}   ")
+
 
             total_request_size = self.request_handler.is_extract_complete_request(self.inb)
             if total_request_size: #if not None then it's complete
@@ -117,7 +118,7 @@ class Client_Handler:
         return self.client_id.bytes
 
     def remove_processed_data_from_inb(self, total_request_size):
-        self.inb = self.inb[total_request_size+1:]  # remove the processed data
+        self.inb = self.inb[total_request_size+1:]  # removes the processed data
 
 
     def update_client_with_request_payload(self, request):
@@ -128,9 +129,9 @@ class Client_Handler:
     def get_client_id(self):
         return self.client_id
 
-    def set_client_id(self, id):
+    def set_client_id(self, c_id):
         if not self.client_id:
-            self.client_id = id
+            self.client_id = c_id
         else:
             raise Exception("[ERROR] Client ID already set")
 
@@ -156,8 +157,8 @@ class Client_Handler:
 
 
 
-    def set_client_list(self, list):
-        self.clientList = list
+    def set_client_list(self, c_list):
+        self.clientList = c_list
 
     def get_client_list(self):
         return self.clientList

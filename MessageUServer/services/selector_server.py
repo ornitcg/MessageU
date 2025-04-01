@@ -70,7 +70,6 @@ class SelectorServer:
         client_handler.update_last_seen()
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         self.selector.register(client_socket, events, data=client_handler)
-        print(f"[LOG] Client from {addr} registered with selector")  ## TODO DEBUG
         return client_handler
 
     def close(self):

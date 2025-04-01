@@ -25,7 +25,6 @@ class Response_Handler:
 
 
     def handle_response(self, request_object, is_request_successful):
-        print(request_object)
         msgs_request = False  #flag for message request (used for deleting message from DB)
         msg_id_list = [] #list of message ids to delete
         if not is_request_successful:
