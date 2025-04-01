@@ -194,12 +194,12 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 
 
 //returns binary data of a send-symmetric-key request, ready to be sent
-std::string RequestHandler::sendSymmetricKeyBinaryRequest()
+std::string RequestHandler::sendSymmetricKeyBinaryRequest() //152 REMOVE
 {
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
-		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);		
+		Client& targetClient = clientsList.getClientObjectByUserName(targetUserName);		
 		if (!targetClient.wasSymKeyRequested()) {
 			throw std::runtime_error("Symmetric key can only be sent upon request");
 		}
@@ -214,7 +214,7 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 	}	
 }
 
-std::string RequestHandler::sendSendAFileBinaryRequest() {
+std::string RequestHandler::sendSendAFileBinaryRequest() { //153 REMOVE
 	std::string binaryData;
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_FILE);
