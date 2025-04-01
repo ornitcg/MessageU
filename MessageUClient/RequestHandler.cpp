@@ -197,11 +197,14 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
+		if (!targetClient.getSymKey().empty()) {
+			throw std::runtime_error("Error: Symmetric key already exists");
+		}
 		if (!targetClient.wasSymKeyRequested()) {
 			throw std::runtime_error("Error: Symmetric key will be sent only by request");
 		}
 		std::string targetPublicKey = targetClient.getPublicKey();
-		std::string plainContent = ensureSymKeyforTargetClient(targetClient);		
+		std::string plainContent = prepareSymKeyforTargetClient(targetClient);		
 		std::string currentClientId = currentClient.getClientId();
 		std::string content = encMngr.encryptWithTargetPublicKey(targetPublicKey, plainContent);
 		return packBinaryForSend(currentClient.getClientId(), targetClient.getClientId(), messageType, content);		
@@ -237,15 +240,15 @@ std::string RequestHandler::packBinaryForSend(std::string& senderclientId, std::
 
 
 
-std::string RequestHandler::ensureSymKeyforTargetClient(Client& targetClient) { 
+std::string RequestHandler::prepareSymKeyforTargetClient(Client& targetClient) { 
 	std::string symKey;
 	try {
 		symKey = targetClient.getSymKey();
 	}
 	catch (...) {
 		symKey = encMngr.generateSymmetricKey();
-		targetClient.setSymKey(symKey);
 	}		
+	targetClient.setSymKey(symKey);
 	return targetClient.getSymKey();
 }
 
