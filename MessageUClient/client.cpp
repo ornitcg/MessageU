@@ -90,11 +90,8 @@ void Client::setSymKey(const std::string& symmetricKey)
 
 
 
-const std::string& Client::getSymKey() const
-{
-	/*if (symKey.empty()) { //TODO remove
-		throw std::runtime_error("Error: Request for user's symmetric key first");
-	}*/
+const std::string& Client::getSymKey() const{
+	
 	return symKey;
 }
 

@@ -79,8 +79,9 @@ std::string UImanager::getTextMessageFromConsole()
 	std::cout << "Enter message: (pressing ENTER twice will send the message)" << std::endl;
 	std::string message;
 	std::string line;
-	std::cin.ignore(); // clean the buffer from any garbage
-	while (std::getline(std::cin, message)) {
+	std::getline(std::cin, line); //get the first line
+	message = line;
+	while (std::getline(std::cin, line)) {
 		if (line.empty()) {
 			break; 
 		}

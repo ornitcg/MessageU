@@ -194,7 +194,7 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 
 
 //returns binary data of a send-symmetric-key request, ready to be sent
-std::string RequestHandler::sendSymmetricKeyBinaryRequest() //152 REMOVE
+std::string RequestHandler::sendSymmetricKeyBinaryRequest() 
 {
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_SYM_KEY);
@@ -214,7 +214,7 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest() //152 REMOVE
 	}	
 }
 
-std::string RequestHandler::sendSendAFileBinaryRequest() { //153 REMOVE
+std::string RequestHandler::sendSendAFileBinaryRequest() { 
 	std::string binaryData;
 	try {
 		uint8_t messageType = static_cast<uint8_t>(MessageType::SEND_FILE);

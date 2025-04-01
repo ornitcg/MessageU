@@ -63,7 +63,6 @@ void CurrentClient::loadFromFile()
 void CurrentClient::saveToFile(EncryptionManager& encMngr) 
 {
 	try {
-		//std::string filename = "me" + std::to_string(rand() % 1000) + ".info"; //TODO remove
 		std::ofstream file(ME_INFO, std::ios::binary);
 		if (!file) {
 			throw std::runtime_error("Error: failed to open file " + std::string(ME_INFO));

@@ -297,7 +297,6 @@ std::string ResponseHandler::handleTextMessage(std::string& userName , std::stri
 		if (targetClient.getSymKey().empty()) {
 			throw std::runtime_error(MISSING_SYM_KEY_MSG);
 		}
-		//std::string symKey = clientsList.getSymmetricKeyByUserName(userName); //REMOVE
 		std::string decryptedContent = encMngr.decryptWithSymmetricKey(symkey, rawContent);
 		return decryptedContent;
 	}
