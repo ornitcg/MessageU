@@ -2,12 +2,12 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
-#include <sstream>
+#include "UImanager.h"
 #include "utils.h"
-#include <vector>
 #include <array>
 #include <iomanip>
 #include <random>
+#include <sstream>
 
 //returns array with IP and port, read from file
 std::array<std::string,2> getServerIPfromFile(std::string fileName) {
@@ -154,7 +154,7 @@ std::string writeFileData(const std::string& content) {
 	}
 }
 
-
+//returns the %tmp% directory path
 std::string getTempDirectory() {
 	char* tmpPath = nullptr;
 	size_t requiredSize;
@@ -178,6 +178,5 @@ std::string getTempDirectory() {
 			tempDir = "."; // Current directory as fallback
 		}
 	}
-
 	return tempDir;
 }

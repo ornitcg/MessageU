@@ -2,9 +2,9 @@
 #include <array>
 #include <string>
 
-#define MSG_SIZE 1024
+//#define MSG_SIZE 1024
 #define RESPONSE_HEADER_SIZE 7
-#define MAX_BUFF MSG_SIZE 
+#define MAX_BUFF 1024 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #define SERVER_INFO "server.info"
@@ -27,14 +27,7 @@
 #define MESSAGE_ID_SIZE 4
 #define SEND_MESSAGE_HEADER_SIZE  CLIENT_ID_SIZE + MESSAGE_TYPE_FIELD_SIZE + CONTENT_SIZE_FIELD_SIZE //21
 #define RECV_MESSAGE_HEADER_SIZE  SEND_MESSAGE_HEADER_SIZE + MESSAGE_ID_SIZE //25
-#define GET_SYM_KEY_MSG "Request for symmetric key"
-#define RECV_SYM_KEY_MSG "Symmetric key received"
-#define ERROR_TEXT_MSG "Can't decrypt message"
-#define UNKNOWN_USER "Unknown user"
-#define MESSAGE_DISPLAY_ERROR "Can't decrypt message!"
 #define REGISTER_REQUEST_PAYLOAD_SIZE MAX_NAME_SIZE + PUBLIC_KEY_SIZE + 1 
-#define DESTINATION_FILE_DIR_NAME "MessageUfiles"
-
 
 
 std::array<std::string, 2> getServerIPfromFile(std::string fileName);

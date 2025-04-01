@@ -46,7 +46,7 @@ std::string ResponseHandler::receiveResponseHeader() {
 			int bytesReceived = recv(conn.getClientSocket(), buffer, RESPONSE_HEADER_SIZE - totalReceived, 0);
 
 			if (bytesReceived <= 0) {
-				throw std::runtime_error("Error: connection closed by server");
+				throw std::runtime_error("Lost connection to server. Please reconnect");
 			}
 			responseHeader.append(buffer, bytesReceived);
 			totalReceived += bytesReceived;

@@ -1,10 +1,6 @@
 #include "Client.h"
-#include <filesystem>
-#include "utils.h"
-#include <fstream>
 #include <iostream>
-#include "Base64Wrapper.h"
-#include "EncryptionManager.h"
+#include "UImanager.h"
 
 
 
@@ -50,7 +46,7 @@ void Client::setPublicKey(const std::string& publicKey)
 std::string& Client::getPublicKey()
 {
 	if (publicKey.empty()) {
-		throw std::runtime_error("Error: Request for user's public key first");
+		throw std::runtime_error(MISSING_PUBLIC_KEY_MSG);
 	}
 	return publicKey;
 }
@@ -88,23 +84,17 @@ void Client::setSymKey(const std::string& symmetricKey)
 {
 	if (this->symKey.empty())
 		this->symKey = symmetricKey;
-	else throw std::runtime_error("Error: symmetric key already set");
+	else throw std::runtime_error("Symmetric key already set for this user");
 }
-
-//std::string& Client::getSymKey()
-//{
-//	return symKey;
-//}
-
 
 
 
 
 std::string& Client::getSymKey()
 {
-	if (symKey.empty()) {
+	/*if (symKey.empty()) { //TODO remove
 		throw std::runtime_error("Error: Request for user's symmetric key first");
-	}
+	}*/
 	return symKey;
 }
 

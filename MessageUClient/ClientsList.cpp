@@ -1,4 +1,5 @@
 #include "ClientsList.h"
+#include "UImanager.h"
 
 ClientsList::ClientsList()
 {
@@ -33,7 +34,7 @@ std::string ClientsList::getTargetClientIdByUserName(const std::string& userName
 			return client.second.getClientId();
 		}
 	}
-	throw std::runtime_error("Error: client not found");
+	throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
 }
 
 std::string ClientsList::getUserNameByClientId(const std::string& targetClientId) const
@@ -43,7 +44,7 @@ std::string ClientsList::getUserNameByClientId(const std::string& targetClientId
 			return client.first;
 		}
 	}
-	throw std::runtime_error("Error: client not found");
+	throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
 }
 
 
@@ -55,7 +56,7 @@ Client& ClientsList::getClientObjectByUserName(std::string userName)
 			return client.second;
 		}
 	}
-	throw std::runtime_error("Error: client not found");
+	throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
 }
 
 
@@ -98,7 +99,7 @@ bool ClientsList::hasPublicKey(const std::string& userName) const
 				}
 			}
 		}
-		throw std::runtime_error("Error: client not found");
+		throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
 	}
 	catch (const std::exception& e) {
 		throw e;
@@ -114,7 +115,7 @@ void ClientsList::setSymmetricKeyForUser(const std::string& userName, const std:
 				return;
 			}			
 		}	
-		throw std::runtime_error("Error: Client not found");
+		throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
 	}
 	catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -129,12 +130,12 @@ std::string ClientsList::getSymmetricKeyByUserName(const std::string& userName) 
 			if (client.first == userName) {				
 				std::string symKey = client.second.getSymKey();
 				if (symKey.empty()) {
-					throw std::runtime_error("Error: Request for symmetric key for this user first");
+					throw std::runtime_error(MISSING_SYM_KEY_MSG);
 				}
 				return symKey;
 			}
 		}
-		throw std::runtime_error("Error: client not found");
+		throw std::runtime_error(CLIENT_NOT_FOUND_MSG);
 	}
 	catch (const std::exception& e) {
 		throw e;

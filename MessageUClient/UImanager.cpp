@@ -48,7 +48,7 @@ std::string UImanager::getUserNameFromConsole()
 	std::cin.ignore(); // clean the buffer from any garbage
 	std::getline(std::cin, userName);
 	if (userName.size() > MAX_NAME_SIZE) {
-		throw std::runtime_error("Error: user name is too long");
+		throw std::runtime_error("Username must be shorter. Please use fewer characters");
 	}
 	return userName;
 }
@@ -76,13 +76,19 @@ std::string UImanager::getFilePathFromConsole() {
 
 std::string UImanager::getCurrentUserTextMessageFromConsole()
 {
-	std::cout << "Enter message: " << std::endl;
+	std::cout << "Enter message: (pressing ENTER twice will send the message)" << std::endl;
 	std::string message;
+	std::string line;
 	std::cin.ignore(); // clean the buffer from any garbage
-	std::getline(std::cin, message);
-	if (message.size() > MSG_SIZE) {
-		throw std::runtime_error("Error: message is too long");
-	}
+	while (std::getline(std::cin, message)) {
+		if (line.empty()) {
+			break; 
+		}
+		if (!message.empty()) {
+			message += "\n"; 
+		}
+		message += line;	
+	}	
 	return message;
 }
 

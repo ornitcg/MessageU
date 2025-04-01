@@ -2,7 +2,6 @@
 #include "utils.h"
 #include <string>
 #include <iostream>
-#include <fstream>
 #include <filesystem>
 #include "RequestInfo.h"
 #include "RegisterRequest.h"
@@ -29,8 +28,13 @@ RequestHandler::~RequestHandler(){
 bool RequestHandler::handleChoice(const int choice)
 {
 	std::string binaryData = "";
+	MenuOption menuOption = static_cast<MenuOption>(choice);
+	if (currentClient.getClientId().empty() && menuOption != MenuOption::REGISTER) {
+		throw std::runtime_error("Please register to continue");
+	}
+
 	try {
-		switch (static_cast<MenuOption> (choice)) {
+		switch (menuOption) {
 		case MenuOption::REGISTER:
 			binaryData = RequestHandler::registerClientBinaryRequest();
 			break;
@@ -80,7 +84,7 @@ std::string RequestHandler::registerClientBinaryRequest()
 {
 	try {
 		if (std::filesystem::exists(ME_INFO)) {
-			throw std::runtime_error("Error: You are already registered");
+			throw std::runtime_error("You are already registered");
 		}
 
 		std::string userName = uiManager.getUserNameFromConsole(); // checks if length is valid	
@@ -103,10 +107,7 @@ std::string RequestHandler::registerClientBinaryRequest()
 //returns binary data of a clients-list request, ready to be sent
 std::string RequestHandler::clientsListBinaryRequest()
 {
-	try {
-		if (currentClient.getClientId().empty()) {
-			throw std::runtime_error("Error: You have to register first!");
-		}
+	try {		
 		ListRequest request = ListRequest(currentClient.getClientId());
 		std::string binaryData = request.getBinaryHeader();
 		return binaryData;
@@ -177,7 +178,7 @@ std::string RequestHandler::symmetricKeyBinaryRequest()
 		uint8_t messageType = static_cast<uint8_t>(MessageType::GET_SYM_KEY);
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		if (!clientsList.hasPublicKey(targetUserName)) {
-			throw std::runtime_error("Error: Request for user's public key first");
+			throw std::runtime_error(MISSING_PUBLIC_KEY_MSG);
 		}
 		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
 		targetClient.setSymKeyRequested(true);
@@ -198,10 +199,10 @@ std::string RequestHandler::sendSymmetricKeyBinaryRequest()
 		std::string targetUserName = uiManager.getUserNameFromConsole();
 		Client targetClient = clientsList.getClientObjectByUserName(targetUserName);
 		if (!targetClient.getSymKey().empty()) {
-			throw std::runtime_error("Error: Symmetric key already exists");
+			throw std::runtime_error("Symmetric key already set up for this user");
 		}
 		if (!targetClient.wasSymKeyRequested()) {
-			throw std::runtime_error("Error: Symmetric key will be sent only by request");
+			throw std::runtime_error("Symmetric key can only be sent upon request");
 		}
 		std::string targetPublicKey = targetClient.getPublicKey();
 		std::string plainContent = prepareSymKeyforTargetClient(targetClient);		
@@ -241,17 +242,10 @@ std::string RequestHandler::packBinaryForSend(std::string& senderclientId, std::
 
 
 std::string RequestHandler::prepareSymKeyforTargetClient(Client& targetClient) { 
-	std::string symKey;
-	try {
-		symKey = targetClient.getSymKey();
-	}
-	catch (...) {
-		symKey = encMngr.generateSymmetricKey();
-	}		
-	targetClient.setSymKey(symKey);
+	if (targetClient.getSymKey().empty())
+		targetClient.setSymKey(encMngr.generateSymmetricKey());
 	return targetClient.getSymKey();
 }
-
 
 
 
@@ -264,20 +258,14 @@ void RequestHandler::sendBinaryData(std::string& binaryData) {
 	{
 		sendRes = send(conn.getClientSocket(), binaryData.c_str() + bytesSent, min(MAX_BUFF, bytesToSend - bytesSent), 0);
 		if (sendRes == SOCKET_ERROR) {
-			throw std::runtime_error("Error: send failed");
+			throw std::runtime_error("Message could not be sent.");
 		}
 		bytesSent += sendRes;
 		if (bytesSent == bytesToSend) {
 			break;
 		}
 	}
-
-	//int sendRes = send(conn.getClientSocket(), binaryData.c_str(), static_cast<int>(binaryData.size()), 0); //REMOVE
-	/*if (sendRes == SOCKET_ERROR) {
-		throw std::runtime_error("Error: send failed");
-	}*/
 }
-
 
 
 
