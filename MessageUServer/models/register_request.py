@@ -24,8 +24,6 @@ class Register_Request(Base_Request):
         if len(self.user_name) > USER_NAME_SIZE:
             raise ValueError("[ERROR] User name is too long")
 
-        if len(self.public_key) != PUBLIC_KEY_SIZE:
-            raise ValueError("[ERROR] Public key is not the right size")
         if self.public_key == b'\x00' * PUBLIC_KEY_SIZE:
             raise ValueError("[ERROR] Public key is empty")
         offset = USER_NAME_SIZE

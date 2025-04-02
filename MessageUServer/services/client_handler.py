@@ -52,8 +52,8 @@ class Client_Handler:
 
     def handle_event(self, key, mask):
         try:
-            is_request_processed = False #initialize to false
-            self.is_request_successful = False #initialize to false
+            is_request_processed = False #initialization
+            self.is_request_successful = False #initialization
             if mask & selectors.EVENT_READ:
                     is_request_processed = self.handle_read_event()
             if self.outb and (mask & selectors.EVENT_WRITE) :
@@ -64,7 +64,7 @@ class Client_Handler:
         except Exception as e:
             print(f"[ERROR] Error handling client in handle event {self.address}: {e}")
             self.response_handler.send_error_response()
-            return False  # Signal that this client has been handled
+            return False
 
 
     def handle_read_event(self):
@@ -74,6 +74,8 @@ class Client_Handler:
                 print(f"[LOG] Client {self.address} disconnected")
                 raise ConnectionError("Client disconnected")
 
+            if len(self.inb) + len(recv_data) > MAX_SIZE_4GB:
+                raise ValueError("[ERROR] Received data exceeds 4GB limit")
             if self.client_id: #case client already registered
                 self.db_mngr.update_client_last_seen(self.client_id)
             self.add_to_receive_buf(recv_data)
