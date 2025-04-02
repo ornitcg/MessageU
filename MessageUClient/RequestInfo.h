@@ -38,7 +38,7 @@ struct RequestInfo {
 
 // storage of all requests information
 const std::vector<std::pair<MenuOption, RequestInfo>> requestInfoVector = {
-	{MenuOption::REGISTER, {MenuOption::REGISTER, RequestCode::REGISTER, MessageType::NONE, "Register with the server"}},
+	{MenuOption::REGISTER, {MenuOption::REGISTER, RequestCode::REGISTER, MessageType::NONE, "Register"}},
 	{MenuOption::GET_CLIENT_LIST, {MenuOption::GET_CLIENT_LIST, RequestCode::GET_CLIENT_LIST, MessageType::NONE, "Request for clients list"}},
 	{MenuOption::GET_PUBLIC_KEY, {MenuOption::GET_PUBLIC_KEY, RequestCode::GET_PUBLIC_KEY, MessageType::NONE, "Request for public key"}},
 	{MenuOption::GET_WAITING_MESSAGES, {MenuOption::GET_WAITING_MESSAGES, RequestCode::GET_WAITING_MESSAGES, MessageType::NONE, "Request for waiting messages"}},

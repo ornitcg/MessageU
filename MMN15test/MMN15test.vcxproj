@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b4c6812f-3cf1-4234-8ea3-0bc203920c73}</ProjectGuid>
-    <RootNamespace>MessageUClient</RootNamespace>
+    <ProjectGuid>{8f5e90e5-2955-496a-a5b9-2f15a7efc6bf}</ProjectGuid>
+    <RootNamespace>MMN15test</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -104,14 +104,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\ornit\OneDrive\Documents\Defensive Programming\cryptopp-CRYPTOPP_8_8_0";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>"C:\Users\ornit\OneDrive\Documents\Defensive Programming\cryptopp-CRYPTOPP_8_8_0\x64\Output\Debug\cryptlib.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,61 +127,62 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AESWrapper.h" />
-    <ClInclude Include="Base64Wrapper.h" />
-    <ClInclude Include="BaseRequest.h" />
-    <ClInclude Include="BaseResponse.h" />
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="Connection.h" />
-    <ClInclude Include="ClientsList.h" />
-    <ClInclude Include="CurrentClient.h" />
-    <ClInclude Include="defines.h" />
-    <ClInclude Include="EncryptionManager.h" />
-    <ClInclude Include="ListRequest.h" />
-    <ClInclude Include="ListResponse.h" />
-    <ClInclude Include="Message.h" />
-    <ClInclude Include="MessageSendResponse.h" />
-    <ClInclude Include="PublicKeyRequest.h" />
-    <ClInclude Include="PublicKeyResponse.h" />
-    <ClInclude Include="RegisterRequest.h" />
-    <ClInclude Include="RegisterResponse.h" />
-    <ClInclude Include="RequestHandler.h" />
-    <ClInclude Include="RequestInfo.h" />
-    <ClInclude Include="ResponseHandler.h" />
-    <ClInclude Include="ResponseType.h" />
-    <ClInclude Include="RSAWrapper.h" />
-    <ClInclude Include="MessageSendRequest.h" />
-    <ClInclude Include="UImanager.h" />
-    <ClInclude Include="UserNameException.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\AESWrapper.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Base64Wrapper.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\BaseRequest.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\BaseResponse.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Client.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ClientsList.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Connection.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\CurrentClient.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\defines.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\EncryptionManager.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ListRequest.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ListResponse.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Message.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\MessageSendRequest.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\MessageSendResponse.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\PublicKeyRequest.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\PublicKeyResponse.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RegisterRequest.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RegisterResponse.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RequestHandler.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RequestInfo.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ResponseHandler.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ResponseType.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RSAWrapper.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\UImanager.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\UserNameException.h" />
+    <ClInclude Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AESWrapper.cpp" />
-    <ClCompile Include="Base64Wrapper.cpp" />
-    <ClCompile Include="BaseRequest.cpp" />
-    <ClCompile Include="BaseResponse.cpp" />
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="ClientsList.cpp" />
-    <ClCompile Include="Connection.cpp" />
-    <ClCompile Include="CurrentClient.cpp" />
-    <ClCompile Include="EncryptionManager.cpp" />
-    <ClCompile Include="ListRequest.cpp" />
-    <ClCompile Include="ListResponse.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Message.cpp" />
-    <ClCompile Include="MessageSendResponse.cpp" />
-    <ClCompile Include="PublicKeyRequest.cpp" />
-    <ClCompile Include="PublicKeyResponse.cpp" />
-    <ClCompile Include="RegisterRequest.cpp" />
-    <ClCompile Include="RegisterResponse.cpp" />
-    <ClCompile Include="RequestHandler.cpp" />
-    <ClCompile Include="RequestInfo.cpp" />
-    <ClCompile Include="ResponseHandler.cpp" />
-    <ClCompile Include="ResponseType.cpp" />
-    <ClCompile Include="RSAWrapper.cpp" />
-    <ClCompile Include="MessageSendRequest.cpp" />
-    <ClCompile Include="UImanager.cpp" />
-    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\AESWrapper.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Base64Wrapper.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\BaseRequest.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\BaseResponse.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Client.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ClientsList.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Connection.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\CurrentClient.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\EncryptionManager.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ListRequest.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ListResponse.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\main.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\Message.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\MessageSendRequest.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\MessageSendResponse.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\PublicKeyRequest.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\PublicKeyResponse.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RegisterRequest.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RegisterResponse.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RequestHandler.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RequestInfo.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ResponseHandler.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\ResponseType.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\RSAWrapper.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\UImanager.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\UserNameException.cpp" />
+    <ClCompile Include="..\..\..\OneDrive\Desktop\MMN15\MessageUClient\utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
