@@ -1,6 +1,7 @@
 from models.base_request import Base_Request
 from utils.defines import *
 from models.message import Message
+from utils.server_messages import *
 
 class Message_Request(Base_Request):
     def __init__(self, header, payload):
@@ -8,12 +9,16 @@ class Message_Request(Base_Request):
         self.parse_payload(payload)
 
     def parse_payload(self, payload):
+        if len(payload) < CLIENT_ID_SIZE + MESSAGE_TYPE_SIZE + CONTENT_SIZE:
+            raise ValueError(WRONG_PAYLOAD_SIZE_ERROR)
         self.target_client_id = payload[:CLIENT_ID_SIZE]
         offset = CLIENT_ID_SIZE
         self.message_type = int.from_bytes(payload[offset:offset+MESSAGE_TYPE_SIZE], byteorder='little')
         offset += MESSAGE_TYPE_SIZE
         self.content_size = int.from_bytes(payload[offset:offset + CONTENT_SIZE],byteorder='little')
         offset += CONTENT_SIZE
+        if len(payload) < offset + self.content_size:
+            raise ValueError("[ERROR] Content size exceeds payload length")
         self.content = payload[offset:offset + self.content_size]
 
     def get_message(self):

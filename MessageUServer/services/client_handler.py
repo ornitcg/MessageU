@@ -77,15 +77,13 @@ class Client_Handler:
             if self.client_id: #case client already registered
                 self.db_mngr.update_client_last_seen(self.client_id)
             self.add_to_receive_buf(recv_data)
-            # print(f"[LOG] Received data from client {self.address} , size:  {len(recv_data)}, totalSize: {len(self.inb)}   ")
-
-
             total_request_size = self.request_handler.is_extract_complete_request(self.inb)
             if total_request_size: #if not None then it's complete
                 self.request_object = self.request_handler.get_request_object(self.inb)
                 self.remove_processed_data_from_inb(total_request_size)
                 self.is_request_successful = self.request_handler.handle_request(self.request_object)
             return True
+
         except (ConnectionError, ConnectionResetError, BrokenPipeError) as e:
             print(f"[LOG] Response sent, client {self.address} disconnected")
             self.disconnect_client()

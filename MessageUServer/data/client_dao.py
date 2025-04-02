@@ -1,5 +1,5 @@
 import sqlite3
-
+from datetime import datetime, timezone
 
 
 class Client_Dao:
@@ -79,7 +79,8 @@ class Client_Dao:
 
     def update_client_last_seen(self, client_id):
         try:
-            self.cursor.execute("UPDATE clients SET LastSeen = CURRENT_TIMESTAMP WHERE ID=?", (client_id,))
+            current_time = datetime.now(timezone.utc).isoformat()
+            self.cursor.execute("UPDATE clients SET LastSeen = ? WHERE ID=?", (current_time ,client_id,))
             self.conn.commit()
             return True
         except sqlite3.Error as e:
