@@ -43,7 +43,7 @@ int UImanager::getChoice()
 
 std::string UImanager::getUserNameFromConsole()
 {
-	std::cout << "Enter User name: " << std::endl;
+	std::cout << "Enter User name: (valid characters are a-z,A-Z,0-9,_)" << std::endl;
 	std::string userName;
 	std::cin.ignore(); // clean the buffer from any garbage
 	std::getline(std::cin, userName);

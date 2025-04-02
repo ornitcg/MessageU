@@ -2,7 +2,7 @@
 
 //#define MSG_SIZE 1024
 #define RESPONSE_HEADER_SIZE 7
-#define MAX_BUFF 1024 
+#define MAX_BUFF 4096 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define SERVER_INFO "server.info"
 #define ME_INFO "me.info"

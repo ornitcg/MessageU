@@ -3,6 +3,7 @@ from models.register_request import *
 from models.public_key_request import *
 from models.message_request import *
 from models.clients_list_request import *
+import re
 from models.waiting_messages_request import *
 import pprint
 
@@ -49,16 +50,19 @@ class Request_Handler:
         try:
             client_handler = self.get_client_handler()
             client_handler.update_client_with_request_payload(request)
+
+            if not re.match(r"^[a-zA-Z0-9_]+$", client_handler.get_user_name()):
+                raise Exception("[ERROR] Invalid user name")
             is_user_name_registered = self.db_mngr.is_exists_client_username(client_handler.user_name)
             if is_user_name_registered:
                 raise Exception("[ERROR] User name already registered")
-            else:
-                client_handler.generate_client_id()
-                binary_client_id = self.client_handler.get_binary_client_id()
-                user_name = self.client_handler.get_user_name()
-                public_key = self.client_handler.get_public_key()
-                self.db_mngr.add_client(binary_client_id, user_name, public_key)
-                return True
+
+            client_handler.generate_client_id()
+            binary_client_id = self.client_handler.get_binary_client_id()
+            user_name = self.client_handler.get_user_name()
+            public_key = self.client_handler.get_public_key()
+            self.db_mngr.add_client(binary_client_id, user_name, public_key)
+            return True
         except Exception as e:
             print(f"[ERROR] Error registering client: {e}")
             raise e
@@ -137,6 +141,9 @@ class Request_Handler:
     def handle_send_message(self, message_request_object):
         try:
             message = message_request_object.get_message()
+            target_client_id = message.get_to_client()
+            if self.db_mngr.get_client_by_id ( target_client_id ) is None:
+                raise Exception("[ERROR] Target client not found")
             msg_id = self.db_mngr.add_message(message)
             self.client_handler.set_message_id(msg_id)
             return True

@@ -19,6 +19,15 @@ class Register_Request(Base_Request):
         else:
             self.user_name = user_name_bytes.decode('ascii',errors='strict')
 
+        if self.user_name == '' or len(self.user_name.strip()) == 0 :
+            raise ValueError("[ERROR] User name is empty")
+        if len(self.user_name) > USER_NAME_SIZE:
+            raise ValueError("[ERROR] User name is too long")
+
+        if len(self.public_key) != PUBLIC_KEY_SIZE:
+            raise ValueError("[ERROR] Public key is not the right size")
+        if self.public_key == b'\x00' * PUBLIC_KEY_SIZE:
+            raise ValueError("[ERROR] Public key is empty")
         offset = USER_NAME_SIZE
         self.public_key = payload[offset : offset + PUBLIC_KEY_SIZE]
 
